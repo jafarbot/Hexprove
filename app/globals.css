@@ -1,0 +1,384 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   DARK MODE (default)
+   ============================================ */
+:root,
+.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+  --surface: #0a0a0a;
+  --surface-50: #111111;
+  --surface-100: #1a1a1a;
+  --surface-200: #222222;
+  --accent: #00d4aa;
+  --accent-hover: #00e6b8;
+  --accent-dim: rgba(0, 212, 170, 0.15);
+  --glass-bg: rgba(10, 10, 10, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
+  --text-muted: #555555;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --card-bg: #0a0a0a;
+  --card-hover: #111111;
+  --input-bg: transparent;
+  --input-border: rgba(255, 255, 255, 0.1);
+  --button-bg: #ffffff;
+  --button-text: #000000;
+  --tag-bg: #1a1a1a;
+  --tag-text: #888888;
+  --red-text: #f87171;
+  --red-bg: rgba(248, 113, 113, 0.1);
+}
+
+/* ============================================
+   LIGHT MODE
+   ============================================ */
+.light {
+  --background: #fafafa;
+  --foreground: #0a0a0a;
+  --surface: #ffffff;
+  --surface-50: #f5f5f5;
+  --surface-100: #eeeeee;
+  --surface-200: #e5e5e5;
+  --accent: #00a88a;
+  --accent-hover: #00c49a;
+  --accent-dim: rgba(0, 168, 138, 0.12);
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --text-primary: #0a0a0a;
+  --text-secondary: #525252;
+  --text-muted: #737373;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --card-bg: #ffffff;
+  --card-hover: #f5f5f5;
+  --input-bg: #ffffff;
+  --input-border: rgba(0, 0, 0, 0.15);
+  --button-bg: #0a0a0a;
+  --button-text: #ffffff;
+  --tag-bg: #f5f5f5;
+  --tag-text: #525252;
+  --red-text: #dc2626;
+  --red-bg: rgba(220, 38, 38, 0.1);
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hide scrollbar */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+/* Selection */
+::selection {
+  background: var(--accent);
+  color: var(--background);
+}
+
+/* ============================================
+   UTILITY CLASSES (theme-aware)
+   ============================================ */
+
+/* Gradient text - same for both modes */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent) 0%, #00ff88 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass effect */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+}
+
+/* Glow effect */
+.glow {
+  box-shadow: 0 0 30px rgba(0, 212, 170, 0.4);
+}
+
+/* Monospace */
+.mono {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  letter-spacing: -0.02em;
+}
+
+/* Section border */
+.section-border {
+  border-top: 1px solid var(--border-color);
+}
+
+/* ============================================
+   COMPONENT CLASSES (theme-aware)
+   ============================================ */
+
+/* Primary button */
+.btn-primary {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent);
+  color: var(--background);
+}
+
+/* Secondary button */
+.btn-secondary {
+  background-color: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+  background-color: var(--accent-dim);
+}
+
+/* Card */
+.card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  background-color: var(--card-hover);
+  border-color: var(--accent);
+}
+
+/* Tag */
+.tag {
+  background-color: var(--tag-bg);
+  color: var(--tag-text);
+}
+
+/* Input */
+.input-field {
+  background-color: var(--input-bg);
+  border-bottom: 1px solid var(--input-border);
+  color: var(--foreground);
+  transition: border-color 0.3s ease;
+}
+
+.input-field:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.input-field::placeholder {
+  color: var(--text-muted);
+}
+
+/* Text colors */
+.text-theme-primary {
+  color: var(--text-primary);
+}
+
+.text-theme-secondary {
+  color: var(--text-secondary);
+}
+
+.text-theme-muted {
+  color: var(--text-muted);
+}
+
+/* Backgrounds */
+.bg-theme {
+  background-color: var(--background);
+}
+
+.bg-theme-surface {
+  background-color: var(--surface);
+}
+
+.bg-theme-surface-50 {
+  background-color: var(--surface-50);
+}
+
+/* Borders */
+.border-theme {
+  border-color: var(--border-color);
+}
+
+/* Red/error styling */
+.text-theme-red {
+  color: var(--red-text);
+}
+
+.bg-theme-red {
+  background-color: var(--red-bg);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Marquee */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+.display-xl {
+  font-size: clamp(3rem, 10vw, 8rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.display-lg {
+  font-size: clamp(2rem, 6vw, 5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.display-md {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+/* ============================================
+   LEGACY OVERRIDES (for Tailwind classes)
+   ============================================ */
+
+/* Background colors */
+.dark .bg-black, .light .bg-black {
+  background-color: var(--background) !important;
+}
+
+.dark .bg-surface, .light .bg-surface {
+  background-color: var(--surface) !important;
+}
+
+.dark .bg-surface-50, .light .bg-surface-50 {
+  background-color: var(--surface-50) !important;
+}
+
+.dark .bg-surface-100, .light .bg-surface-100 {
+  background-color: var(--surface-100) !important;
+}
+
+/* Text colors */
+.dark .text-white, .light .text-white {
+  color: var(--text-primary) !important;
+}
+
+.dark .text-gray-400, .light .text-gray-400 {
+  color: var(--text-secondary) !important;
+}
+
+.dark .text-gray-500, .light .text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+.dark .text-gray-600, .light .text-gray-600 {
+  color: var(--text-muted) !important;
+}
+
+/* Border colors */
+.dark .border-white\/10, .light .border-white\/10 {
+  border-color: var(--border-color) !important;
+}
+
+.dark .border-white\/5, .light .border-white\/5 {
+  border-color: var(--border-color) !important;
+}
+
+/* Red text */
+.dark .text-red-400, .light .text-red-400 {
+  color: var(--red-text) !important;
+}
+
+/* Accent backgrounds */
+.dark .bg-accent\/10, .light .bg-accent\/10 {
+  background-color: var(--accent-dim) !important;
+}
+
+.dark .bg-red-500\/10, .light .bg-red-500\/10 {
+  background-color: var(--red-bg) !important;
+}
+
+/* Button overrides */
+.dark .bg-white, .light .bg-white {
+  background-color: var(--button-bg) !important;
+}
+
+.dark .text-black, .light .text-black {
+  color: var(--button-text) !important;
+}
+
+/* Navbar blur */
+.dark .bg-black\/80, .light .bg-black\/80 {
+  background-color: var(--glass-bg) !important;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .glass {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}

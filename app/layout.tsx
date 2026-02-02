@@ -1,0 +1,171 @@
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import PageLoader from "@/components/PageLoader";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
+};
+
+export const metadata: Metadata = {
+  title: "Hexprove | Crypto QA Consultancy | Web3 Testing Experts",
+  description:
+    "Outsource QA to crypto-native experts. Hexprove provides dedicated QA testing for DeFi, NFT, and Web3 companies. Deep blockchain knowledge, no crowdsourced inconsistency. Manual testing, E2E automation, dApp testing.",
+  keywords: [
+    "crypto QA",
+    "Web3 testing",
+    "outsource QA",
+    "QA consultancy",
+    "DeFi testing",
+    "NFT testing",
+    "blockchain QA",
+    "quality assurance crypto",
+    "software testing Web3",
+    "dApp testing",
+    "smart contract QA",
+    "wallet testing",
+    "crypto bug testing",
+    "dedicated QA team",
+    "manual QA testing",
+    "E2E automation",
+    "Uniswap",
+    "OpenSea",
+  ],
+  authors: [{ name: "Hexprove", url: "https://hexprove.io" }],
+  creator: "Hexprove",
+  publisher: "Hexprove",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/logo.svg",
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
+  },
+  openGraph: {
+    title: "Hexprove | Crypto QA Consultancy | Web3 Testing Experts",
+    description:
+      "Outsource QA to crypto-native experts. Dedicated QA testing for DeFi, NFT, and Web3 companies. Experience from Uniswap, OpenSea, Bloomberg, and Tradeweb.",
+    url: "https://hexprove.io",
+    siteName: "Hexprove",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hexprove | Crypto QA Consultancy",
+    description:
+      "Outsource QA to crypto-native experts. Dedicated QA testing for DeFi, NFT, and Web3 companies.",
+    creator: "@hexprove",
+  },
+  alternates: {
+    canonical: "https://hexprove.io",
+  },
+  category: "Technology",
+};
+
+// JSON-LD Structured Data for SEO
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Hexprove",
+  description: "Crypto-native QA consultancy providing dedicated testing services for Web3, DeFi, and NFT companies.",
+  url: "https://hexprove.io",
+  logo: "https://hexprove.io/logo.svg",
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: "hello@hexprove.io",
+    contactType: "sales",
+  },
+  sameAs: [
+    "https://twitter.com/hexprove",
+    "https://linkedin.com/company/hexprove",
+  ],
+  knowsAbout: [
+    "Quality Assurance",
+    "Software Testing",
+    "Web3",
+    "DeFi",
+    "NFT",
+    "Blockchain",
+    "Crypto",
+    "E2E Testing",
+    "Manual Testing",
+    "dApp Testing",
+  ],
+  serviceArea: {
+    "@type": "Place",
+    name: "Worldwide",
+  },
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "QA Testing Services",
+    itemListElement: [
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Manual QA Testing",
+          description: "Comprehensive manual testing by crypto-native QA experts",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "E2E Automation",
+          description: "Automated end-to-end testing with wallet mocking and transaction verification",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "dApp Testing",
+          description: "Transaction flows, gas estimation, and chain-specific edge case testing",
+        },
+      },
+    ],
+  },
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" className={`${inter.variable} dark`} suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
+      <body className="bg-background text-foreground antialiased">
+        <PageLoader />
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}

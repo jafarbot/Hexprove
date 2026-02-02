@@ -1,0 +1,6 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Hexagon outline -->
+  <path d="M20 4L35.5 12.5V27.5L20 36L4.5 27.5V12.5L20 4Z" stroke="#00d4aa" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Checkmark -->
+  <path d="M12 20L17.5 25.5L28 14" stroke="#00d4aa" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
