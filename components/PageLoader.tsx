@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { HexagonLoader } from "./animations";
 
 export default function PageLoader() {
   const [isLoading, setIsLoading] = useState(true);
@@ -82,50 +83,11 @@ export default function PageLoader() {
             }}
             className="fixed inset-0 z-[10000] flex items-center justify-center pointer-events-none"
           >
-            <div className="flex flex-col items-center gap-4">
-              {/* Hexprove Logo */}
-              <motion.svg
-                width="64"
-                height="64"
-                viewBox="0 0 40 40"
-                fill="none"
-                animate={{
-                  scale: [1, 1.05, 1],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: 0,
-                  ease: "easeInOut",
-                }}
-              >
-                <motion.path
-                  d="M20 4L35.5 12.5V27.5L20 36L4.5 27.5V12.5L20 4Z"
-                  stroke="#00d4aa"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: 1 }}
-                  transition={{
-                    pathLength: { duration: 0.5, delay: 0.2, ease: "easeInOut" },
-                    opacity: { duration: 0.2, delay: 0.2 },
-                  }}
-                />
-                <motion.path
-                  d="M12 20L17.5 25.5L28 14"
-                  stroke="#00d4aa"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: 1 }}
-                  transition={{
-                    pathLength: { duration: 0.4, delay: 0.5, ease: "easeInOut" },
-                    opacity: { duration: 0.2, delay: 0.5 },
-                  }}
-                />
-              </motion.svg>
+            <div className="flex flex-col items-center gap-8">
+              {/* Animated Hexagon Loader */}
+              <div className="text-accent">
+                <HexagonLoader size={100} />
+              </div>
 
               {/* Hexprove text */}
               <motion.div
@@ -133,8 +95,8 @@ export default function PageLoader() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{
-                  opacity: { duration: 0.2, delay: 0.4 },
-                  y: { duration: 0.2, delay: 0.4 },
+                  opacity: { duration: 0.3, delay: 0.4 },
+                  y: { duration: 0.3, delay: 0.4 },
                 }}
                 className="text-xl font-bold text-theme-primary tracking-tight"
               >
