@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     "Uniswap",
     "OpenSea",
   ],
-  authors: [{ name: "Hexprove", url: "https://hexprove.io" }],
+  authors: [{ name: "Hexprove", url: "https://hexprove.com" }],
   creator: "Hexprove",
   publisher: "Hexprove",
   robots: {
@@ -56,15 +56,15 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/logo.svg",
-    shortcut: "/logo.svg",
-    apple: "/logo.svg",
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
   },
   openGraph: {
     title: "Hexprove | Crypto QA Consultancy | Web3 Testing Experts",
     description:
       "Outsource QA to crypto-native experts. Dedicated QA testing for DeFi, NFT, and Web3 companies. Experience from Uniswap, OpenSea, Bloomberg, and Tradeweb.",
-    url: "https://hexprove.io",
+    url: "https://hexprove.com",
     siteName: "Hexprove",
     type: "website",
     locale: "en_US",
@@ -92,7 +92,7 @@ const jsonLd = {
   logo: "https://hexprove.io/logo.svg",
   contactPoint: {
     "@type": "ContactPoint",
-    email: "hello@hexprove.io",
+    email: "hello@hexprove.com",
     contactType: "sales",
   },
   sameAs: [
