@@ -8,19 +8,20 @@ export default function PageLoader() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // TEMP: Show animation every time for testing
-    // TODO: Re-enable sessionStorage check before production
-    // const hasLoaded = sessionStorage.getItem("hasLoadedBefore");
-    // if (hasLoaded) {
-    //   setIsLoading(false);
-    //   return;
-    // }
+    // Check if this is the first load in this session
+    const hasLoaded = sessionStorage.getItem("hasLoadedBefore");
+    
+    if (hasLoaded) {
+      // Skip animation if already loaded in this session
+      setIsLoading(false);
+      return;
+    }
 
     // Prevent scrolling during animation
     document.body.style.overflow = "hidden";
 
     // Mark as loaded for this session
-    // sessionStorage.setItem("hasLoadedBefore", "true");
+    sessionStorage.setItem("hasLoadedBefore", "true");
 
     // Complete animation after 2.5 seconds
     const timer = setTimeout(() => {
