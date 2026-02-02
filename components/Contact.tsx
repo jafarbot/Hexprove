@@ -3,6 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useState, useCallback, useRef } from "react";
 import { TextScramble, MagneticButton, HoverText } from "./animations";
+import { Logo } from "./Logo";
 
 export default function Contact() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -265,17 +266,29 @@ export default function Contact() {
       >
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6">
           <div className="flex items-center gap-3">
-            <svg width="24" height="24" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-              <path d="M20 4L35.5 12.5V27.5L20 36L4.5 27.5V12.5L20 4Z" stroke="#00d4aa" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-              <path d="M12 20L17.5 25.5L28 14" stroke="#00d4aa" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="text-accent"
+            >
+              <Logo size={24} />
+            </motion.div>
             <span className="font-semibold text-theme-primary">Hexprove</span>
           </div>
           
-          <nav className="flex gap-6 sm:gap-8 text-sm" aria-label="Footer navigation">
-            <HoverText text="Privacy" href="#" className="text-theme-muted min-h-[44px] flex items-center" />
-            <HoverText text="Terms" href="#" className="text-theme-muted min-h-[44px] flex items-center" />
-          </nav>
+          <div className="flex items-center gap-6 sm:gap-8 text-sm">
+            <a 
+              href="mailto:hello@hexprove.com" 
+              className="text-theme-secondary hover:text-accent transition-colors font-mono min-h-[44px] flex items-center"
+              aria-label="Email Hexprove"
+            >
+              hello@hexprove.com
+            </a>
+            <nav className="flex gap-6 sm:gap-8" aria-label="Footer navigation">
+              <HoverText text="Privacy" href="#" className="text-theme-muted min-h-[44px] flex items-center" />
+              <HoverText text="Terms" href="#" className="text-theme-muted min-h-[44px] flex items-center" />
+            </nav>
+          </div>
           
           <div className="text-sm text-theme-muted font-mono">
             <span aria-label="Copyright">&copy;</span> {new Date().getFullYear()} Hexprove
