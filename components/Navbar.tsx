@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useTheme } from "./ThemeContext";
 import { HoverText, MagneticButton } from "./animations";
+import { Logo } from "./Logo";
 
 const navLinks = [
   { name: "About", href: "#about", num: "01" },
@@ -63,13 +64,11 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group" onClick={closeMobileMenu}>
             <motion.div
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="text-accent"
             >
-              <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
-                <path d="M20 4L35.5 12.5V27.5L20 36L4.5 27.5V12.5L20 4Z" stroke="#00d4aa" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                <path d="M12 20L17.5 25.5L28 14" stroke="#00d4aa" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <Logo size={32} />
             </motion.div>
             <span className="text-lg font-bold text-theme-primary">Hexprove</span>
           </Link>
