@@ -86,7 +86,7 @@ function ExperienceRow({ exp, index }: { exp: typeof experiences[0]; index: numb
         {/* Description - SEO optimized */}
         <div className="md:col-span-4">
           <motion.p
-            className="text-theme-primary text-sm sm:text-base"
+            className="text-theme-primary text-base sm:text-base"
             animate={{ opacity: isHovered ? 1 : 0.9 }}
           >
             {exp.description}
@@ -120,11 +120,11 @@ export default function Experience() {
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
-    <section 
-      id="experience" 
+    <section
+      id="experience"
       ref={sectionRef}
       aria-label="Our professional experience in QA testing"
-      className="py-32 px-4 sm:px-6 lg:px-8 section-border"
+      className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 section-border"
       style={{ backgroundColor: "var(--surface)" }}
     >
       <div className="max-w-7xl mx-auto">

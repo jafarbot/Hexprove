@@ -70,7 +70,7 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
 
         {/* Description */}
         <div className="md:col-span-5">
-          <p className="text-sm sm:text-base text-theme-secondary">{service.description}</p>
+          <p className="text-base sm:text-base text-theme-secondary">{service.description}</p>
         </div>
 
         {/* Tags */}
@@ -81,7 +81,7 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
               role="listitem"
               initial={{ opacity: 0.5 }}
               animate={{ opacity: isHovered ? 1 : 0.5 }}
-              className="px-3 py-1.5 text-xs font-mono rounded-full min-h-[32px] flex items-center"
+              className="px-4 py-2.5 text-xs font-mono rounded-full min-h-[44px] flex items-center"
               style={{ backgroundColor: "var(--tag-bg)", color: "var(--tag-text)" }}
             >
               {tag}

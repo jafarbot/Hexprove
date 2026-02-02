@@ -177,7 +177,7 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 2.7 + index * 0.1 }}
               role="listitem"
             >
-              <div className="font-mono text-3xl sm:text-4xl md:text-5xl font-bold mb-1 sm:mb-2 text-theme-primary">
+              <div className="font-mono text-2xl sm:text-4xl md:text-5xl font-bold mb-1 sm:mb-2 text-theme-primary">
                 <AnimatedCounter 
                   value={stat.value} 
                   suffix={stat.suffix}
@@ -185,7 +185,7 @@ export default function Hero() {
                   duration={1.5}
                 />
               </div>
-              <div className="text-xs sm:text-sm text-theme-muted">{stat.label}</div>
+              <div className="text-sm sm:text-sm text-theme-muted">{stat.label}</div>
             </motion.div>
           ))}
         </motion.div>

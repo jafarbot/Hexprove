@@ -132,15 +132,15 @@ export default function WhyChooseUs() {
               />
 
               <div className="mb-4 sm:mb-6">
-                <span className="inline-block px-3 py-1.5 text-xs font-mono rounded-full uppercase tracking-wider text-theme-red bg-theme-red min-h-[28px]">
+                <span className="inline-block px-4 py-2.5 text-xs font-mono rounded-full uppercase tracking-wider text-theme-red bg-theme-red min-h-[44px]">
                   Them
                 </span>
-                <p className="text-theme-muted mt-3 line-through text-sm sm:text-base" style={{ textDecorationColor: "var(--text-muted)" }}>
+                <p className="text-theme-muted mt-3 line-through text-base sm:text-base" style={{ textDecorationColor: "var(--text-muted)" }}>
                   {item.them}
                 </p>
               </div>
               <div>
-                <span className="inline-block px-3 py-1.5 text-xs font-mono text-accent rounded-full uppercase tracking-wider min-h-[28px]" style={{ backgroundColor: "var(--accent-dim)" }}>
+                <span className="inline-block px-4 py-2.5 text-xs font-mono text-accent rounded-full uppercase tracking-wider min-h-[44px]" style={{ backgroundColor: "var(--accent-dim)" }}>
                   Hexprove
                 </span>
                 <p className="text-theme-primary mt-3 font-medium text-base sm:text-lg">
