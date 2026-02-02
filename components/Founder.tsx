@@ -53,33 +53,15 @@ export default function Founder() {
                 className="absolute inset-0 flex items-center justify-center text-theme-muted"
                 style={{ backgroundColor: "var(--surface-50)" }}
               >
-                <div className="text-center p-4">
-                  <svg 
-                    className="w-16 h-16 mx-auto mb-2 opacity-30" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={1.5} 
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" 
-                    />
-                  </svg>
-                  <p className="text-xs opacity-50">Add photo at<br/>public/founder.jpg</p>
-                </div>
+                <Image
+                  src="/founder.jpg"
+                  alt="Sino U. - Founder of Hexprove"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 200px, 240px"
+                  priority
+                />
               </div>
-              
-              {/* Uncomment when photo is added */}
-              {/* <Image
-                src="/founder.jpg"
-                alt="Founder"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 200px, 240px"
-                priority
-              /> */}
               
               {/* Animated border on hover */}
               <motion.div
@@ -100,7 +82,7 @@ export default function Founder() {
               transition={{ duration: 0.6, delay: 0.5 }}
             >
               <h3 className="text-2xl sm:text-3xl font-bold text-theme-primary mb-2">
-                Founded by <span className="gradient-text">[Your Name]</span>
+                Founded by <span className="gradient-text">Sino Usmonov</span>
               </h3>
               <p className="text-base sm:text-lg text-accent mb-6">
                 Former Lead QA at Uniswap & OpenSea
