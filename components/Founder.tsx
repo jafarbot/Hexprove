@@ -82,7 +82,7 @@ export default function Founder() {
               transition={{ duration: 0.6, delay: 0.5 }}
             >
               <h3 className="text-2xl sm:text-3xl font-bold text-theme-primary mb-2">
-                Founded by <span className="gradient-text">Sino Usmonov</span>
+                Founded by <span className="gradient-text">Sino</span>
               </h3>
               <p className="text-base sm:text-lg text-accent mb-6">
                 Former Lead QA at Uniswap & OpenSea
