@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import WhyChooseUs from "@/components/WhyChooseUs";
@@ -9,6 +10,13 @@ import Founder from "@/components/Founder";
 import Contact from "@/components/Contact";
 
 export default function Home() {
+  // Check if coming soon mode is enabled
+  const isComingSoon = process.env.NEXT_PUBLIC_COMING_SOON === "true";
+  
+  if (isComingSoon) {
+    redirect("/coming-soon");
+  }
+
   return (
     <main>
       <Navbar />
