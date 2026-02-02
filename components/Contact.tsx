@@ -104,10 +104,10 @@ export default function Contact() {
               <div>
                 <span className="text-sm text-theme-muted uppercase tracking-wider">Email</span>
                 <a
-                  href="mailto:hello@hexprove.io"
+                  href="mailto:hello@hexprove.com"
                   className="block text-xl sm:text-2xl md:text-3xl font-semibold mt-2 text-theme-primary hover:text-accent transition-colors"
                 >
-                  <HoverText text="hello@hexprove.io" />
+                  <HoverText text="hello@hexprove.com" />
                 </a>
               </div>
 
@@ -117,8 +117,7 @@ export default function Contact() {
                 animate={isInView ? { opacity: 1 } : {}}
                 transition={{ duration: 0.8, delay: 0.6 }}
               >
-                <HoverText text="Twitter" href="#" className="text-theme-muted hover:text-theme-primary min-h-[44px] flex items-center" />
-                <HoverText text="LinkedIn" href="#" className="text-theme-muted hover:text-theme-primary min-h-[44px] flex items-center" />
+                <HoverText text="LinkedIn" href="https://www.linkedin.com/in/sinousmonov/" className="text-theme-muted hover:text-theme-primary min-h-[44px] flex items-center" />
               </motion.div>
             </motion.address>
           </div>
@@ -276,22 +275,13 @@ export default function Contact() {
             <span className="font-semibold text-theme-primary">Hexprove</span>
           </div>
           
-          <div className="flex items-center gap-6 sm:gap-8 text-sm">
-            <a 
-              href="mailto:hello@hexprove.com" 
-              className="text-theme-secondary hover:text-accent transition-colors font-mono min-h-[44px] flex items-center"
-              aria-label="Email Hexprove"
-            >
-              hello@hexprove.com
-            </a>
-            <nav className="flex gap-6 sm:gap-8" aria-label="Footer navigation">
-              <HoverText text="Privacy" href="#" className="text-theme-muted min-h-[44px] flex items-center" />
-              <HoverText text="Terms" href="#" className="text-theme-muted min-h-[44px] flex items-center" />
-            </nav>
-          </div>
+          <nav className="flex gap-6 sm:gap-8 text-sm" aria-label="Footer navigation">
+            <HoverText text="Privacy" href="#" className="text-theme-muted min-h-[44px] flex items-center" />
+            <HoverText text="Terms" href="#" className="text-theme-muted min-h-[44px] flex items-center" />
+          </nav>
           
           <div className="text-sm text-theme-muted font-mono">
-            <span aria-label="Copyright">&copy;</span> {new Date().getFullYear()} Hexprove
+            <span aria-label="Copyright">&copy;</span> {new Date().getFullYear()} Hexprove LLC
           </div>
         </div>
       </motion.footer>
