@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hexprove Email Assets</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0a;
+      color: #e5e5e5;
+      padding: 40px 20px;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: #00d4aa;
+    }
+    
+    .subtitle {
+      color: #888;
+      margin-bottom: 3rem;
+      font-size: 1.1rem;
+    }
+    
+    .asset-grid {
+      display: grid;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    
+    .asset-card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 2rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    
+    .asset-card:hover {
+      transform: translateY(-2px);
+      border-color: #00d4aa;
+    }
+    
+    .asset-preview {
+      background: #0a0a0a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+    }
+    
+    .asset-preview img {
+      max-width: 100%;
+      height: auto;
+    }
+    
+    .asset-info h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+    
+    .asset-info p {
+      color: #888;
+      margin-bottom: 1rem;
+    }
+    
+    .download-btn {
+      display: inline-block;
+      background: #00d4aa;
+      color: #000;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    
+    .download-btn:hover {
+      background: #00f5c4;
+    }
+    
+    .usage-guide {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 3rem;
+    }
+    
+    .usage-guide h2 {
+      color: #00d4aa;
+      margin-bottom: 1rem;
+    }
+    
+    .usage-guide ul {
+      list-style: none;
+      padding-left: 1rem;
+    }
+    
+    .usage-guide li {
+      margin-bottom: 0.5rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+    
+    .usage-guide li:before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: #00d4aa;
+    }
+    
+    code {
+      background: #0a0a0a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #00d4aa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Hexprove Email Assets</h1>
+    <p class="subtitle">Download logo files for email signatures and marketing campaigns</p>
+    
+    <div class="asset-grid">
+      <!-- Icon Only -->
+      <div class="asset-card">
+        <div class="asset-preview">
+          <img src="hexprove-icon.svg" alt="Hexprove Icon" style="width: 120px;">
+        </div>
+        <div class="asset-info">
+          <h2>Icon Only</h2>
+          <p>120x120px - Perfect for email signatures and social media</p>
+          <a href="hexprove-icon.svg" download class="download-btn">Download SVG</a>
+        </div>
+      </div>
+      
+      <!-- Horizontal Logo -->
+      <div class="asset-card">
+        <div class="asset-preview">
+          <img src="hexprove-logo-horizontal.svg" alt="Hexprove Horizontal Logo" style="width: 300px;">
+        </div>
+        <div class="asset-info">
+          <h2>Horizontal Logo</h2>
+          <p>300x80px - Best for email headers and footers</p>
+          <a href="hexprove-logo-horizontal.svg" download class="download-btn">Download SVG</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="usage-guide">
+      <h2>Usage Guide</h2>
+      <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Email Signature</h3>
+      <ul>
+        <li>Use <code>hexprove-icon.svg</code> (120x120px)</li>
+        <li>Resize to 60x60px or 80x80px for signatures</li>
+        <li>Place next to your name and title</li>
+      </ul>
+      
+      <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Email Marketing</h3>
+      <ul>
+        <li>Use <code>hexprove-logo-horizontal.svg</code> in headers</li>
+        <li>Keep minimum width of 200px for readability</li>
+        <li>Ensure good contrast on background</li>
+      </ul>
+      
+      <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Colors</h3>
+      <ul>
+        <li>Primary: <code>#00d4aa</code> (Teal)</li>
+        <li>Works best on dark backgrounds (#000, #0a0a0a, #1a1a1a)</li>
+        <li>For light backgrounds, consider adding a dark container</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
