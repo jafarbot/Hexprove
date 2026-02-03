@@ -5,6 +5,14 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || '';
   const pathname = request.nextUrl.pathname;
 
+  // Check if coming soon mode is enabled
+  const comingSoonEnabled = process.env.NEXT_PUBLIC_COMING_SOON === 'true';
+
+  // If coming soon is disabled, allow full site
+  if (!comingSoonEnabled) {
+    return NextResponse.next();
+  }
+
   // Allow staging subdomain to see full site
   const isStaging = hostname.startsWith('staging.') || hostname.startsWith('preview.');
 
