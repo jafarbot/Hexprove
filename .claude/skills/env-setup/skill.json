@@ -1,0 +1,6 @@
+{
+  "name": "env-setup",
+  "description": "Initialize and validate environment variables for Hexprove project",
+  "command": "bash",
+  "args": ["/Users/sino/Documents/Hexprove/.claude/skills/env-setup/setup.sh"]
+}

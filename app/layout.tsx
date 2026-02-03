@@ -77,7 +77,7 @@ export const metadata: Metadata = {
     creator: "@hexprove",
   },
   alternates: {
-    canonical: "https://hexprove.io",
+    canonical: "https://hexprove.com",
   },
   category: "Technology",
 };
@@ -88,11 +88,11 @@ const jsonLd = {
   "@type": "Organization",
   name: "Hexprove",
   description: "Crypto-native QA consultancy providing dedicated testing services for Web3, DeFi, and NFT companies.",
-  url: "https://hexprove.io",
-  logo: "https://hexprove.io/logo.svg",
+  url: "https://hexprove.com",
+  logo: "https://hexprove.com/logo.svg",
   contactPoint: {
     "@type": "ContactPoint",
-    email: "hello@hexprove.com",
+    email: "team@hexprove.com",
     contactType: "sales",
   },
   sameAs: [

@@ -1,0 +1,6 @@
+{
+  "name": "deploy-preview",
+  "description": "Pre-deployment checklist for Hexprove website - validates build, env vars, and deployment readiness",
+  "command": "bash",
+  "args": ["/Users/sino/Documents/Hexprove/.claude/skills/deploy-preview/deploy.sh"]
+}

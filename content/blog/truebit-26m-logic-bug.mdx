@@ -1,0 +1,105 @@
+---
+title: "Truebit Lost $26.5M — Why Security Audits Alone Aren't Enough"
+description: "The first major DeFi hack of 2026 was an integer overflow. But the real lesson is about defense in depth."
+date: "2026-02-03"
+author: "Sino Usmonov"
+tags: ["DeFi", "Security", "QA Strategy"]
+---
+
+On February 1st, 2026, Truebit became the first major DeFi protocol to fall victim to an exploit this year. The damage? **$26.5 million drained** in minutes. The TRU token crashed nearly 100%.
+
+Let's be honest about what happened — and what it teaches us about protecting DeFi protocols.
+
+## What Actually Happened
+
+The Truebit exploit was a **classic integer overflow vulnerability** in legacy Solidity 0.6.10 code. The attacker discovered that by inputting an astronomically large token amount (240+ million tokens with 18 decimal precision), they could cause the price calculation to overflow, wrap around to zero, and mint tokens for free.
+
+This is textbook security audit territory. Modern Solidity (0.8+) has built-in overflow protection. Static analysis tools like Slither flag this pattern. Security auditors are specifically trained to catch it.
+
+**Would manual QA have caught this?** Honestly — probably not.
+
+- The attack required inputting values far beyond what any UI would allow
+- It needed direct contract interaction, not normal user flows
+- You'd need to understand integer overflow mechanics to even think of testing this
+
+So why am I writing about it?
+
+## The Real Lesson: Defense in Depth
+
+The Truebit exploit reveals something important: **no single defense is enough**.
+
+| Defense Layer | What It Catches | What It Misses |
+|---------------|-----------------|----------------|
+| **Security Audits** | Code bugs, overflows, reentrancy, access control | Real-world user flows, UI/UX issues, integration problems |
+| **Functional QA** | Business logic flaws, edge cases in user journeys, state inconsistencies | Deep code-level vulnerabilities |
+| **Static Analysis** | Known vulnerability patterns | Context-specific logic errors |
+
+Truebit's contract was 5 years old and apparently hadn't been audited with modern tooling. That's the gap that got exploited.
+
+But here's what keeps me up at night: **the bugs that auditors miss because they don't think like users.**
+
+## Where Functional QA Actually Saves You
+
+At Uniswap and OpenSea, I saw bugs that no security audit would have caught — because they weren't code vulnerabilities. They were **logic flaws in how the product worked**:
+
+### 1. Slippage Display Bugs
+
+The UI showed 2% slippage, but the transaction executed with 5% due to a frontend calculation error. Users lost money. This isn't a smart contract bug — it's a QA bug.
+
+### 2. Transaction Preview Mismatches
+
+"You'll receive approximately 1,000 USDC" — but the actual swap returned 950 USDC because the preview didn't account for a fee tier change. Security audits don't test UI accuracy.
+
+### 3. Multi-Step Flow Edge Cases
+
+Approve → Swap → Stake. What happens if the user's wallet disconnects between steps? What if gas spikes mid-flow? What if they're on a chain that just reorged? These are functional QA questions.
+
+### 4. State Inconsistencies
+
+The frontend shows a balance of 100 tokens. The contract has 95. Where did 5 tokens go? Often it's caching, event indexing, or RPC inconsistencies — not contract bugs.
+
+### 5. Error States That Break Users
+
+Transaction fails due to insufficient gas. The UI shows "Transaction pending" forever. User tries again. Now they've submitted two identical transactions. This is preventable with proper QA.
+
+## What This Means for Your Protocol
+
+If you're building in DeFi, you need both:
+
+**Security audits** for:
+- Smart contract vulnerabilities
+- Cryptographic issues
+- Access control problems
+- Known attack patterns
+
+**Functional QA** for:
+- User flow edge cases
+- Frontend/contract consistency
+- Error handling and recovery
+- Real-world usage patterns
+- Multi-chain and multi-wallet scenarios
+
+One doesn't replace the other. Truebit needed a fresh security audit. But even audited protocols ship bugs that affect users — bugs that dedicated QA catches.
+
+## The Hexprove Approach
+
+We don't do security audits. We're not trying to compete with Trail of Bits or OpenZeppelin.
+
+What we do is **functional QA for crypto products** — testing how real users interact with your protocol:
+
+- Does the UI accurately reflect what the contract will do?
+- What happens when things go wrong mid-transaction?
+- Are there user flows that create unexpected outcomes?
+- Does your dApp handle chain-specific edge cases?
+
+We built QA frameworks at Uniswap and OpenSea. We know the difference between what auditors find and what QA finds — because we've seen both.
+
+---
+
+The Truebit exploit was preventable with a security audit. But the next bug that costs you users might not be a code vulnerability at all.
+
+It might be a slippage calculation that's off by 3%. A transaction preview that doesn't match execution. An error state that leaves users stuck.
+
+That's what functional QA catches.
+
+**Need help securing your user experience?** [Let's talk](mailto:team@hexprove.com).

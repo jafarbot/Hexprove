@@ -96,10 +96,10 @@ export default function ComingSoon() {
               Get in touch
             </span>
             <a
-              href="mailto:hello@hexprove.com"
+              href="mailto:team@hexprove.com"
               className="text-2xl font-semibold text-theme-primary hover:text-accent transition-colors inline-block"
             >
-              <HoverText text="hello@hexprove.com" />
+              <HoverText text="team@hexprove.com" />
             </a>
           </div>
 

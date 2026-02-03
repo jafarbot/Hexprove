@@ -1,0 +1,6 @@
+{
+  "name": "content-audit",
+  "description": "Audit Hexprove website content for SEO, messaging, and brand consistency",
+  "command": "bash",
+  "args": ["/Users/sino/Documents/Hexprove/.claude/skills/content-audit/audit.sh"]
+}

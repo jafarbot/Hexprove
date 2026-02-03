@@ -2,10 +2,15 @@
 
 import { motion, useInView } from "framer-motion";
 import { useState, useCallback, useRef } from "react";
+import Link from "next/link";
 import { TextScramble, MagneticButton, HoverText } from "./animations";
 import { Logo } from "./Logo";
 
-export default function Contact() {
+interface ContactProps {
+  blogPostCount?: number;
+}
+
+export default function Contact({ blogPostCount = 0 }: ContactProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
@@ -16,12 +21,32 @@ export default function Contact() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        setError('Failed to send. Please email us directly at team@hexprove.com');
+      }
+    } catch {
+      setError('Failed to send. Please email us directly at team@hexprove.com');
+    } finally {
+      setIsSubmitting(false);
+    }
   }, [formData]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,7 +82,7 @@ export default function Contact() {
               transition={{ duration: 0.6 }}
               className="flex items-center gap-4 mb-6 sm:mb-8"
             >
-              <span className="text-accent font-mono text-sm">05</span>
+              <span className="text-accent font-mono text-sm">06</span>
               <motion.div
                 className="h-px bg-accent"
                 initial={{ width: 0 }}
@@ -104,10 +129,10 @@ export default function Contact() {
               <div>
                 <span className="text-sm text-theme-muted uppercase tracking-wider">Email</span>
                 <a
-                  href="mailto:hello@hexprove.com"
+                  href="mailto:team@hexprove.com"
                   className="block text-xl sm:text-2xl md:text-3xl font-semibold mt-2 text-theme-primary hover:text-accent transition-colors"
                 >
-                  <HoverText text="hello@hexprove.com" />
+                  <HoverText text="team@hexprove.com" />
                 </a>
               </div>
 
@@ -163,8 +188,34 @@ export default function Contact() {
                       />
                     </motion.svg>
                   </motion.div>
-                  <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-theme-primary">Message Sent</h3>
-                  <p className="text-theme-secondary">We&apos;ll get back to you within 24 hours.</p>
+                  <h3 className="text-2xl sm:text-3xl font-bold mb-4">
+                    <span className="text-theme-primary">Thank </span>
+                    <span className="text-accent">You</span>
+                  </h3>
+                  <p className="text-theme-secondary mb-6">We&apos;ll be in touch within 24 hours.</p>
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    {blogPostCount < 3 ? (
+                      <Link
+                        href="/blog/truebit-26m-logic-bug"
+                        className="inline-flex items-center gap-2 text-accent hover:underline font-medium"
+                      >
+                        While you wait: See how a $26M bug slipped through
+                        <span aria-hidden="true">&rarr;</span>
+                      </Link>
+                    ) : (
+                      <Link
+                        href="/blog"
+                        className="inline-flex items-center gap-2 text-accent hover:underline font-medium"
+                      >
+                        Explore our insights
+                        <span aria-hidden="true">&rarr;</span>
+                      </Link>
+                    )}
+                  </motion.div>
                 </div>
               </motion.div>
             ) : (
@@ -235,6 +286,18 @@ export default function Contact() {
                   />
                 </motion.div>
 
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 rounded-lg text-sm"
+                    style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}
+                    role="alert"
+                  >
+                    {error}
+                  </motion.div>
+                )}
+
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -243,10 +306,11 @@ export default function Contact() {
                 >
                   <MagneticButton
                     type="submit"
-                    className="w-full py-4 btn-primary font-semibold rounded-full min-h-[52px]"
+                    className="w-full py-4 btn-primary font-semibold rounded-full min-h-[52px] disabled:opacity-50 disabled:cursor-not-allowed"
                     strength={0.1}
+                    disabled={isSubmitting}
                   >
-                    Send Message
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
                   </MagneticButton>
                 </motion.div>
               </form>
