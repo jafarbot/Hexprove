@@ -3,6 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { TextScramble } from "./animations";
+import { useSectionTracking } from "@/lib/useSectionTracking";
 
 const services = [
   {
@@ -105,10 +106,15 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
 
 export default function Services() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const trackingRef = useSectionTracking("services", 0.5);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
-    <section 
+    <section
+      ref={(node) => {
+        (sectionRef as any).current = node;
+        (trackingRef as any).current = node;
+      }} 
       id="services" 
       ref={sectionRef}
       aria-label="QA testing services for crypto and Web3 companies"

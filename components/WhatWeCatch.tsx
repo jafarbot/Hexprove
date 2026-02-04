@@ -10,6 +10,7 @@ import {
   CheckCircle, 
   Image as ImageIcon 
 } from "lucide-react";
+import { useSectionTracking } from "@/lib/useSectionTracking";
 
 const issues = [
   { name: "Gas Estimation Errors", icon: Zap },
@@ -22,14 +23,18 @@ const issues = [
 
 export default function WhatWeCatch() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const trackingRef = useSectionTracking("what_we_catch", 0.5);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
     <section 
       id="what-we-catch"
-      ref={sectionRef}
+      ref={(node) => {
+        (sectionRef as any).current = node;
+        (trackingRef as any).current = node;
+      }}
       aria-label="Crypto-specific bugs we catch"
-      className="py-32 px-4 sm:px-6 lg:px-8 section-border relative overflow-hidden bg-theme"
+      className="py-16 sm:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 section-border relative overflow-hidden bg-theme"
     >
       {/* Animated background blobs */}
       <motion.div

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useScrollDepth } from "@/lib/useScrollDepth";
 import type { BlogPost as BlogPostType } from "@/lib/blog";
 
 interface BlogPostProps {
@@ -11,6 +12,8 @@ interface BlogPostProps {
 }
 
 export default function BlogPost({ post, children }: BlogPostProps) {
+  // Track scroll depth for blog engagement
+  useScrollDepth(`/blog/${post.slug}`);
   const formattedDate = new Date(post.date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",

@@ -95,7 +95,7 @@ We catch bugs early in the development cycle when they're cheapest to fix — no
 
 - Automated test script development
 - Security/penetration testing
-- Smart contract auditing (recommend [CertiK/Hacken] for this)
+- Smart contract auditing (separate service category, not provided by HexProve)
 - 24/7 on-call coverage
 
 ---

@@ -228,3 +228,34 @@ I help crypto startups with QA (ex-Uniswap, OpenSea). If you're looking to level
 - Make it specific to them when possible
 - Questions work well
 - Lowercase is fine for casual tone
+
+## Cold Email Principles (Core Rules)
+
+### Hard Rules — NEVER:
+- Write more than ~200 words
+- Use fancy words or buzzwords
+- Send without a clear ask
+- Be vague or abstract
+- Be spammy (max 1-2 follow-ups)
+- Include fake personalization
+
+### Hard Rules — ALWAYS:
+- Say who you are
+- Say why you're reaching out
+- Say why they should care
+- Be specific (examples, numbers)
+- Have one clear CTA
+- Sound like a real human
+
+### Winning Format
+```
+Hey [Name] - [specific observation about their product/company].
+
+Question: [what you're offering/asking]?
+
+Asking because [credibility - Uniswap/OpenSea experience].
+
+[Brief context, link to more if needed].
+
+Worth a chat?
+```

@@ -28,6 +28,8 @@
   --input-border: rgba(255, 255, 255, 0.1);
   --button-bg: #ffffff;
   --button-text: #000000;
+  --button-hover-bg: var(--accent);
+  --button-hover-text: #000000;
   --tag-bg: #1a1a1a;
   --tag-text: #888888;
   --red-text: #f87171;
@@ -61,6 +63,8 @@
   --input-border: rgba(0, 0, 0, 0.15);
   --button-bg: #0a0a0a;
   --button-text: #ffffff;
+  --button-hover-bg: var(--accent);
+  --button-hover-text: #000000;
   --tag-bg: #f5f5f5;
   --tag-text: #525252;
   --red-text: #dc2626;
@@ -152,11 +156,21 @@ body {
   background-color: var(--button-bg);
   color: var(--button-text);
   transition: all 0.3s ease;
+  font-weight: 600;
 }
 
 .btn-primary:hover {
   background-color: var(--accent);
   color: var(--background);
+}
+
+/* Ensure button visibility on mobile */
+@media (max-width: 768px) {
+  .btn-primary {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    -webkit-font-smoothing: antialiased;
+  }
 }
 
 /* Secondary button */
@@ -245,6 +259,14 @@ body {
 
 .bg-theme-red {
   background-color: var(--red-bg);
+}
+
+.border-theme-red {
+  border-color: var(--red-text) !important;
+}
+
+.border-theme-red\/30 {
+  border-color: color-mix(in srgb, var(--red-text) 30%, transparent) !important;
 }
 
 /* ============================================
@@ -385,4 +407,9 @@ body {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }
+}
+
+/* Fixed navbar offset for anchor links */
+section[id] {
+  scroll-margin-top: 80px;
 }

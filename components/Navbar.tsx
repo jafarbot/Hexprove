@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useTheme } from "./ThemeContext";
@@ -20,7 +21,12 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { theme, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     let ticking = false;
@@ -122,7 +128,7 @@ export default function Navbar() {
           <div className="flex items-center gap-3 md:hidden">
             <button
               onClick={toggleTheme}
-              className="p-2 text-theme-secondary hover:text-theme-primary transition-colors"
+              className="p-3 min-h-[44px] min-w-[44px] text-theme-secondary hover:text-theme-primary transition-colors flex items-center justify-center"
               aria-label="Toggle theme"
             >
               {theme === "dark" ? (
@@ -141,21 +147,30 @@ export default function Navbar() {
               className="p-3 min-h-[44px] min-w-[44px] text-theme-secondary hover:text-theme-primary transition-colors flex items-center justify-center"
               aria-label="Menu"
             >
-              <div className="w-6 h-4 flex flex-col justify-between">
+              <div className="w-6 h-5 flex flex-col justify-between">
                 <motion.span
-                  className="w-full h-0.5 origin-left"
-                  style={{ backgroundColor: "var(--foreground)" }}
-                  animate={{ rotate: mobileMenuOpen ? 45 : 0, y: mobileMenuOpen ? -2 : 0 }}
+                  className="w-full h-0.5 bg-current origin-center"
+                  animate={{ 
+                    rotate: mobileMenuOpen ? 45 : 0,
+                    y: mobileMenuOpen ? 8 : 0
+                  }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
                 />
                 <motion.span
-                  className="w-full h-0.5"
-                  style={{ backgroundColor: "var(--foreground)" }}
-                  animate={{ opacity: mobileMenuOpen ? 0 : 1, x: mobileMenuOpen ? -20 : 0 }}
+                  className="w-full h-0.5 bg-current"
+                  animate={{ 
+                    opacity: mobileMenuOpen ? 0 : 1,
+                    scaleX: mobileMenuOpen ? 0 : 1
+                  }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
                 />
                 <motion.span
-                  className="w-full h-0.5 origin-left"
-                  style={{ backgroundColor: "var(--foreground)" }}
-                  animate={{ rotate: mobileMenuOpen ? -45 : 0, y: mobileMenuOpen ? 2 : 0 }}
+                  className="w-full h-0.5 bg-current origin-center"
+                  animate={{ 
+                    rotate: mobileMenuOpen ? -45 : 0,
+                    y: mobileMenuOpen ? -8 : 0
+                  }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
                 />
               </div>
             </button>
@@ -163,18 +178,18 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
+      {/* Mobile Menu - Rendered via Portal */}
+      {mounted && mobileMenuOpen && createPortal(
+        <AnimatePresence>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden fixed inset-0 top-[72px] z-50"
+            className="md:hidden fixed inset-0 z-[9999]"
             style={{ backgroundColor: "var(--background)" }}
           >
-            <div className="flex flex-col items-start justify-center h-full px-8 gap-6">
+            <div className="flex flex-col items-start justify-center h-full px-8 gap-6 pt-20">
               {navLinks.map((link, index) => (
                 <motion.a
                   key={link.name}
@@ -184,7 +199,7 @@ export default function Navbar() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -30 }}
                   transition={{ delay: index * 0.1 }}
-                  className="group flex items-center gap-4"
+                  className="group flex items-center gap-4 min-h-[44px] py-2"
                 >
                   <span className="text-accent font-mono text-sm">{link.num}</span>
                   <span className="text-2xl sm:text-3xl font-bold text-theme-primary hover:text-accent transition-colors">
@@ -199,14 +214,15 @@ export default function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{ delay: navLinks.length * 0.1 }}
-                className="mt-8 px-8 py-3 btn-primary font-semibold rounded-full"
+                className="mt-8 px-8 py-3 btn-primary font-semibold rounded-full min-h-[48px] flex items-center justify-center"
               >
-                Get Started
+                Book a Call
               </motion.a>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>,
+        document.body
+      )}
     </motion.nav>
   );
 }

@@ -341,7 +341,7 @@ Unlike crowdsourced platforms where you get different testers every week, HexPro
 We start with understanding your product and creating comprehensive test plans. We integrate with your existing workflow (Linear, Jira, GitHub), join your Slack/Discord, and provide testing coverage aligned with your release cadence. You get the same dedicated QA engineers every sprint.
 
 ### Do you do security audits?
-No — we focus on functional QA testing. For smart contract security audits, we recommend working with specialized auditors like CertiK or Hacken. Functional QA and security audits are complementary; most products need both.
+No — we focus on functional QA testing. Smart contract security audits are a separate service category handled by specialized security firms. Functional QA and security audits are complementary; most products need both.
 
 ### What's your pricing model?
 We work on monthly retainers with flexible pricing based on your product's complexity and testing needs. No hidden fees, no per-bug charges, no vendor management overhead. Contact us for a custom quote.

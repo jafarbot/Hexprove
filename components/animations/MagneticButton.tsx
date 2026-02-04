@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 interface MagneticButtonProps {
@@ -24,9 +24,14 @@ export function MagneticButton({
 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current || disabled) return;
+    if (!ref.current || disabled || isTouchDevice) return;
     const rect = ref.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -39,6 +44,10 @@ export function MagneticButton({
     setPosition({ x: 0, y: 0 });
   };
 
+  const handleTouchEnd = () => {
+    setPosition({ x: 0, y: 0 });
+  };
+
   const Component = href ? motion.a : motion.button;
 
   return (
@@ -46,6 +55,7 @@ export function MagneticButton({
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onTouchEnd={handleTouchEnd}
       className={className?.includes('w-full') ? 'block' : 'inline-block'}
     >
       <Component
@@ -68,10 +78,18 @@ interface HoverTextProps {
   text: string;
   className?: string;
   href?: string;
+  trackLocation?: string;
+  onTrack?: (text: string, href: string, location: string) => void;
 }
 
-export function HoverText({ text, className = "", href }: HoverTextProps) {
+export function HoverText({ text, className = "", href, trackLocation, onTrack }: HoverTextProps) {
   const [isHovered, setIsHovered] = useState(false);
+
+  const handleClick = () => {
+    if (href && trackLocation && onTrack) {
+      onTrack(text, href, trackLocation);
+    }
+  };
 
   const content = (
     <span
@@ -108,7 +126,7 @@ export function HoverText({ text, className = "", href }: HoverTextProps) {
   );
 
   if (href) {
-    return <a href={href}>{content}</a>;
+    return <a href={href} onClick={handleClick} target="_blank" rel="noopener noreferrer">{content}</a>;
   }
 
   return content;

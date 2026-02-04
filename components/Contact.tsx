@@ -5,7 +5,8 @@ import { useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { TextScramble, MagneticButton, HoverText } from "./animations";
 import { Logo } from "./Logo";
-import { trackFormSubmit } from "@/lib/analytics";
+import { trackFormSubmit, trackOutboundLink } from "@/lib/analytics";
+import { useSectionTracking } from "@/lib/useSectionTracking";
 
 interface ContactProps {
   blogPostCount?: number;
@@ -13,6 +14,7 @@ interface ContactProps {
 
 export default function Contact({ blogPostCount = 0 }: ContactProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const trackingRef = useSectionTracking("contact", 0.5);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   const [formData, setFormData] = useState({
@@ -40,8 +42,30 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
 
     if (!formData.email.trim()) {
       errors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errors.email = 'Please enter a valid email address';
+    } else {
+      // More strict email validation
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      const email = formData.email.trim().toLowerCase();
+      
+      if (!emailRegex.test(email)) {
+        errors.email = 'Please enter a valid email address';
+      } else {
+        // Check for common typos in popular domains
+        const domain = email.split('@')[1];
+        const commonDomainTypos: Record<string, string> = {
+          'gmial.com': 'gmail.com',
+          'gmai.com': 'gmail.com',
+          'gmil.com': 'gmail.com',
+          'yahooo.com': 'yahoo.com',
+          'yaho.com': 'yahoo.com',
+          'hotmial.com': 'hotmail.com',
+          'outlok.com': 'outlook.com',
+        };
+        
+        if (commonDomainTypos[domain]) {
+          errors.email = `Did you mean ${email.split('@')[0]}@${commonDomainTypos[domain]}?`;
+        }
+      }
     }
 
     if (!formData.message.trim()) {
@@ -70,6 +94,8 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
         body: JSON.stringify(formData),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
         setSubmitted(true);
         trackFormSubmit('contact_form', {
@@ -77,10 +103,12 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
           has_company: !!formData.company,
         });
       } else {
-        setError('Failed to send. Please email us directly at team@hexprove.com');
+        // Show specific error message from API if available
+        const errorMessage = data.error || 'Failed to send. Please email us directly at team@hexprove.com';
+        setError(errorMessage);
       }
-    } catch {
-      setError('Failed to send. Please email us directly at team@hexprove.com');
+    } catch (err) {
+      setError('Network error. Please check your connection or email us directly at team@hexprove.com');
     } finally {
       setIsSubmitting(false);
     }
@@ -95,10 +123,56 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
     }
   }, [fieldErrors]);
 
+  const handleBlur = useCallback((fieldName: string) => {
+    // Validate individual field on blur
+    const errors: { name?: string; email?: string; message?: string } = {};
+    
+    if (fieldName === 'name' && !formData.name.trim()) {
+      errors.name = 'Name is required';
+    }
+    
+    if (fieldName === 'email') {
+      if (!formData.email.trim()) {
+        errors.email = 'Email is required';
+      } else {
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const email = formData.email.trim().toLowerCase();
+        
+        if (!emailRegex.test(email)) {
+          errors.email = 'Please enter a valid email address';
+        } else {
+          const domain = email.split('@')[1];
+          const commonDomainTypos: Record<string, string> = {
+            'gmial.com': 'gmail.com',
+            'gmai.com': 'gmail.com',
+            'gmil.com': 'gmail.com',
+            'yahooo.com': 'yahoo.com',
+            'yaho.com': 'yahoo.com',
+            'hotmial.com': 'hotmail.com',
+            'outlok.com': 'outlook.com',
+          };
+          
+          if (commonDomainTypos[domain]) {
+            errors.email = `Did you mean ${email.split('@')[0]}@${commonDomainTypos[domain]}?`;
+          }
+        }
+      }
+    }
+    
+    if (fieldName === 'message' && !formData.message.trim()) {
+      errors.message = 'Message is required';
+    }
+    
+    setFieldErrors(prev => ({ ...prev, ...errors }));
+  }, [formData]);
+
   return (
     <section 
       id="contact"
-      ref={sectionRef}
+      ref={(node) => {
+        (sectionRef as any).current = node;
+        (trackingRef as any).current = node;
+      }}
       aria-label="Contact Hexprove for QA consulting"
       className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 section-border relative overflow-hidden bg-theme"
     >
@@ -183,7 +257,13 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                 animate={isInView ? { opacity: 1 } : {}}
                 transition={{ duration: 0.8, delay: 0.6 }}
               >
-                <HoverText text="LinkedIn" href="https://www.linkedin.com/in/sinousmonov/" className="text-theme-muted hover:text-theme-primary min-h-[44px] flex items-center" />
+                <HoverText 
+                  text="LinkedIn" 
+                  href="https://www.linkedin.com/in/sinousmonov/" 
+                  className="text-theme-muted hover:text-theme-primary min-h-[44px] flex items-center"
+                  trackLocation="contact_footer"
+                  onTrack={trackOutboundLink}
+                />
               </motion.div>
             </motion.address>
           </div>
@@ -288,19 +368,33 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                       value={formData[field.name as keyof typeof formData]}
                       onChange={handleChange}
                       onFocus={() => setFocusedField(field.name)}
-                      onBlur={() => setFocusedField(null)}
+                      onBlur={() => {
+                        setFocusedField(null);
+                        handleBlur(field.name);
+                      }}
                       required={field.name !== "company"}
                       autoComplete={field.name}
-                      className="input-field w-full px-0 py-3 text-base sm:text-lg min-h-[48px]"
+                      className={`input-field w-full px-0 py-3 text-base sm:text-lg min-h-[48px] ${
+                        fieldErrors[field.name as keyof typeof fieldErrors] 
+                          ? 'border-theme-red' 
+                          : ''
+                      }`}
                       placeholder={field.placeholder}
                       aria-required={field.name !== "company"}
                       aria-invalid={!!fieldErrors[field.name as keyof typeof fieldErrors]}
                       aria-describedby={fieldErrors[field.name as keyof typeof fieldErrors] ? `${field.name}-error` : undefined}
                     />
                     {fieldErrors[field.name as keyof typeof fieldErrors] && (
-                      <span id={`${field.name}-error`} className="text-red-500 text-sm mt-1 block" role="alert">
+                      <motion.span 
+                        id={`${field.name}-error`} 
+                        className="text-theme-red text-sm mt-2 block font-medium" 
+                        role="alert"
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
                         {fieldErrors[field.name as keyof typeof fieldErrors]}
-                      </span>
+                      </motion.span>
                     )}
                   </motion.div>
                 ))}
@@ -325,19 +419,31 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                     value={formData.message}
                     onChange={handleChange}
                     onFocus={() => setFocusedField("message")}
-                    onBlur={() => setFocusedField(null)}
+                    onBlur={() => {
+                      setFocusedField(null);
+                      handleBlur("message");
+                    }}
                     required
                     rows={4}
-                    className="input-field w-full px-0 py-3 resize-none text-base sm:text-lg"
+                    className={`input-field w-full px-0 py-3 resize-none text-base sm:text-lg ${
+                      fieldErrors.message ? 'border-theme-red' : ''
+                    }`}
                     placeholder="Tell us about your project..."
                     aria-required="true"
                     aria-invalid={!!fieldErrors.message}
                     aria-describedby={fieldErrors.message ? "message-error" : undefined}
                   />
                   {fieldErrors.message && (
-                    <span id="message-error" className="text-red-500 text-sm mt-1 block" role="alert">
+                    <motion.span 
+                      id="message-error" 
+                      className="text-theme-red text-sm mt-2 block font-medium" 
+                      role="alert"
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
                       {fieldErrors.message}
-                    </span>
+                    </motion.span>
                   )}
                 </motion.div>
 
@@ -345,11 +451,15 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-4 rounded-lg text-sm"
-                    style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}
+                    className="p-4 rounded-lg text-sm bg-theme-red text-theme-red border border-theme-red/30"
                     role="alert"
                   >
-                    {error}
+                    <div className="flex items-start gap-2">
+                      <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                      <span className="font-medium">{error}</span>
+                    </div>
                   </motion.div>
                 )}
 
@@ -361,11 +471,22 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                 >
                   <MagneticButton
                     type="submit"
-                    className="w-full py-4 btn-primary font-semibold rounded-full min-h-[52px] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 btn-primary font-semibold rounded-full min-h-[52px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     strength={0.1}
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Sending...' : 'Send Message'}
+                    {isSubmitting ? (
+                      <>
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          className="w-5 h-5 border-2 border-current border-t-transparent rounded-full"
+                        />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      'Send Message'
+                    )}
                   </MagneticButton>
                 </motion.div>
               </form>

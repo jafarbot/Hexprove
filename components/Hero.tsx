@@ -6,18 +6,19 @@ import { TextScramble, CharReveal } from "./animations";
 import { AnimatedCounter } from "./animations";
 import { MagneticButton } from "./animations";
 import { trackCtaClick } from "@/lib/analytics";
+import { useSectionTracking } from "@/lib/useSectionTracking";
 
 const companies = ["Uniswap", "OpenSea", "Bloomberg", "Tradeweb"];
 
 const stats = [
   { value: 10, suffix: "+", label: "Years Experience" },
-  { value: 4, suffix: "", label: "Top-Tier Companies" },
   { value: 100, suffix: "+", label: "Products Tested" },
   { value: 0, suffix: "", label: "Learning Curve" },
 ];
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useSectionTracking("hero", 0.3);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -28,9 +29,12 @@ export default function Hero() {
 
   return (
     <section
-      ref={containerRef}
+      ref={(node) => {
+        (containerRef as any).current = node;
+        (sectionRef as any).current = node;
+      }}
       aria-label="Hexprove - Crypto-native QA experts"
-      className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16 sm:pb-24 overflow-hidden bg-theme"
+      className="relative min-h-[100dvh] flex flex-col justify-center px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16 sm:pb-20 overflow-hidden bg-theme"
     >
       {/* Animated background grid */}
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -108,7 +112,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1 }}
-          className="max-w-3xl mb-8 sm:mb-12"
+          className="max-w-3xl mb-6 sm:mb-12"
         >
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-theme-secondary leading-relaxed">
             <CharReveal 
@@ -131,7 +135,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 2.2 }}
-          className="flex flex-col sm:flex-row gap-4 mb-12 sm:mb-20"
+          className="flex flex-col sm:flex-row gap-4 mb-8 sm:mb-20"
         >
           <MagneticButton
             href="/#contact"
@@ -168,7 +172,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 2.5 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 pt-6 sm:pt-8 border-t border-theme"
+          className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8 pt-4 sm:pt-8 border-t border-theme"
           role="list"
           aria-label="Key statistics"
         >
@@ -209,7 +213,9 @@ export default function Hero() {
             {companies.map((company, i) => (
               <motion.span 
                 key={i} 
-                className="text-sm sm:text-lg text-theme-secondary font-medium tracking-wide hover:text-theme-primary transition-colors cursor-default"
+                className={`text-sm sm:text-lg text-theme-secondary font-medium tracking-wide transition-colors cursor-default ${
+                  company === "Uniswap" ? "hover:text-[#FF007A]" : "hover:text-theme-primary"
+                }`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 3.4 + i * 0.1 }}

@@ -1,6 +1,6 @@
 {
-  "name": "hexprove-status",
+  "name": "status",
   "description": "Health check for Hexprove website - checks build, env, and deployment readiness",
   "command": "bash",
-  "args": ["/Users/sino/Documents/Hexprove/.claude/skills/hexprove-status/status.sh"]
+  "args": ["/Users/sino/Documents/Hexprove/.claude/skills/status/status.sh"]
 }

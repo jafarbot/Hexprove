@@ -78,6 +78,12 @@ export async function trackEvent(eventName: string, data: EventData = {}): Promi
   }
 
   try {
+    // Track in Umami (if available)
+    if (typeof window.umami !== 'undefined') {
+      window.umami.track(eventName, data);
+    }
+
+    // Also send to BigQuery API (if configured)
     const payload = {
       eventName,
       timestamp: new Date().toISOString(),
@@ -111,6 +117,15 @@ export async function trackEvent(eventName: string, data: EventData = {}): Promi
   }
 }
 
+// Declare Umami type for TypeScript
+declare global {
+  interface Window {
+    umami?: {
+      track: (eventName: string, data?: Record<string, any>) => void;
+    };
+  }
+}
+
 // Convenience functions for common events
 export function trackPageView(pagePath?: string): void {
   trackEvent('page_view', {
@@ -130,5 +145,28 @@ export function trackFormSubmit(formName: string, additionalData?: EventData): v
   trackEvent(`${formName}_submitted`, {
     time_on_site: getTimeOnSite(),
     ...additionalData,
+  });
+}
+
+export function trackScrollDepth(pagePath: string, depth: number, timeOnPage: number): void {
+  trackEvent('scroll_depth', {
+    page_path: pagePath,
+    scroll_depth: depth,
+    time_on_page: timeOnPage,
+  });
+}
+
+export function trackOutboundLink(linkText: string, destination: string, location: string): void {
+  trackEvent('outbound_link_click', {
+    link_text: linkText,
+    destination,
+    link_location: location,
+  });
+}
+
+export function trackSectionView(sectionName: string, timeToSection: number): void {
+  trackEvent('section_view', {
+    section_name: sectionName,
+    time_to_section: timeToSection,
   });
 }

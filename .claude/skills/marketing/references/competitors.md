@@ -66,19 +66,10 @@
 
 These companies are often confused with QA but serve a different market:
 
-### CertiK
-- **Focus:** Smart contract security audits
-- **Market:** Pre-deployment security verification
-- **HexProve relationship:** Complementary, not competitive. HexProve does functional QA; CertiK does security audits.
-
-### Hacken
-- **Focus:** Blockchain security, penetration testing
-- **Market:** Security compliance, audits
-- **HexProve relationship:** Complementary
-
-### Cantina
-- **Focus:** Smart contract audits, bug bounties
-- **HexProve relationship:** Complementary
+### Security Audit Firms
+- **Focus:** Smart contract security audits, code verification
+- **Market:** Pre-deployment security verification, compliance
+- **HexProve relationship:** Complementary, not competitive. HexProve does functional QA testing; security firms do smart contract audits. Different service categories serving different needs.
 
 ## Competitive Positioning Matrix
 

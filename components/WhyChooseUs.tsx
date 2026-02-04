@@ -3,6 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { TextScramble, HoverText } from "./animations";
+import { useSectionTracking } from "@/lib/useSectionTracking";
 
 const comparisons = [
   {
@@ -25,12 +26,16 @@ const comparisons = [
 
 export default function WhyChooseUs() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const trackingRef = useSectionTracking("why_choose_us", 0.5);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
     <section 
       id="about" 
-      ref={sectionRef}
+      ref={(node) => {
+        (sectionRef as any).current = node;
+        (trackingRef as any).current = node;
+      }}
       aria-label="Why choose Hexprove for crypto QA"
       className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 section-border relative overflow-hidden bg-theme"
     >

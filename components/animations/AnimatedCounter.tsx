@@ -21,7 +21,7 @@ export function AnimatedCounter({
   delay = 0,
 }: AnimatedCounterProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, amount: 0 });
   const [hasStarted, setHasStarted] = useState(false);
 
   const spring = useSpring(0, {
