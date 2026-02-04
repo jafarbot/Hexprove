@@ -5,6 +5,7 @@ import { useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { TextScramble, MagneticButton, HoverText } from "./animations";
 import { Logo } from "./Logo";
+import { trackFormSubmit } from "@/lib/analytics";
 
 interface ContactProps {
   blogPostCount?: number;
@@ -71,6 +72,10 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
 
       if (res.ok) {
         setSubmitted(true);
+        trackFormSubmit('contact_form', {
+          source_page: window.location.pathname,
+          has_company: !!formData.company,
+        });
       } else {
         setError('Failed to send. Please email us directly at team@hexprove.com');
       }

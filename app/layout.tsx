@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Hexprove | Crypto QA Consultancy | Web3 Testing Experts",
   description:
-    "Outsource QA to crypto-native experts. Hexprove provides dedicated QA testing for DeFi, NFT, and Web3 companies. Deep blockchain knowledge, no crowdsourced inconsistency. Manual testing, E2E automation, dApp testing.",
+    "Hexprove (also searched as Hex Proof, HexProof) - Outsource QA to crypto-native experts. Dedicated QA testing for DeFi, NFT, and Web3 companies. Deep blockchain knowledge, no crowdsourced inconsistency.",
   keywords: [
     "crypto QA",
     "Web3 testing",
@@ -87,6 +87,15 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Hexprove",
+  alternateName: [
+    "Hex Proof",
+    "HexProof",
+    "Hex-Proof",
+    "Hexproof",
+    "Hex Prove",
+    "hex proof",
+    "hexproof",
+  ],
   description: "Crypto-native QA consultancy providing dedicated testing services for Web3, DeFi, and NFT companies.",
   url: "https://hexprove.com",
   logo: "https://hexprove.com/logo.svg",

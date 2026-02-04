@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useTheme } from "./ThemeContext";
 import { HoverText, MagneticButton } from "./animations";
 import { Logo } from "./Logo";
+import { trackCtaClick } from "@/lib/analytics";
 
 const navLinks = [
   { name: "About", href: "/#about", num: "01" },
@@ -52,7 +53,7 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.8, ease: [0.215, 0.61, 0.355, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
         scrolled ? "backdrop-blur-xl" : ""
       }`}
       style={{
@@ -111,6 +112,7 @@ export default function Navbar() {
               href="/#contact"
               className="px-5 py-2 btn-primary text-sm font-semibold rounded-full"
               strength={0.15}
+              onClick={() => trackCtaClick('navbar', 'Contact', '/#contact')}
             >
               Contact
             </MagneticButton>
@@ -136,7 +138,7 @@ export default function Navbar() {
             
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-theme-secondary hover:text-theme-primary transition-colors"
+              className="p-3 min-h-[44px] min-w-[44px] text-theme-secondary hover:text-theme-primary transition-colors flex items-center justify-center"
               aria-label="Menu"
             >
               <div className="w-6 h-4 flex flex-col justify-between">
@@ -169,7 +171,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden fixed inset-0 top-[60px] z-40"
+            className="md:hidden fixed inset-0 top-[72px] z-50"
             style={{ backgroundColor: "var(--background)" }}
           >
             <div className="flex flex-col items-start justify-center h-full px-8 gap-6">
@@ -185,7 +187,7 @@ export default function Navbar() {
                   className="group flex items-center gap-4"
                 >
                   <span className="text-accent font-mono text-sm">{link.num}</span>
-                  <span className="text-4xl font-bold text-theme-primary hover:text-accent transition-colors">
+                  <span className="text-2xl sm:text-3xl font-bold text-theme-primary hover:text-accent transition-colors">
                     {link.name}
                   </span>
                 </motion.a>

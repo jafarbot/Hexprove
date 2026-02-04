@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { TextScramble, CharReveal } from "./animations";
 import { AnimatedCounter } from "./animations";
 import { MagneticButton } from "./animations";
+import { trackCtaClick } from "@/lib/analytics";
 
 const companies = ["Uniswap", "OpenSea", "Bloomberg", "Tradeweb"];
 
@@ -29,7 +30,7 @@ export default function Hero() {
     <section
       ref={containerRef}
       aria-label="Hexprove - Crypto-native QA experts"
-      className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 lg:px-8 pt-24 pb-24 sm:pb-16 overflow-hidden bg-theme"
+      className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16 sm:pb-24 overflow-hidden bg-theme"
     >
       {/* Animated background grid */}
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -133,9 +134,10 @@ export default function Hero() {
           className="flex flex-col sm:flex-row gap-4 mb-12 sm:mb-20"
         >
           <MagneticButton
-            href="#contact"
+            href="/#contact"
             className="group inline-flex items-center justify-center px-6 sm:px-8 py-4 btn-primary font-semibold rounded-full min-h-[48px]"
             strength={0.2}
+            onClick={() => trackCtaClick('hero', 'Book a Call', '/#contact')}
           >
             <span>Book a Call</span>
             <motion.svg
@@ -152,9 +154,10 @@ export default function Hero() {
           </MagneticButton>
 
           <MagneticButton
-            href="#about"
+            href="/#about"
             className="inline-flex items-center justify-center px-6 sm:px-8 py-4 btn-secondary font-medium rounded-full min-h-[48px]"
             strength={0.2}
+            onClick={() => trackCtaClick('hero', 'Learn More', '/#about')}
           >
             Learn More
           </MagneticButton>
