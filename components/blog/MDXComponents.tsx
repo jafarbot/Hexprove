@@ -64,4 +64,37 @@ export const mdxComponents: MDXComponents = {
     <strong className="font-bold text-theme-primary">{children}</strong>
   ),
   em: ({ children }) => <em className="italic">{children}</em>,
+  table: ({ children }) => (
+    <div className="overflow-x-auto my-6">
+      <table
+        className="w-full text-sm border-collapse rounded-lg overflow-hidden"
+        style={{ backgroundColor: "var(--bg-elevated, #1F2937)" }}
+      >
+        {children}
+      </table>
+    </div>
+  ),
+  thead: ({ children }) => (
+    <thead
+      className="text-left"
+      style={{ backgroundColor: "var(--bg-darker, #111827)" }}
+    >
+      {children}
+    </thead>
+  ),
+  tbody: ({ children }) => <tbody>{children}</tbody>,
+  tr: ({ children }) => (
+    <tr
+      className="border-b"
+      style={{ borderColor: "var(--border-color, #374151)" }}
+    >
+      {children}
+    </tr>
+  ),
+  th: ({ children }) => (
+    <th className="px-4 py-3 font-semibold text-theme-primary">{children}</th>
+  ),
+  td: ({ children }) => (
+    <td className="px-4 py-3 text-theme-secondary">{children}</td>
+  ),
 };
