@@ -8,12 +8,12 @@ import { HoverText, MagneticButton } from "./animations";
 import { Logo } from "./Logo";
 
 const navLinks = [
-  { name: "About", href: "#about", num: "01" },
-  { name: "Services", href: "#services", num: "02" },
-  { name: "Experience", href: "#experience", num: "03" },
-  { name: "Team", href: "#team", num: "04" },
+  { name: "About", href: "/#about", num: "01" },
+  { name: "Services", href: "/#services", num: "02" },
+  { name: "Experience", href: "/#experience", num: "03" },
+  { name: "Team", href: "/#team", num: "04" },
   { name: "Blog", href: "/blog", num: "05" },
-  { name: "Contact", href: "#contact", num: "06" },
+  { name: "Contact", href: "/#contact", num: "06" },
 ];
 
 export default function Navbar() {
@@ -108,7 +108,7 @@ export default function Navbar() {
             </button>
 
             <MagneticButton
-              href="#contact"
+              href="/#contact"
               className="px-5 py-2 btn-primary text-sm font-semibold rounded-full"
               strength={0.15}
             >
@@ -191,7 +191,7 @@ export default function Navbar() {
                 </motion.a>
               ))}
               <motion.a
-                href="#contact"
+                href="/#contact"
                 onClick={closeMobileMenu}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
