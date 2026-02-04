@@ -24,9 +24,41 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{
+    name?: string;
+    email?: string;
+    message?: string;
+  }>({});
+
+  const validateForm = useCallback(() => {
+    const errors: { name?: string; email?: string; message?: string } = {};
+
+    if (!formData.name.trim()) {
+      errors.name = 'Name is required';
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+
+    if (!formData.message.trim()) {
+      errors.message = 'Message is required';
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  }, [formData]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate before submitting
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
@@ -47,12 +79,16 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData]);
+  }, [formData, validateForm]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  }, []);
+    // Clear field error when user starts typing
+    if (fieldErrors[name as keyof typeof fieldErrors]) {
+      setFieldErrors(prev => ({ ...prev, [name]: undefined }));
+    }
+  }, [fieldErrors]);
 
   return (
     <section 
@@ -253,7 +289,14 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                       className="input-field w-full px-0 py-3 text-base sm:text-lg min-h-[48px]"
                       placeholder={field.placeholder}
                       aria-required={field.name !== "company"}
+                      aria-invalid={!!fieldErrors[field.name as keyof typeof fieldErrors]}
+                      aria-describedby={fieldErrors[field.name as keyof typeof fieldErrors] ? `${field.name}-error` : undefined}
                     />
+                    {fieldErrors[field.name as keyof typeof fieldErrors] && (
+                      <span id={`${field.name}-error`} className="text-red-500 text-sm mt-1 block" role="alert">
+                        {fieldErrors[field.name as keyof typeof fieldErrors]}
+                      </span>
+                    )}
                   </motion.div>
                 ))}
 
@@ -283,7 +326,14 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                     className="input-field w-full px-0 py-3 resize-none text-base sm:text-lg"
                     placeholder="Tell us about your project..."
                     aria-required="true"
+                    aria-invalid={!!fieldErrors.message}
+                    aria-describedby={fieldErrors.message ? "message-error" : undefined}
                   />
+                  {fieldErrors.message && (
+                    <span id="message-error" className="text-red-500 text-sm mt-1 block" role="alert">
+                      {fieldErrors.message}
+                    </span>
+                  )}
                 </motion.div>
 
                 {error && (
