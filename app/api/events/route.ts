@@ -47,12 +47,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, mode: 'local' });
     }
 
-    // Initialize BigQuery - uses Workload Identity Federation on Vercel
-    // or Application Default Credentials locally
+    // Initialize BigQuery
     const credentials = process.env.BIGQUERY_CREDENTIALS;
-    const bigquery = credentials
-      ? new BigQuery({ projectId, credentials: JSON.parse(credentials) })
-      : new BigQuery({ projectId });
 
     // Prepare row for BigQuery
     const row = {
@@ -69,20 +65,29 @@ export async function POST(request: NextRequest) {
       data: JSON.stringify(event.data),
     };
 
-    await bigquery
-      .dataset(dataset)
-      .table('events')
-      .insert([row]);
+    // Try BigQuery, fall back to logging if it fails
+    try {
+      const bigquery = credentials
+        ? new BigQuery({ projectId, credentials: JSON.parse(credentials) })
+        : new BigQuery({ projectId });
 
-    return NextResponse.json({ success: true });
+      await bigquery
+        .dataset(dataset)
+        .table('events')
+        .insert([row]);
+
+      return NextResponse.json({ success: true, mode: 'bigquery' });
+    } catch (bqError) {
+      // BigQuery failed - log event and return success anyway
+      // Analytics should never break the user experience
+      console.log('[Event - BigQuery unavailable]', JSON.stringify(row));
+      console.error('[BigQuery Error]', bqError);
+      return NextResponse.json({ success: true, mode: 'logged' });
+    }
   } catch (error) {
     console.error('[Events API Error]', error);
-
-    // Don't expose internal errors to client
-    return NextResponse.json(
-      { error: 'Failed to track event' },
-      { status: 500 }
-    );
+    // Still return success - analytics errors shouldn't affect users
+    return NextResponse.json({ success: true, mode: 'error' });
   }
 }
 
