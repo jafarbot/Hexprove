@@ -94,7 +94,15 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
+      let data: { error?: string; success?: boolean } = {};
+      try {
+        data = await res.json();
+      } catch {
+        setError(res.status === 500
+          ? 'Server error. Please try again in a moment or email us at team@hexprove.com.'
+          : 'Something went wrong. Please email us at team@hexprove.com.');
+        return;
+      }
 
       if (res.ok) {
         setSubmitted(true);
@@ -103,12 +111,13 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
           has_company: !!formData.company,
         });
       } else {
-        // Show specific error message from API if available
-        const errorMessage = data.error || 'Failed to send. Please email us directly at team@hexprove.com';
+        const errorMessage = data.error || (res.status === 500
+          ? 'Server error. Please try again or email us at team@hexprove.com.'
+          : 'Failed to send. Please email us at team@hexprove.com.');
         setError(errorMessage);
       }
     } catch (err) {
-      setError('Network error. Please check your connection or email us directly at team@hexprove.com');
+      setError('Network error. Please check your connection or email us at team@hexprove.com.');
     } finally {
       setIsSubmitting(false);
     }
@@ -516,8 +525,9 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
           </div>
           
           <nav className="flex gap-6 sm:gap-8 text-sm" aria-label="Footer navigation">
-            <HoverText text="Privacy" href="#" className="text-theme-muted min-h-[44px] flex items-center" />
-            <HoverText text="Terms" href="#" className="text-theme-muted min-h-[44px] flex items-center" />
+            <HoverText text="Privacy" href="/privacy" className="text-theme-muted min-h-[44px] flex items-center" />
+            <HoverText text="Terms" href="/terms" className="text-theme-muted min-h-[44px] flex items-center" />
+            <HoverText text="Cookie Policy" href="/cookie-policy" className="text-theme-muted min-h-[44px] flex items-center" />
           </nav>
           
           <div className="text-sm text-theme-muted font-mono">
