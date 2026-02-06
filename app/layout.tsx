@@ -171,7 +171,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {/* Google Analytics 4 */}
+        {/* Google Analytics 4 — NEXT_PUBLIC_* is inlined at build time; redeploy after setting env var */}
         {process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID && (
           <>
             <Script

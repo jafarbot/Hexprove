@@ -104,11 +104,11 @@ export default function WhyChooseUs() {
             className="lg:pt-24"
           >
             <p className="text-lg sm:text-xl text-theme-secondary leading-relaxed mb-4 sm:mb-6">
-              We&apos;ve worked with crowdsourced QA vendors. We&apos;ve seen testers report 
+              We&apos;ve worked with crowdsourced QA vendors. We&apos;ve seen testers report
               gas fees as bugs.
             </p>
             <p className="text-lg sm:text-xl text-theme-muted leading-relaxed">
-              That&apos;s why we built Hexprove — a dedicated QA consultancy that 
+              That&apos;s why we built Hexprove — a dedicated QA consultancy that
               actually understands crypto and Web3.
             </p>
           </motion.div>

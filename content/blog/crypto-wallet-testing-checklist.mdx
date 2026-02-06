@@ -1,0 +1,478 @@
+---
+title: "Crypto Wallet Testing Checklist: 10 Critical Test Cases You Can't Skip"
+description: "Complete crypto wallet testing guide from Uniswap's former QA lead. Learn how to test wallet connections, transaction signing, network switching, and more. Covers MetaMask, WalletConnect, Coinbase Wallet, and mobile wallets."
+date: "2026-02-06"
+author: "Sino Usmonov"
+tags: ["Wallet Testing", "Crypto QA", "Web3 Testing", "MetaMask", "WalletConnect"]
+keywords: ["crypto wallet testing", "wallet testing checklist", "test wallet connection", "MetaMask testing", "WalletConnect testing", "web3 wallet QA"]
+---
+
+Testing crypto wallet integrations is where most Web3 apps break in production.
+
+I've seen it at Uniswap. I've seen it at OpenSea. And I see it every week with the crypto startups we work with — wallet bugs that slip through testing because teams don't know what to look for.
+
+The problem? **Traditional QA testers treat wallet connections like login forms.** They're not. Wallet testing requires understanding transaction states, network switching, gas estimation, and a dozen edge cases that don't exist in Web2.
+
+Here's the crypto wallet testing checklist we used at Uniswap and OpenSea — 10 critical test cases that catch the bugs your users will actually hit.
+
+## Why Crypto Wallet Testing Is Different
+
+Before we dive into the checklist, understand this: **wallet testing isn't just "can the user connect."**
+
+You're testing:
+- Multiple wallet providers (MetaMask, WalletConnect, Coinbase Wallet, Rainbow, Phantom)
+- Multiple chains (Ethereum, Polygon, Arbitrum, Base, Solana)
+- Multiple platforms (web, mobile, browser extension)
+- Transaction states that can fail at 5 different points
+- Gas estimation that changes by the second
+- User flows that span wallet and browser
+
+**One integration bug can cost you users.** At OpenSea, a wallet connection issue during our launch meant thousands of users couldn't list NFTs. At Uniswap, a network switching bug locked users on the wrong chain.
+
+Let's make sure that doesn't happen to you.
+
+---
+
+## 1. Initial Wallet Connection Flow
+
+**What you're testing:** Can users connect their wallet on first visit?
+
+### Test Cases:
+
+**✅ Happy Path:**
+- Click "Connect Wallet" button
+- Select wallet provider (MetaMask, WalletConnect, etc.)
+- Approve connection in wallet
+- Verify: User is connected, address displays correctly
+- Verify: Connection persists on page refresh
+
+**❌ Edge Cases to Test:**
+
+**User rejects connection:**
+- Click "Connect Wallet"
+- Select MetaMask
+- Click "Cancel" in MetaMask popup
+- **Expected:** App shows "Connection rejected" message, user can try again
+- **Common bug:** Button becomes unresponsive, user is stuck
+
+**Wallet is locked:**
+- Lock MetaMask
+- Try to connect
+- **Expected:** Wallet prompts user to unlock first
+- **Common bug:** App hangs waiting for response
+
+**Multiple wallets installed:**
+- Install MetaMask + Coinbase Wallet + Rainbow
+- Try to connect
+- **Expected:** User can choose which wallet to use
+- **Common bug:** Wrong wallet opens, or multiple popups appear
+
+**Mobile wallet via WalletConnect:**
+- Open your app on mobile browser (Safari/Chrome)
+- Click "Connect Wallet"
+- Select WalletConnect
+- **Expected:** QR code or deep link to mobile wallet
+- **Common bug:** QR code doesn't load, deep link doesn't open wallet app
+
+### What We Caught at Uniswap:
+
+On mobile Safari, the WalletConnect modal would appear behind the page overlay, making it impossible to scan the QR code. Users thought the app was broken. **Fix:** Adjust z-index and test on actual devices, not just browser resize.
+
+---
+
+## 2. Network Switching
+
+**What you're testing:** Can users switch between chains without breaking the app?
+
+This is where **most apps fail.** Users start on Ethereum mainnet, you prompt them to switch to Polygon, and suddenly the UI shows wrong balances or the connection drops.
+
+### Test Cases:
+
+**✅ App-initiated network switch:**
+- Connect wallet on Ethereum
+- App detects wrong network, shows "Switch to Polygon" prompt
+- Click "Switch Network"
+- **Expected:** Wallet prompts for network switch, app updates immediately after approval
+- **Common bug:** App state doesn't update, shows stale data from old network
+
+**❌ Edge Cases:**
+
+**User rejects network switch:**
+- App prompts to switch to Polygon
+- User clicks "Cancel" in wallet
+- **Expected:** App shows "Wrong network" state, allows user to try again or cancel action
+- **Common bug:** App assumes switch succeeded, tries to send transaction on wrong network
+
+**User manually switches in wallet:**
+- Connected to your app on Ethereum
+- User opens MetaMask and switches to Arbitrum (without using your app's prompt)
+- **Expected:** Your app detects chain change and updates UI instantly
+- **Common bug:** App doesn't detect the switch, shows Ethereum data while connected to Arbitrum
+
+**Rapid network switching:**
+- Switch Ethereum → Polygon → Arbitrum → Base in quick succession
+- **Expected:** App updates correctly to final network
+- **Common bug:** App gets confused, shows data from wrong network, or multiple chain IDs
+
+**Switch to unsupported network:**
+- User switches wallet to a chain your app doesn't support (e.g., Avalanche)
+- **Expected:** App shows "Unsupported network" message, prompts to switch back
+- **Common bug:** App crashes or shows error messages
+
+### What We Caught at OpenSea:
+
+Users on Polygon would see Ethereum NFT prices for a split second after switching networks. This was a caching issue — the app wasn't clearing old data before fetching new data. **Users thought prices were wrong and didn't transact.**
+
+---
+
+## 3. Transaction Signing and States
+
+**What you're testing:** The entire lifecycle of a blockchain transaction.
+
+This is complex because transactions can fail at **5 different points:**
+1. User rejects in wallet
+2. Insufficient gas
+3. Transaction reverts on-chain
+4. Network congestion (pending forever)
+5. User cancels mid-flight
+
+### Test Cases:
+
+**✅ Successful transaction:**
+- Initiate transaction (swap, mint, transfer, etc.)
+- Sign in wallet
+- **Expected:**
+  - Shows "Pending" state with transaction hash
+  - Shows "Confirmed" state after block confirmation
+  - UI updates with new state (balance changes, ownership transfers, etc.)
+
+**❌ Edge Cases:**
+
+**User rejects signature:**
+- Initiate transaction
+- Click "Reject" in wallet
+- **Expected:** App returns to pre-transaction state, user can try again
+- **Common bug:** Button stays disabled, or app thinks transaction is pending
+
+**Insufficient funds for gas:**
+- Attempt transaction with not enough ETH for gas
+- **Expected:** Wallet shows error before signing, or transaction fails immediately
+- **Common bug:** App doesn't pre-check gas, user signs transaction that immediately fails
+
+**Transaction fails on-chain:**
+- Sign transaction that will revert (e.g., slippage too high, insufficient approval)
+- **Expected:** App detects revert, shows clear error message, offers solution
+- **Common bug:** App shows "Success" then updates to "Failed" later, or shows cryptic error
+
+**Pending transaction takes forever:**
+- Submit transaction with low gas during network congestion
+- Wait 5+ minutes
+- **Expected:** App shows "Pending" state, offers "Speed up" or "Cancel" options
+- **Common bug:** App shows "Success" prematurely, or user has no way to speed up
+
+**User switches tabs during transaction:**
+- Initiate transaction
+- Switch to another browser tab
+- Come back after transaction confirms
+- **Expected:** App detects confirmation and updates UI
+- **Common bug:** App doesn't listen for events in background, user needs to refresh
+
+### What We Caught at Uniswap:
+
+Users would start a swap, switch to Twitter mid-transaction, come back, and see "Pending" even though the transaction had confirmed minutes ago. **Fix:** Use transaction listeners that work even when the tab isn't active, and poll transaction status on tab focus.
+
+---
+
+## 4. Gas Estimation and Display
+
+**What you're testing:** Does your app accurately estimate gas and communicate costs to users?
+
+**Gas bugs lose you users.** If you estimate $5 but they pay $50, they'll never come back.
+
+### Test Cases:
+
+**✅ Accurate gas estimation:**
+- Initiate transaction
+- **Expected:** App shows gas estimate in ETH and USD within ~10% of actual cost
+- **Common bug:** Estimate is way off, or doesn't update when gas prices change
+
+**❌ Edge Cases:**
+
+**Gas spikes mid-transaction:**
+- Get gas estimate during low congestion
+- Network congestion spikes before user signs
+- **Expected:** Wallet shows updated gas, app warnings if cost increased significantly
+- **Common bug:** App shows old estimate, user is surprised by actual cost
+
+**Complex contract interactions:**
+- Test transactions that call multiple contracts (e.g., approve → swap in one transaction)
+- **Expected:** Gas estimate accounts for full interaction
+- **Common bug:** Underestimates gas, transaction fails with "out of gas"
+
+**L2 gas display:**
+- Test on Arbitrum, Optimism, Base
+- **Expected:** Shows L2 gas cost + L1 data cost separately if significant
+- **Common bug:** Shows only L2 gas, L1 data cost surprises users
+
+---
+
+## 5. Wallet Disconnect and Reconnect
+
+**What you're testing:** What happens when the connection breaks?
+
+Users disconnect intentionally. Or MetaMask updates. Or their laptop sleeps. Your app needs to handle all of these gracefully.
+
+### Test Cases:
+
+**✅ Intentional disconnect:**
+- User clicks "Disconnect" in your app
+- **Expected:** Connection clears, app returns to "Connect Wallet" state
+- **Common bug:** Connection persists in some components, causes inconsistent UI
+
+**❌ Edge Cases:**
+
+**User disconnects in wallet (not in your app):**
+- Connected to your app
+- Open MetaMask, go to Settings → Connected Sites → Disconnect
+- **Expected:** Your app detects disconnect and updates UI
+- **Common bug:** App still thinks user is connected
+
+**Wallet extension crashes or updates:**
+- Connected to app
+- MetaMask crashes or auto-updates
+- **Expected:** App detects connection loss, prompts user to reconnect
+- **Common bug:** App crashes or shows error messages
+
+**User switches accounts in wallet:**
+- Connected with Account 1
+- Open MetaMask and switch to Account 2
+- **Expected:** App detects account change and updates data for new account
+- **Common bug:** Shows data from old account, or requires manual refresh
+
+---
+
+## 6. Multi-Wallet Support
+
+**What you're testing:** Does your app work with all major wallet providers?
+
+Don't just test MetaMask. **40% of users use other wallets.**
+
+### Wallets to Test:
+
+**Browser Extensions:**
+- MetaMask (most common)
+- Coinbase Wallet
+- Rainbow
+- Rabby
+- Phantom
+- Trust Wallet
+- Uniswap Wallet
+
+**Mobile Wallets via WalletConnect:**
+- MetaMask Mobile
+- Coinbase Wallet Mobile
+- Rainbow Mobile
+- Trust Wallet
+- Zerion
+
+**Embedded Wallets:**
+- Coinbase Smart Wallet
+- Privy
+- Dynamic
+
+### Test Cases:
+
+**✅ Each wallet connects and signs transactions correctly:**
+- Test full flow (connect → transaction → sign) with each wallet
+- **Expected:** Works identically across all wallets
+- **Common bug:** Works in MetaMask, breaks in Coinbase Wallet due to different provider APIs
+
+**❌ Edge Cases:**
+
+**User has multiple wallets installed:**
+- Install MetaMask + Coinbase Wallet
+- Try to connect
+- **Expected:** User can choose which one to use
+- **Common bug:** Wrong wallet opens, or both try to inject provider
+
+**Mobile deep linking:**
+- On iOS Safari, click "Connect Wallet" → Select "Rainbow"
+- **Expected:** Deep link opens Rainbow app, user approves, returns to browser
+- **Common bug:** Deep link doesn't work, user is stuck
+
+---
+
+## 7. Transaction History and State
+
+**What you're testing:** Does your app accurately reflect transaction history and current state?
+
+### Test Cases:
+
+**✅ Recent transactions display:**
+- Complete several transactions (successful and failed)
+- **Expected:** App shows transaction history with status, timestamps, links to block explorer
+- **Common bug:** Pending transactions disappear from history, or failed transactions show as pending forever
+
+**❌ Edge Cases:**
+
+**Transaction replaced (speed up/cancel):**
+- Submit transaction with low gas
+- Use MetaMask "Speed up" feature (sends new transaction with same nonce)
+- **Expected:** App detects replacement, shows new transaction hash, marks old one as replaced
+- **Common bug:** Shows both transactions as separate, or loses track of which is real
+
+**Chain reorg:**
+- Transaction confirms in block X
+- Chain reorganizes, block X is replaced
+- **Expected:** App detects reorg, shows transaction as pending again until re-confirmed
+- **Common bug:** This is rare, but apps can show wrong state if they cache confirmations
+
+---
+
+## 8. Error Handling and User Messaging
+
+**What you're testing:** Are error messages helpful, or cryptic?
+
+**Bad error message:** "Error: execution reverted"
+**Good error message:** "Transaction failed: Insufficient USDC balance. You need 100 USDC but have 95 USDC."
+
+### Test Cases:
+
+**✅ Trigger every possible error:**
+- Insufficient balance
+- Insufficient gas
+- User rejects transaction
+- Transaction reverts (slippage, deadline, etc.)
+- Network error (RPC down)
+- Wallet locked
+
+**Expected:** Each error has a clear, user-friendly message that explains:
+1. What went wrong
+2. Why it happened
+3. How to fix it
+
+**Common bug:** Generic error messages that don't help users, or technical jargon
+
+---
+
+## 9. Mobile Wallet Testing (Critical!)
+
+**What you're testing:** Does your app work on mobile browsers AND mobile wallets?
+
+**50% of crypto users are on mobile.** If your app doesn't work on mobile, you're losing half your users.
+
+### Test on Actual Devices:
+
+**iOS Safari:**
+- iPhone 13+, iOS 16+
+- Test connection, transactions, network switching
+
+**Android Chrome:**
+- Various Android devices
+- Test connection, transactions
+
+**In-app browsers:**
+- MetaMask Mobile in-app browser
+- Coinbase Wallet in-app browser
+- Trust Wallet in-app browser
+
+### Common Mobile Bugs:
+
+**Deep linking doesn't work:**
+- WalletConnect QR code scans correctly, but doesn't return to browser after signing
+- **Fix:** Test deep link URLs on actual devices
+
+**Touch targets too small:**
+- "Connect Wallet" button is tiny on mobile, hard to tap
+- **Fix:** Ensure touch targets are at least 44x44px
+
+**Modal overlays break:**
+- Wallet connection modal appears behind page content on mobile
+- **Fix:** Test z-index and scrolling behavior on mobile
+
+---
+
+## 10. Edge Case Scenarios (The Ones That Get You)
+
+**What you're testing:** Weird user behavior that you didn't anticipate.
+
+These are the bugs we've seen in production that most teams never test for.
+
+### Test Cases:
+
+**User spam-clicks "Connect Wallet":**
+- Click "Connect Wallet" 10 times rapidly
+- **Expected:** Only one wallet popup appears
+- **Common bug:** Multiple popups, or app state gets confused
+
+**User has $0 ETH (can't pay gas):**
+- Connect wallet with 0 ETH balance
+- Try to do anything
+- **Expected:** App detects this before transaction, shows helpful message
+- **Common bug:** User signs transaction that immediately fails, wastes time
+
+**User switches wallets mid-session:**
+- Connect with MetaMask
+- Disconnect
+- Connect with Coinbase Wallet
+- **Expected:** App clears all MetaMask state, starts fresh with Coinbase Wallet
+- **Common bug:** App shows mix of data from both wallets
+
+**Page refresh during pending transaction:**
+- Start transaction
+- Refresh page immediately
+- **Expected:** App detects pending transaction on load, shows status
+- **Common bug:** App doesn't remember the transaction, user thinks it failed
+
+**User on old wallet version:**
+- Test with MetaMask v9 (older version)
+- **Expected:** App still works, or shows "Update your wallet" message
+- **Common bug:** App breaks with cryptic errors
+
+---
+
+## What We Do at Hexprove
+
+At Uniswap, we tested wallet connections across 8 different wallet providers, 6 chains, and 12 device/browser combinations. That's **576 test scenarios** before every major release.
+
+At OpenSea, we caught wallet bugs that would have broken NFT listings for thousands of users.
+
+**Most crypto teams don't have time to test this thoroughly.** That's where we come in.
+
+We're a dedicated QA team that actually understands crypto:
+- We know the difference between transaction states
+- We test wallet integrations on real devices, not just browser resize
+- We catch edge cases before your users do
+
+We built QA at Uniswap and OpenSea. Now we help crypto startups ship confidently.
+
+---
+
+## Your Wallet Testing Checklist
+
+Here's the TL;DR checklist you can use today:
+
+- [ ] Initial connection flow (happy path + rejection + locked wallet)
+- [ ] Network switching (app-initiated, user-initiated, rapid switching, unsupported networks)
+- [ ] Transaction signing (success, rejection, revert, pending, user leaves page)
+- [ ] Gas estimation (accurate estimates, spike handling, complex interactions)
+- [ ] Disconnect and reconnect (intentional, wallet crash, account switching)
+- [ ] Multi-wallet support (MetaMask, Coinbase Wallet, WalletConnect, mobile wallets)
+- [ ] Transaction history (pending, confirmed, failed, replaced transactions)
+- [ ] Error messages (clear, actionable, user-friendly)
+- [ ] Mobile testing (iOS Safari, Android Chrome, in-app browsers, deep linking)
+- [ ] Edge cases (spam clicks, zero balance, wallet switching, old versions)
+
+**Test all of these before launch.** One missed test case can cost you users.
+
+---
+
+## Need Help Testing Your Wallet Integration?
+
+If you're shipping a crypto product and want to make sure wallet connections actually work, we can help.
+
+We'll test your wallet integration across all providers, chains, and edge cases — and deliver a clear report of what works and what breaks.
+
+**[Book a 15-minute call](/#contact)** and we'll walk through your specific use case.
+
+Or **[see our services](/#services)** to learn how we work with crypto teams.

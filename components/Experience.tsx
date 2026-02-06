@@ -7,30 +7,30 @@ import { TextScramble } from "./animations";
 const experiences = [
   {
     company: "Uniswap",
-    role: "Lead QA",
+    role: "",
     type: "Web3",
-    description: "DeFi protocol testing, decentralized exchange QA, smart contract integration",
+    description: "Built QA for the world's largest decentralized exchange",
     color: "#FF007A",
   },
   {
     company: "OpenSea",
-    role: "Lead QA",
+    role: "",
     type: "Web3",
-    description: "NFT marketplace testing, wallet integration QA, Web3 transaction flows",
+    description: "Built QA for the world's largest NFT platform",
     color: "#2081E2",
   },
   {
     company: "Bloomberg",
-    role: "Senior QA",
+    role: "",
     type: "Enterprise",
-    description: "Enterprise financial software testing, real-time data systems QA",
+    description: "Financial software trusted by every major bank",
     color: "#F97316",
   },
   {
     company: "Tradeweb",
-    role: "Senior QA",
+    role: "",
     type: "Enterprise",
-    description: "Institutional trading platform QA, high-frequency systems testing",
+    description: "Fixed income trading at institutional scale",
     color: "#3B82F6",
   },
 ];
@@ -78,13 +78,8 @@ function ExperienceRow({ exp, index }: { exp: typeof experiences[0]; index: numb
           </motion.h3>
         </div>
 
-        {/* Role */}
-        <div className="md:col-span-2">
-          <span className="text-theme-secondary text-sm">{exp.role}</span>
-        </div>
-
         {/* Description - SEO optimized */}
-        <div className="md:col-span-4">
+        <div className="md:col-span-6">
           <motion.p
             className="text-theme-primary text-base sm:text-base"
             animate={{ opacity: isHovered ? 1 : 0.9 }}

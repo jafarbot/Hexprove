@@ -20,9 +20,9 @@ const services = [
   },
   {
     num: "03",
-    title: "dApp Testing",
-    description: "Transaction flows, error states, gas estimation, and chain-specific edge cases covered.",
-    tags: ["Wallet Flows", "Error Handling", "Multi-chain"],
+    title: "dApp & Payments",
+    description: "Wallet connections, transactions, on/off-ramps, gas estimation, and chain-specific edge cases.",
+    tags: ["Wallet Flows", "On/Off-Ramp", "Multi-chain"],
   },
   {
     num: "04",
@@ -114,9 +114,8 @@ export default function Services() {
       ref={(node) => {
         (sectionRef as any).current = node;
         (trackingRef as any).current = node;
-      }} 
-      id="services" 
-      ref={sectionRef}
+      }}
+      id="services"
       aria-label="QA testing services for crypto and Web3 companies"
       className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 section-border bg-theme"
     >
@@ -139,24 +138,35 @@ export default function Services() {
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
-          <header className="overflow-hidden">
-            <motion.h2
-              className="display-lg"
-              initial={{ y: "100%" }}
-              animate={isInView ? { y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
+          <div>
+            <header className="overflow-hidden">
+              <motion.h2
+                className="display-lg"
+                initial={{ y: "100%" }}
+                animate={isInView ? { y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
+              >
+                What we
+              </motion.h2>
+              <motion.h2
+                className="display-lg gradient-text"
+                initial={{ y: "100%" }}
+                animate={isInView ? { y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.3, ease: [0.215, 0.61, 0.355, 1] }}
+              >
+                deliver
+              </motion.h2>
+            </header>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="text-xl mt-6"
             >
-              What we
-            </motion.h2>
-            <motion.h2
-              className="display-lg gradient-text"
-              initial={{ y: "100%" }}
-              animate={isInView ? { y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.3, ease: [0.215, 0.61, 0.355, 1] }}
-            >
-              deliver
-            </motion.h2>
-          </header>
+              <span className="text-accent font-semibold">Tailored to your product</span>
+              <span className="text-theme-secondary"> — not one-size-fits-all packages.</span>
+            </motion.p>
+          </div>
         </div>
 
         {/* Services list */}

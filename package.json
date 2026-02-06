@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "drafts": "node sales-materials/scripts/generate-drafts.js",
+    "pipeline": "node sales-materials/scripts/pipeline-report.js"
   },
   "keywords": [
     "qa",

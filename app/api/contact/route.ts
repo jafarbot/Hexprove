@@ -7,14 +7,24 @@ export async function POST(request: Request) {
     const smtpPass = process.env.PROTON_SMTP_PASS;
 
     if (!smtpUser || !smtpPass) {
-      console.error('Proton SMTP credentials not configured');
+      console.error('[Contact API] Proton SMTP credentials not configured. Set PROTON_SMTP_USER and PROTON_SMTP_PASS in Vercel.');
       return NextResponse.json(
         { error: 'Email service not configured' },
         { status: 500 }
       );
     }
 
-    const { name, email, company, message } = await request.json();
+    let body: { name?: string; email?: string; company?: string; message?: string };
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid request body' },
+        { status: 400 }
+      );
+    }
+
+    const { name, email, company, message } = body;
 
     // Trim whitespace from all fields
     const trimmedName = name?.trim();
@@ -75,14 +85,14 @@ export async function POST(request: Request) {
         from: `Hexprove <${smtpUser}>`,
         to: smtpUser,
         replyTo: trimmedEmail,
-        subject: `New inquiry from ${trimmedName}${company ? ` (${company.trim()})` : ''}`,
-        text: `Name: ${trimmedName}\nEmail: ${trimmedEmail}\nCompany: ${company?.trim() || 'Not provided'}\n\nMessage:\n${trimmedMessage}`,
+        subject: `New inquiry from ${trimmedName}${company != null && String(company).trim() ? ` (${String(company).trim()})` : ''}`,
+        text: `Name: ${trimmedName}\nEmail: ${trimmedEmail}\nCompany: ${company != null ? String(company).trim() || 'Not provided' : 'Not provided'}\n\nMessage:\n${trimmedMessage}`,
         html: `
           <div style="font-family: -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #0A0A0A; color: #fff;">
             <h2 style="color: #00F5A0; margin-bottom: 24px;">New Contact Form Submission</h2>
             <p><strong style="color: #9CA3AF;">Name:</strong> ${trimmedName}</p>
             <p><strong style="color: #9CA3AF;">Email:</strong> <a href="mailto:${trimmedEmail}" style="color: #00F5A0;">${trimmedEmail}</a></p>
-            ${company ? `<p><strong style="color: #9CA3AF;">Company:</strong> ${company.trim()}</p>` : ''}
+            ${company != null && String(company).trim() ? `<p><strong style="color: #9CA3AF;">Company:</strong> ${String(company).trim()}</p>` : ''}
             <hr style="border-color: #2A2A2A; margin: 24px 0;" />
             <p style="color: #9CA3AF;"><strong>Message:</strong></p>
             <div style="background-color: #1A1A1A; padding: 16px 20px; border-radius: 8px; border: 1px solid #2A2A2A;">
@@ -125,9 +135,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Contact form error:', error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Contact form error:', message, error);
     return NextResponse.json(
-      { error: 'Failed to send message' },
+      { error: 'Failed to send message. Please try again or email us at team@hexprove.com.' },
       { status: 500 }
     );
   }
