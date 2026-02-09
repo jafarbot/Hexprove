@@ -20,12 +20,18 @@ const services = [
   },
   {
     num: "03",
+    title: "API Testing",
+    description: "Test the backbone of your app — RPC calls, price feed APIs, webhook events, and every third-party integration your product relies on.",
+    tags: ["REST / GraphQL", "WebSocket", "RPC"],
+  },
+  {
+    num: "04",
     title: "dApp & Payments",
     description: "Wallet connections, transactions, on/off-ramps, gas estimation, and chain-specific edge cases.",
     tags: ["Wallet Flows", "On/Off-Ramp", "Multi-chain"],
   },
   {
-    num: "04",
+    num: "05",
     title: "Cross-Chain",
     description: "Validate across Ethereum, L2s, and Solana. Bridge testing and network switching included.",
     tags: ["Ethereum", "L2s", "Solana"],

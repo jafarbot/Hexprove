@@ -132,7 +132,7 @@ export default function Experience() {
               transition={{ duration: 0.6 }}
               className="flex items-center gap-4 mb-8"
             >
-              <span className="text-accent font-mono text-sm">03</span>
+              <span className="text-accent font-mono text-sm">04</span>
               <motion.div
                 className="h-px bg-accent"
                 initial={{ width: 0 }}

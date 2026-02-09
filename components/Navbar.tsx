@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -9,15 +10,18 @@ import { Logo } from "./Logo";
 import { trackCtaClick } from "@/lib/analytics";
 
 const navLinks = [
-  { name: "About", href: "/#about", num: "01" },
-  { name: "Services", href: "/#services", num: "02" },
-  { name: "Experience", href: "/#experience", num: "03" },
-  { name: "Team", href: "/#team", num: "04" },
-  { name: "Blog", href: "/blog", num: "05" },
-  { name: "Contact", href: "/#contact", num: "06" },
+  { name: "About", href: "/about", scrollTo: "about", num: "01" },
+  { name: "Services", href: "/services", scrollTo: "services", num: "02" },
+  { name: "How We Work", href: "/how-we-work", scrollTo: "how-we-work", num: "03" },
+  { name: "Experience", href: "/about", scrollTo: "experience", num: "04" },
+  { name: "Team", href: "/about", scrollTo: "team", num: "05" },
+  { name: "Blog", href: "/blog", scrollTo: null, num: "06" },
+  { name: "Contact", href: "/contact", scrollTo: "contact", num: "07" },
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const isHomepage = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -52,6 +56,20 @@ export default function Navbar() {
 
   const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
 
+  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, link: typeof navLinks[0]) => {
+    // On homepage, smooth-scroll to section instead of navigating
+    if (isHomepage && link.scrollTo) {
+      e.preventDefault();
+      const el = document.getElementById(link.scrollTo);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+      closeMobileMenu();
+    } else {
+      closeMobileMenu();
+    }
+  }, [isHomepage, closeMobileMenu]);
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -85,6 +103,7 @@ export default function Navbar() {
               <a
                 key={link.name}
                 href={link.href}
+                onClick={(e) => handleNavClick(e, link)}
                 className="group relative text-sm text-theme-secondary hover:text-theme-primary transition-colors"
               >
                 <span className="text-accent text-[10px] font-mono absolute -top-3 left-0 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -95,10 +114,10 @@ export default function Navbar() {
             ))}
 
             <MagneticButton
-              href="/#contact"
+              href="/contact"
               className="px-5 py-2 btn-primary text-sm font-semibold rounded-full"
               strength={0.15}
-              onClick={() => trackCtaClick('navbar', 'Contact', '/#contact')}
+              onClick={() => trackCtaClick('navbar', 'Contact', '/contact')}
             >
               Contact
             </MagneticButton>
@@ -114,7 +133,7 @@ export default function Navbar() {
               <div className="w-6 h-5 flex flex-col justify-between">
                 <motion.span
                   className="w-full h-0.5 bg-current origin-center"
-                  animate={{ 
+                  animate={{
                     rotate: mobileMenuOpen ? 45 : 0,
                     y: mobileMenuOpen ? 8 : 0
                   }}
@@ -122,7 +141,7 @@ export default function Navbar() {
                 />
                 <motion.span
                   className="w-full h-0.5 bg-current"
-                  animate={{ 
+                  animate={{
                     opacity: mobileMenuOpen ? 0 : 1,
                     scaleX: mobileMenuOpen ? 0 : 1
                   }}
@@ -130,7 +149,7 @@ export default function Navbar() {
                 />
                 <motion.span
                   className="w-full h-0.5 bg-current origin-center"
-                  animate={{ 
+                  animate={{
                     rotate: mobileMenuOpen ? -45 : 0,
                     y: mobileMenuOpen ? -8 : 0
                   }}
@@ -158,7 +177,7 @@ export default function Navbar() {
                 <motion.a
                   key={link.name}
                   href={link.href}
-                  onClick={closeMobileMenu}
+                  onClick={(e) => handleNavClick(e, link)}
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -30 }}
@@ -172,8 +191,8 @@ export default function Navbar() {
                 </motion.a>
               ))}
               <motion.a
-                href="/#contact"
-                onClick={closeMobileMenu}
+                href="/contact"
+                onClick={(e) => handleNavClick(e, { name: "Contact", href: "/contact", scrollTo: "contact", num: "07" })}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}

@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import WhatWeCatch from "@/components/WhatWeCatch";
 import Services from "@/components/Services";
+import Engagement from "@/components/Engagement";
 import Experience from "@/components/Experience";
 import Team from "@/components/Team";
 import Founder from "@/components/Founder";
@@ -19,6 +20,7 @@ export default function Home() {
       <WhyChooseUs />
       <WhatWeCatch />
       <Services />
+      <Engagement />
       <Experience />
       <Team />
       <Founder />

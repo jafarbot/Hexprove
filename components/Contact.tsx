@@ -206,7 +206,7 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
               transition={{ duration: 0.6 }}
               className="flex items-center gap-4 mb-6 sm:mb-8"
             >
-              <span className="text-accent font-mono text-sm">06</span>
+              <span className="text-accent font-mono text-sm">07</span>
               <motion.div
                 className="h-px bg-accent"
                 initial={{ width: 0 }}

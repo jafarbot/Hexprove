@@ -165,7 +165,7 @@ export default function WhyChooseUs() {
         >
           <HoverText 
             text="See what we catch →" 
-            href="#what-we-catch"
+            href="/services"
             className="text-accent text-base sm:text-lg min-h-[44px] inline-flex items-center"
           />
         </motion.div>

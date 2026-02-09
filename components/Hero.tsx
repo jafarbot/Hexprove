@@ -138,10 +138,10 @@ export default function Hero() {
           className="flex flex-col sm:flex-row gap-4 mb-8 sm:mb-20"
         >
           <MagneticButton
-            href="/#contact"
+            href="/contact"
             className="group inline-flex items-center justify-center px-6 sm:px-8 py-4 btn-primary font-semibold rounded-full min-h-[48px]"
             strength={0.2}
-            onClick={() => trackCtaClick('hero', 'Book a Call', '/#contact')}
+            onClick={() => trackCtaClick('hero', 'Book a Call', '/contact')}
           >
             <span>Book a Call</span>
             <motion.svg
@@ -158,10 +158,10 @@ export default function Hero() {
           </MagneticButton>
 
           <MagneticButton
-            href="/#about"
+            href="/about"
             className="inline-flex items-center justify-center px-6 sm:px-8 py-4 btn-secondary font-medium rounded-full min-h-[48px]"
             strength={0.2}
-            onClick={() => trackCtaClick('hero', 'Learn More', '/#about')}
+            onClick={() => trackCtaClick('hero', 'Learn More', '/about')}
           >
             Learn More
           </MagneticButton>

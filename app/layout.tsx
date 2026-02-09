@@ -41,6 +41,11 @@ export const metadata: Metadata = {
     "dedicated QA team",
     "manual QA testing",
     "E2E automation",
+    "API testing",
+    "API testing crypto",
+    "RPC endpoint testing",
+    "QA audit",
+    "pre-launch QA",
     "Uniswap",
     "OpenSea",
   ],
@@ -122,6 +127,11 @@ const jsonLd = {
     "E2E Testing",
     "Manual Testing",
     "dApp Testing",
+    "API Testing",
+    "REST API Testing",
+    "GraphQL Testing",
+    "RPC Endpoint Testing",
+    "WebSocket Testing",
   ],
   serviceArea: {
     "@type": "Place",
@@ -145,6 +155,14 @@ const jsonLd = {
           "@type": "Service",
           name: "E2E Automation",
           description: "Automated end-to-end testing with wallet mocking and transaction verification",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "API Testing",
+          description: "RPC calls, price feed APIs, webhook events, and third-party integration testing",
         },
       },
       {
