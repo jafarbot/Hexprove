@@ -30,6 +30,27 @@ const nextConfig = {
         destination: '/',
         permanent: true,
       },
+      // Section shortcuts — redirect to parent pages
+      {
+        source: '/team',
+        destination: '/about',
+        permanent: true,
+      },
+      {
+        source: '/experience',
+        destination: '/about',
+        permanent: true,
+      },
+      {
+        source: '/engagement',
+        destination: '/how-we-work',
+        permanent: true,
+      },
+      {
+        source: '/service',
+        destination: '/services',
+        permanent: true,
+      },
     ];
   },
 };
