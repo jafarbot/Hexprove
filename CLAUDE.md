@@ -51,11 +51,67 @@ Maintain consistent z-index layers to prevent stacking issues:
 - Add styled components for: table, thead, tbody, tr, th, td
 - Test MDX rendering (tables, code blocks) before deploy
 
-## Blog Content - Legal
+## Legal Compliance - Non-Disparagement & Confidentiality
 
-- Never attribute specific bugs to former employers
-- Use generic phrasing: "In my years testing DeFi products..."
-- Credentials (company names) OK in About/bio sections only
+CRITICAL: All content must comply with separation agreement terms regarding
+previous employers (Uniswap/Universal Navigation Inc. and OpenSea).
+
+### ✅ ALLOWED - Positive Credentials:
+- "Former Lead QA at Uniswap"
+- "Built QA infrastructure at Uniswap and OpenSea"
+- "Experience at leading Web3 platforms including Uniswap, OpenSea"
+- "Tested products processing billions in volume"
+- Factual role descriptions and achievements
+- Generic industry expertise gained from these roles
+
+### ❌ PROHIBITED - Disparagement & Confidential Info:
+- Never mention specific bugs, failures, or problems at Uniswap or OpenSea
+- Never say "At Uniswap, [bug/problem] happened"
+- Never say "We caught this bug at Uniswap/OpenSea"
+- Never disclose production incidents, outages, or user impact
+- Never mention specific testing processes, methodologies, or numbers from these companies
+- Never criticize their leadership, decisions, or business practices
+- Never use their problems/failures as marketing examples
+
+### 🔄 SAFE ALTERNATIVES:
+Instead of: "At Uniswap, we caught a bug where..."
+Use: "In production environments at scale, we've seen bugs where..."
+
+Instead of: "OpenSea had an issue during launch that affected thousands of users"
+Use: "High-traffic launches can expose wallet connection issues that affect user experience"
+
+Instead of: "At Uniswap, we tested across 8 wallets, 6 chains, 12 browsers"
+Use: "At leading DEXs, comprehensive testing requires 8+ wallets, 6+ chains, 12+ browsers"
+
+### 📝 CONTENT REVIEW CHECKLIST:
+Before generating any content that mentions previous employers, verify:
+1. Is this a positive credential or factual role description? ✅
+2. Does it mention specific bugs/failures at the company? ❌
+3. Does it disclose internal processes/methodologies? ❌
+4. Does it criticize the company in any way? ❌
+5. Could this be seen as using their problems to sell our services? ❌
+
+If ANY of #2-5 are yes, rephrase to be generic/industry-wide.
+
+### 🎯 TONE GUIDELINES:
+- Frame expertise as "built at scale" not "fixed their problems"
+- Use "leading platforms" or "major DEXs" instead of company names when discussing problems
+- Position yourself as experienced, not as superior to previous employers
+- Educational content should teach, not criticize past employers
+
+### ⚠️ HIGH-RISK PHRASES TO AVOID:
+- "The problem with [company] was..."
+- "When I was at [company], they didn't understand..."
+- "[Company]'s QA was broken/inadequate/insufficient"
+- "I left [company] because..."
+- "Users at [company] experienced [negative outcome]"
+- "That's why I built HexProve" (if context implies fixing previous employer's problems)
+
+### ✅ SAFE FRAMING EXAMPLES:
+- "Throughout my career at leading Web3 platforms..."
+- "In my experience building QA at scale..."
+- "Common production bugs I've encountered across the industry..."
+- "Based on my experience at major DEXs and NFT marketplaces..."
 
 ## Form Validation
 

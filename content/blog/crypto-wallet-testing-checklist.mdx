@@ -9,7 +9,7 @@ keywords: ["crypto wallet testing", "wallet testing checklist", "test wallet con
 
 Testing crypto wallet integrations is where most Web3 apps break in production.
 
-I've seen it at Uniswap. I've seen it at OpenSea. And I see it every week with the crypto startups we work with — wallet bugs that slip through testing because teams don't know what to look for.
+I've built QA infrastructure at leading Web3 platforms processing billions in volume, and I see it every week with the crypto startups we work with — wallet bugs that slip through testing because teams don't know what to look for.
 
 The problem? **Traditional QA testers treat wallet connections like login forms.** They're not. Wallet testing requires understanding transaction states, network switching, gas estimation, and a dozen edge cases that don't exist in Web2.
 
@@ -27,7 +27,7 @@ You're testing:
 - Gas estimation that changes by the second
 - User flows that span wallet and browser
 
-**One integration bug can cost you users.** At OpenSea, a wallet connection issue during our launch meant thousands of users couldn't list NFTs. At Uniswap, a network switching bug locked users on the wrong chain.
+**One integration bug can cost you users.** Wallet connection issues during high-traffic launches can prevent users from completing core actions. Network switching bugs can leave users confused about which chain they're on, leading to failed transactions.
 
 Let's make sure that doesn't happen to you.
 
@@ -74,9 +74,9 @@ Let's make sure that doesn't happen to you.
 - **Expected:** QR code or deep link to mobile wallet
 - **Common bug:** QR code doesn't load, deep link doesn't open wallet app
 
-### What We Caught at Uniswap:
+### Common Mobile Bug We've Seen:
 
-On mobile Safari, the WalletConnect modal would appear behind the page overlay, making it impossible to scan the QR code. Users thought the app was broken. **Fix:** Adjust z-index and test on actual devices, not just browser resize.
+On mobile Safari, WalletConnect modals can appear behind page overlays due to z-index conflicts, making QR codes invisible. Users assume the connection flow is broken. **Fix:** Adjust z-index for WalletConnect modals and always test on actual iOS devices, not just browser resize.
 
 ---
 
@@ -119,9 +119,9 @@ This is where **most apps fail.** Users start on Ethereum mainnet, you prompt th
 - **Expected:** App shows "Unsupported network" message, prompts to switch back
 - **Common bug:** App crashes or shows error messages
 
-### What We Caught at OpenSea:
+### Common Network Switching Bug:
 
-Users on Polygon would see Ethereum NFT prices for a split second after switching networks. This was a caching issue — the app wasn't clearing old data before fetching new data. **Users thought prices were wrong and didn't transact.**
+After switching networks, users can briefly see stale data from the previous chain due to caching issues. For example, showing Ethereum prices while connected to Polygon. **Fix:** Clear all cached state before fetching data for the new network, and show a loading state during the transition.
 
 ---
 
@@ -177,9 +177,9 @@ This is complex because transactions can fail at **5 different points:**
 - **Expected:** App detects confirmation and updates UI
 - **Common bug:** App doesn't listen for events in background, user needs to refresh
 
-### What We Caught at Uniswap:
+### Common Tab-Switching Bug:
 
-Users would start a swap, switch to Twitter mid-transaction, come back, and see "Pending" even though the transaction had confirmed minutes ago. **Fix:** Use transaction listeners that work even when the tab isn't active, and poll transaction status on tab focus.
+Users often switch browser tabs during pending transactions. When they return, the app may still show "Pending" even if the transaction confirmed minutes ago. **Fix:** Use transaction listeners that work even when the tab isn't active, and poll transaction status whenever the tab regains focus.
 
 ---
 
@@ -433,9 +433,9 @@ These are the bugs we've seen in production that most teams never test for.
 
 ## What We Do at Hexprove
 
-At Uniswap, we tested wallet connections across 8 different wallet providers, 6 chains, and 12 device/browser combinations. That's **576 test scenarios** before every major release.
+At leading Web3 platforms, we've tested wallet connections across 8+ different wallet providers, 6+ chains, and 12+ device/browser combinations — that's 500+ test scenarios before major releases.
 
-At OpenSea, we caught wallet bugs that would have broken NFT listings for thousands of users.
+We've built this expertise catching critical wallet bugs in production environments at scale, ensuring users can connect, transact, and switch networks smoothly.
 
 **Most crypto teams don't have time to test this thoroughly.** That's where we come in.
 
@@ -444,7 +444,7 @@ We're a dedicated QA team that actually understands crypto:
 - We test wallet integrations on real devices, not just browser resize
 - We catch edge cases before your users do
 
-We built QA at Uniswap and OpenSea. Now we help crypto startups ship confidently.
+We've built QA infrastructure at major Web3 platforms. Now we help crypto startups ship confidently.
 
 ---
 
