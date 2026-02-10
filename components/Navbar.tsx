@@ -16,6 +16,7 @@ const navLinks = [
   { name: "Experience", href: "/about", scrollTo: "experience", num: "04" },
   { name: "Team", href: "/about", scrollTo: "team", num: "05" },
   { name: "Blog", href: "/blog", scrollTo: null, num: "06" },
+  { name: "Contact", href: "/contact", scrollTo: "contact", num: "07" },
 ];
 
 export default function Navbar() {
