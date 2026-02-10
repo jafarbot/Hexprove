@@ -112,14 +112,15 @@ export default function Navbar() {
               </a>
             ))}
 
-            <MagneticButton
-              href="/contact"
+            <a
+              href="https://calendly.com/sino-hexprove/30min"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-5 py-2 btn-primary text-sm font-semibold rounded-full"
-              strength={0.15}
-              onClick={() => trackCtaClick('navbar', 'Book a Call', '/contact')}
+              onClick={() => trackCtaClick('navbar', 'Book a Call', 'https://calendly.com/sino-hexprove/30min')}
             >
               Book a Call
-            </MagneticButton>
+            </a>
           </div>
 
           {/* Mobile buttons */}
@@ -190,8 +191,10 @@ export default function Navbar() {
                 </motion.a>
               ))}
               <motion.a
-                href="/contact"
-                onClick={(e) => handleNavClick(e, { name: "Contact", href: "/contact", scrollTo: "contact", num: "07" })}
+                href="https://calendly.com/sino-hexprove/30min"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={closeMobileMenu}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}

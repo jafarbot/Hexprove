@@ -152,10 +152,10 @@ export default function Hero() {
           className="flex flex-col sm:flex-row gap-4 mb-8 sm:mb-20"
         >
           <MagneticButton
-            href="/contact"
+            href="https://calendly.com/sino-hexprove/30min"
             className="group inline-flex items-center justify-center px-6 sm:px-8 py-4 btn-primary font-semibold rounded-full min-h-[48px]"
             strength={0.2}
-            onClick={() => trackCtaClick('hero', 'Book a Call', '/contact')}
+            onClick={() => trackCtaClick('hero', 'Book a Call', 'https://calendly.com/sino-hexprove/30min')}
           >
             <span>Book a Call</span>
             <motion.svg
