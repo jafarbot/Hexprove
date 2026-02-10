@@ -25,6 +25,7 @@ export function TextScramble({
 }: TextScrambleProps) {
   const [displayText, setDisplayText] = useState(text);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [forceVisible, setForceVisible] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once, margin: "-100px" });
   const hasAnimated = useRef(false);
@@ -83,12 +84,23 @@ export function TextScramble({
     }
   }, [isInView, scramble, delay, useTriggerMode]);
 
+  // Fallback for mobile: ensure text is visible even if useInView never fires (e.g. iOS Safari, dynamic toolbar)
+  useEffect(() => {
+    if (useTriggerMode) return;
+    const fallbackMs = (delay + duration + 2) * 1000;
+    const id = setTimeout(() => {
+      setForceVisible(true);
+      setDisplayText(text);
+    }, fallbackMs);
+    return () => clearTimeout(id);
+  }, [useTriggerMode, delay, duration, text]);
+
   return (
     <motion.span
       ref={ref}
       className={`inline-block ${className}`}
       initial={useTriggerMode ? { opacity: 1 } : { opacity: 0 }}
-      animate={{ opacity: useTriggerMode || isInView ? 1 : 0 }}
+      animate={{ opacity: useTriggerMode || isInView || forceVisible ? 1 : 0 }}
       transition={{ duration: 0.3 }}
     >
       {displayText}
