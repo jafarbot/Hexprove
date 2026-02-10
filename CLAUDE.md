@@ -1,5 +1,18 @@
 # Hexprove Development Guidelines
 
+## Git Workflow
+
+**NEVER push directly to main.** Always:
+1. Create a feature/fix branch: `git checkout -b feat/feature-name` or `git checkout -b fix/bug-name`
+2. Commit changes to the branch
+3. Push branch and create a PR: `git push -u origin branch-name` then `gh pr create`
+4. Merge via PR (after review/approval)
+
+Branch naming conventions:
+- `feat/` — new features
+- `fix/` — bug fixes
+- `chore/` — maintenance, config, docs
+
 ## Z-Index Hierarchy
 
 Maintain consistent z-index layers to prevent stacking issues:
