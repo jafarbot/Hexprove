@@ -11,6 +11,8 @@ interface MagneticButtonProps {
   strength?: number;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
+  target?: string;
+  rel?: string;
 }
 
 export function MagneticButton({
@@ -21,6 +23,8 @@ export function MagneticButton({
   strength = 0.3,
   type = "button",
   disabled = false,
+  target,
+  rel,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -63,6 +67,8 @@ export function MagneticButton({
         onClick={onClick}
         type={href ? undefined : type}
         disabled={href ? undefined : disabled}
+        target={href ? (target ?? (href.startsWith("http") ? "_blank" : undefined)) : undefined}
+        rel={href ? (rel ?? (href.startsWith("http") ? "noopener noreferrer" : undefined)) : undefined}
         className={className}
         animate={{ x: position.x, y: position.y }}
         transition={{ type: "spring", stiffness: 150, damping: 15 }}
