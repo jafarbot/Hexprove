@@ -117,10 +117,12 @@ body {
 
 /* Gradient text - same for both modes */
 .gradient-text {
+  color: var(--accent);
   background: linear-gradient(135deg, var(--accent) 0%, #00ff88 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  -webkit-transform: translateZ(0);
 }
 
 /* Glass effect */
