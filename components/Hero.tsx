@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { TextScramble, CharReveal } from "./animations";
 import { AnimatedCounter } from "./animations";
 import { MagneticButton } from "./animations";
+import { CircuitTrace } from "./animations";
 import { trackCtaClick } from "@/lib/analytics";
 import { useSectionTracking } from "@/lib/useSectionTracking";
 
@@ -33,9 +34,22 @@ export default function Hero() {
         (containerRef as any).current = node;
         (sectionRef as any).current = node;
       }}
+      id="hero"
       aria-label="Hexprove - Crypto-native QA experts"
       className="relative min-h-[100dvh] flex flex-col justify-center px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16 sm:pb-20 overflow-hidden bg-theme"
     >
+      {/* Circuit trace background */}
+      <motion.div
+        className="absolute inset-0 z-[1]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.18 }}
+        transition={{ duration: 2, ease: "easeOut" }}
+        aria-hidden="true"
+        style={{ pointerEvents: "none" }}
+      >
+        <CircuitTrace className="!absolute" />
+      </motion.div>
+
       {/* Animated background grid */}
       <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         <motion.div
@@ -116,7 +130,7 @@ export default function Hero() {
         >
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-theme-secondary leading-relaxed">
             <CharReveal 
-              text="Battle-tested QA infrastructure for Web3 products at scale."
+              text="The only QA team built from inside crypto — not trained on it."
               delay={1.2}
               staggerDelay={0.02}
             />

@@ -10,7 +10,7 @@ export default function NotFound() {
   return (
     <div className="relative min-h-[100dvh] flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 overflow-hidden bg-theme">
       {/* Matrix rain background */}
-      <div className="opacity-30">
+      <div className="opacity-20">
         <MatrixRain />
       </div>
 

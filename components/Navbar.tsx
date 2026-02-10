@@ -16,7 +16,6 @@ const navLinks = [
   { name: "Experience", href: "/about", scrollTo: "experience", num: "04" },
   { name: "Team", href: "/about", scrollTo: "team", num: "05" },
   { name: "Blog", href: "/blog", scrollTo: null, num: "06" },
-  { name: "Contact", href: "/contact", scrollTo: "contact", num: "07" },
 ];
 
 export default function Navbar() {
@@ -117,9 +116,9 @@ export default function Navbar() {
               href="/contact"
               className="px-5 py-2 btn-primary text-sm font-semibold rounded-full"
               strength={0.15}
-              onClick={() => trackCtaClick('navbar', 'Contact', '/contact')}
+              onClick={() => trackCtaClick('navbar', 'Book a Call', '/contact')}
             >
-              Contact
+              Book a Call
             </MagneticButton>
           </div>
 

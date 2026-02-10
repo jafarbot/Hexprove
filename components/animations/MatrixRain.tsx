@@ -82,7 +82,6 @@ export function MatrixRain({ className = "" }: MatrixRainProps) {
     <canvas
       ref={canvasRef}
       className={`fixed inset-0 ${className}`}
-      style={{ opacity: 0.6 }}
     />
   );
 }

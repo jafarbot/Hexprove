@@ -3,7 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { TextScramble, MagneticButton, HoverText } from "./animations";
+import { TextScramble, MagneticButton, HoverText, CircuitTrace } from "./animations";
 import { Logo } from "./Logo";
 import { trackFormSubmit, trackOutboundLink } from "@/lib/analytics";
 import { useSectionTracking } from "@/lib/useSectionTracking";
@@ -185,6 +185,18 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
       aria-label="Contact Hexprove for QA consulting"
       className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 section-border relative overflow-hidden bg-theme"
     >
+      {/* Circuit trace background — bookend effect, slower and subtler */}
+      <motion.div
+        className="absolute inset-0 z-[1]"
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 0.08 } : { opacity: 0 }}
+        transition={{ duration: 2, ease: "easeOut" }}
+        aria-hidden="true"
+        style={{ pointerEvents: "none" }}
+      >
+        <CircuitTrace className="!absolute" speedMultiplier={0.4} paused={!isInView} />
+      </motion.div>
+
       {/* Background gradient */}
       <motion.div
         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[400px] sm:w-[800px] h-[400px] sm:h-[800px] rounded-full blur-3xl"
@@ -513,7 +525,7 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
         style={{ borderTop: "1px solid var(--border-color)" }}
       >
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6">
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3 group">
             <motion.div
               whileHover={{ scale: 1.1 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -521,8 +533,8 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
             >
               <Logo size={24} />
             </motion.div>
-            <span className="font-semibold text-theme-primary">Hexprove</span>
-          </div>
+            <span className="font-semibold text-theme-primary group-hover:text-accent transition-colors">Hexprove</span>
+          </Link>
           
           <nav className="flex gap-6 sm:gap-8 text-sm" aria-label="Footer navigation">
             <HoverText text="Privacy" href="/privacy" className="text-theme-muted min-h-[44px] flex items-center" />
