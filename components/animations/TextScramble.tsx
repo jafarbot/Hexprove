@@ -29,6 +29,7 @@ export function TextScramble({
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once, margin: "-100px" });
   const hasAnimated = useRef(false);
+  const prevTriggerRef = useRef<boolean | undefined>(undefined);
   const useTriggerMode = trigger !== undefined;
 
   const scramble = useCallback(() => {
@@ -69,12 +70,17 @@ export function TextScramble({
     return () => clearInterval(interval);
   }, [text, duration, once]);
 
-  // Trigger mode: scramble when trigger changes to true
+  // Trigger mode: scramble only when trigger transitions to true (leading edge), not while hover stays true — prevents loop
   useEffect(() => {
-    if (useTriggerMode && trigger && !isAnimating) {
+    if (!useTriggerMode) return;
+    const prev = prevTriggerRef.current;
+    prevTriggerRef.current = trigger;
+    const justTurnedTrue = trigger === true && (prev === false || prev === undefined);
+    if (justTurnedTrue) {
+      hasAnimated.current = false; // allow one run per hover
       scramble();
     }
-  }, [trigger, useTriggerMode, scramble, isAnimating]);
+  }, [trigger, useTriggerMode, scramble]);
 
   // InView mode: scramble when element enters viewport
   useEffect(() => {
