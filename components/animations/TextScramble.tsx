@@ -12,20 +12,23 @@ interface TextScrambleProps {
   delay?: number;
   duration?: number;
   once?: boolean;
+  trigger?: boolean;
 }
 
-export function TextScramble({ 
-  text, 
-  className = "", 
-  delay = 0, 
+export function TextScramble({
+  text,
+  className = "",
+  delay = 0,
   duration = 1.5,
-  once = true 
+  once = true,
+  trigger,
 }: TextScrambleProps) {
   const [displayText, setDisplayText] = useState(text);
   const [isAnimating, setIsAnimating] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once, margin: "-100px" });
   const hasAnimated = useRef(false);
+  const useTriggerMode = trigger !== undefined;
 
   const scramble = useCallback(() => {
     if (hasAnimated.current && once) return;
@@ -65,19 +68,27 @@ export function TextScramble({
     return () => clearInterval(interval);
   }, [text, duration, once]);
 
+  // Trigger mode: scramble when trigger changes to true
   useEffect(() => {
-    if (isInView) {
+    if (useTriggerMode && trigger && !isAnimating) {
+      scramble();
+    }
+  }, [trigger, useTriggerMode, scramble, isAnimating]);
+
+  // InView mode: scramble when element enters viewport
+  useEffect(() => {
+    if (!useTriggerMode && isInView) {
       const timeout = setTimeout(scramble, delay * 1000);
       return () => clearTimeout(timeout);
     }
-  }, [isInView, scramble, delay]);
+  }, [isInView, scramble, delay, useTriggerMode]);
 
   return (
     <motion.span
       ref={ref}
       className={`inline-block ${className}`}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: isInView ? 1 : 0 }}
+      initial={useTriggerMode ? { opacity: 1 } : { opacity: 0 }}
+      animate={{ opacity: useTriggerMode || isInView ? 1 : 0 }}
       transition={{ duration: 0.3 }}
     >
       {displayText}

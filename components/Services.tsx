@@ -67,11 +67,7 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
             animate={{ x: isHovered ? 10 : 0 }}
             transition={{ duration: 0.3 }}
           >
-            {isHovered ? (
-              <TextScramble text={service.title} duration={0.5} once={false} />
-            ) : (
-              service.title
-            )}
+            <TextScramble text={service.title} duration={0.5} once={false} trigger={isHovered} />
           </motion.h3>
         </div>
 
