@@ -10,13 +10,10 @@ import { Logo } from "./Logo";
 import { trackCtaClick } from "@/lib/analytics";
 
 const navLinks = [
-  { name: "About", href: "/about", scrollTo: "about", num: "01" },
-  { name: "Services", href: "/services", scrollTo: "services", num: "02" },
-  { name: "How We Work", href: "/how-we-work", scrollTo: "how-we-work", num: "03" },
-  { name: "Experience", href: "/about", scrollTo: "experience", num: "04" },
-  { name: "Team", href: "/about", scrollTo: "team", num: "05" },
-  { name: "Blog", href: "/blog", scrollTo: null, num: "06" },
-  { name: "Contact", href: "/contact", scrollTo: "contact", num: "07" },
+  { name: "Services", href: "/services", scrollTo: "services", num: "01" },
+  { name: "About", href: "/about", scrollTo: "about", num: "02" },
+  { name: "Blog", href: "/blog", scrollTo: null, num: "03" },
+  { name: "Contact", href: "/contact", scrollTo: "contact", num: "04" },
 ];
 
 export default function Navbar() {
@@ -90,7 +87,7 @@ export default function Navbar() {
             <motion.div
               whileHover={{ scale: 1.1 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="text-accent"
+              className="text-theme-primary"
             >
               <Logo size={32} />
             </motion.div>
@@ -106,7 +103,7 @@ export default function Navbar() {
                 onClick={(e) => handleNavClick(e, link)}
                 className="group relative text-sm text-theme-secondary hover:text-theme-primary transition-colors"
               >
-                <span className="text-accent text-[10px] font-mono absolute -top-3 left-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-theme-muted text-[10px] font-mono absolute -top-3 left-0 opacity-0 group-hover:opacity-100 transition-opacity">
                   {link.num}
                 </span>
                 <HoverText text={link.name} />
@@ -185,8 +182,8 @@ export default function Navbar() {
                   transition={{ delay: index * 0.1 }}
                   className="group flex items-center gap-4 min-h-[44px] py-2"
                 >
-                  <span className="text-accent font-mono text-sm">{link.num}</span>
-                  <span className="text-2xl sm:text-3xl font-bold text-theme-primary hover:text-accent transition-colors">
+                  <span className="text-theme-muted font-mono text-sm">{link.num}</span>
+                  <span className="text-2xl sm:text-3xl font-bold text-theme-primary hover:text-theme-secondary transition-colors">
                     {link.name}
                   </span>
                 </motion.a>

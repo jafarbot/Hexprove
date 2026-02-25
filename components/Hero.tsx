@@ -37,7 +37,7 @@ export default function Hero() {
       aria-label="Hexprove - Crypto-native QA experts"
       className="relative min-h-[100dvh] flex flex-col justify-center px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16 sm:pb-20 overflow-hidden bg-theme"
     >
-      <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto w-full">
+      <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto w-full overflow-visible">
         {/* Section indicator */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -46,9 +46,9 @@ export default function Hero() {
           className="flex items-center gap-4 mb-8 sm:mb-12"
           aria-hidden="true"
         >
-          <span className="text-accent font-mono text-sm">00</span>
+          <span className="text-theme-muted font-mono text-sm">00</span>
           <motion.div
-            className="h-px bg-accent"
+            className="h-px bg-theme-secondary"
             initial={{ width: 0 }}
             animate={{ width: 60 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -57,13 +57,14 @@ export default function Hero() {
         </motion.div>
 
         {/* Main headline */}
-        <header className="mb-6 sm:mb-8">
-          <h1 className="display-xl leading-[0.9]">
-            <div className="overflow-hidden">
+        <header className="mb-6 sm:mb-8 overflow-visible">
+          <h1 className="display-xl leading-[0.9] overflow-visible">
+            <div className="overflow-visible">
               <motion.div
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3, ease: [0.215, 0.61, 0.355, 1] }}
+                className="overflow-visible"
               >
                 <TextScramble 
                   text="Crypto-native" 
@@ -73,11 +74,12 @@ export default function Hero() {
                 />
               </motion.div>
             </div>
-            <div className="overflow-hidden">
+            <div className="overflow-visible">
               <motion.div
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.8, delay: 0.5, ease: [0.215, 0.61, 0.355, 1] }}
+                className="overflow-visible"
               >
                 <span className="gradient-text">
                   <TextScramble 
@@ -195,17 +197,12 @@ export default function Hero() {
           </span>
           <nav aria-label="Companies we have experience from" className="flex flex-wrap justify-center sm:justify-end items-center gap-4 sm:gap-8 md:gap-12">
             {companies.map((company, i) => (
-              <motion.span 
+              <span 
                 key={i} 
-                className={`text-sm sm:text-lg text-theme-secondary font-medium tracking-wide transition-colors cursor-default ${
-                  company === "Uniswap" ? "hover:text-[#FF007A]" : "hover:text-theme-primary"
-                }`}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 3.4 + i * 0.1 }}
+                className="text-sm sm:text-lg text-theme-secondary font-medium tracking-wide cursor-default"
               >
                 {company}
-              </motion.span>
+              </span>
             ))}
           </nav>
         </div>
@@ -225,7 +222,7 @@ export default function Hero() {
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-          className="w-px h-16 bg-gradient-to-b from-accent to-transparent"
+          className="w-px h-16 bg-gradient-to-b from-white/30 to-transparent"
         />
       </motion.div>
     </section>

@@ -19,8 +19,8 @@
   --glass-bg: rgba(10, 10, 10, 0.8);
   --glass-border: rgba(255, 255, 255, 0.08);
   --text-primary: #ffffff;
-  --text-secondary: #888888;
-  --text-muted: #555555;
+  --text-secondary: #a0a0a0;
+  --text-muted: #707070;
   --border-color: rgba(255, 255, 255, 0.1);
   --card-bg: #0a0a0a;
   --card-hover: #111111;
@@ -97,6 +97,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  letter-spacing: -0.03em;
+  font-size: 18px;
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 16px;
+  }
 }
 
 /* Hide scrollbar */
@@ -115,28 +124,13 @@ body {
    UTILITY CLASSES (theme-aware)
    ============================================ */
 
-/* Gradient text - same for both modes. Solid accent fallback for mobile when gradient doesn't paint (e.g. iOS Safari). */
+/* Gradient text - subtle white to gray, no green */
 .gradient-text {
-  color: var(--accent);
-  -webkit-transform: translateZ(0);
-}
-@supports (background-clip: text) or (-webkit-background-clip: text) {
-  .gradient-text {
-    background: linear-gradient(135deg, var(--accent) 0%, #00ff88 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-}
-/* Ensure gradient text is always visible on small viewports (real devices where gradient can fail to paint) */
-@media (max-width: 768px) {
-  .gradient-text {
-    color: var(--accent);
-    background: none;
-    -webkit-text-fill-color: var(--accent);
-    background-clip: unset;
-    -webkit-background-clip: unset;
-  }
+  color: var(--text-primary);
+  background: linear-gradient(135deg, #ffffff 0%, #888888 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Glass effect */
@@ -211,7 +205,7 @@ body {
 
 .card:hover {
   background-color: var(--card-hover);
-  border-color: var(--accent);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Tag */

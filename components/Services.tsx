@@ -9,31 +9,31 @@ const services = [
   {
     num: "01",
     title: "Manual QA Testing",
-    description: "Comprehensive testing by crypto-native experts who understand DeFi, NFT marketplaces, and Web3 UX. Includes test plan creation and documentation.",
+    description: "We don't just click around. We run a stack of real wallets, test on mainnet for high-value flows (in controlled conditions), and document chains can roll back. You'll get reproducible steps, video captures, and clear severity ratings — not 'something broke' tickets.",
     tags: ["Functional", "Regression", "Exploratory"],
   },
   {
     num: "02",
     title: "E2E Automation",
-    description: "Automated end-to-end testing with wallet mocking, transaction signing, and blockchain state verification.",
+    description: "End-to-end tests that understand Web3: wallet connections, signing prompts, transaction states and revert handling. We write suites with Playwright or Cypress that run in CI and catch regressions before your users do.",
     tags: ["Playwright", "Cypress", "CI/CD"],
   },
   {
     num: "03",
     title: "API Testing",
-    description: "Test the backbone of your app — RPC calls, price feed APIs, webhook events, and every third-party integration your product relies on.",
+    description: "Your frontend doesn't live in a vacuum. We verify the APIs and data sources you depend on — RPC reliability, price feed accuracy, webhook delivery — and catch silent failures before they reach your customers.",
     tags: ["REST / GraphQL", "WebSocket", "RPC"],
   },
   {
     num: "04",
     title: "dApp & Payments",
-    description: "Wallet connections, transactions, on/off-ramps, gas estimation, and chain-specific edge cases.",
+    description: "Wallet connections, transaction signing, gas estimation failures, and edge cases specific to on/off-ramps. We know what happens when a signer rejects at the wrong moment because we've shipped systems that handle it.",
     tags: ["Wallet Flows", "On/Off-Ramp", "Multi-chain"],
   },
   {
     num: "05",
     title: "Cross-Chain",
-    description: "Validate across Ethereum, L2s, and Solana. Bridge testing and network switching included.",
+    description: "Ethereum, L2s, Solana — we have accounts and test assets on all of them. We validate bridges, network switching behavior, and chain-specific validation logic so you don't ship a bridge integration that hasn't been tested end-to-end.",
     tags: ["Ethereum", "L2s", "Solana"],
   },
 ];

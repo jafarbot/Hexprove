@@ -90,19 +90,15 @@ function ExperienceRow({ exp, index }: { exp: typeof experiences[0]; index: numb
 
         {/* Type badge */}
         <div className="md:col-span-2 md:text-right">
-          <motion.span
-            className={`inline-block px-4 py-1.5 text-xs font-mono rounded-full uppercase tracking-wider border ${
-              exp.type === "Web3"
-                ? "text-accent border-accent"
-                : "text-blue-500 border-blue-500"
-            }`}
+          <span
+            className="inline-block px-4 py-1.5 text-xs font-mono rounded-full uppercase tracking-wider border text-theme-secondary"
             style={{
-              backgroundColor: exp.type === "Web3" ? "var(--accent-dim)" : "rgba(59, 130, 246, 0.1)",
+              backgroundColor: "var(--surface-50)",
+              borderColor: "var(--border-color)",
             }}
-            animate={{ scale: isHovered ? 1.05 : 1 }}
           >
             {exp.type}
-          </motion.span>
+          </span>
         </div>
       </div>
 
@@ -132,9 +128,9 @@ export default function Experience() {
               transition={{ duration: 0.6 }}
               className="flex items-center gap-4 mb-8"
             >
-              <span className="text-accent font-mono text-sm">04</span>
+              <span className="text-theme-muted font-mono text-sm">04</span>
               <motion.div
-                className="h-px bg-accent"
+                className="h-px bg-theme-secondary"
                 initial={{ width: 0 }}
                 animate={isInView ? { width: 60 } : {}}
                 transition={{ duration: 0.8, delay: 0.2 }}
