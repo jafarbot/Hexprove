@@ -1,115 +1,107 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { TextScramble } from "./animations";
 import { useSectionTracking } from "@/lib/useSectionTracking";
 
 const services = [
   {
     num: "01",
     title: "Manual QA Testing",
-    description:
-      "We run real wallets, test on mainnet for high-value flows, and document reproducible steps with video captures and severity ratings — not 'something broke' tickets.",
+    description: "We don't just click around. We run a stack of real wallets, test on mainnet for high-value flows (in controlled conditions), and document chains can roll back. You'll get reproducible steps, video captures, and clear severity ratings — not 'something broke' tickets.",
     tags: ["Functional", "Regression", "Exploratory"],
   },
   {
     num: "02",
     title: "E2E Automation",
-    description:
-      "End-to-end tests that understand Web3: wallet connections, signing prompts, transaction states and revert handling. Suites run in CI and catch regressions before your users do.",
+    description: "End-to-end tests that understand Web3: wallet connections, signing prompts, transaction states and revert handling. We write suites with Playwright or Cypress that run in CI and catch regressions before your users do.",
     tags: ["Playwright", "Cypress", "CI/CD"],
   },
   {
     num: "03",
     title: "API Testing",
-    description:
-      "We verify the APIs and data sources you depend on — RPC reliability, price feed accuracy, webhook delivery — and catch silent failures before they reach customers.",
+    description: "Your frontend doesn't live in a vacuum. We verify the APIs and data sources you depend on — RPC reliability, price feed accuracy, webhook delivery — and catch silent failures before they reach your customers.",
     tags: ["REST / GraphQL", "WebSocket", "RPC"],
   },
   {
     num: "04",
     title: "dApp & Payments",
-    description:
-      "Wallet connections, transaction signing, gas estimation failures, and edge cases specific to on/off-ramps. We know what happens when a signer rejects at the wrong moment.",
+    description: "Wallet connections, transaction signing, gas estimation failures, and edge cases specific to on/off-ramps. We know what happens when a signer rejects at the wrong moment because we've shipped systems that handle it.",
     tags: ["Wallet Flows", "On/Off-Ramp", "Multi-chain"],
   },
   {
     num: "05",
     title: "Cross-Chain",
-    description:
-      "Ethereum, L2s, Solana — we validate bridges, network switching behavior, and chain-specific validation logic so you don't ship untested integrations.",
+    description: "Ethereum, L2s, Solana — we have accounts and test assets on all of them. We validate bridges, network switching behavior, and chain-specific validation logic so you don't ship a bridge integration that hasn't been tested end-to-end.",
     tags: ["Ethereum", "L2s", "Solana"],
   },
 ];
 
-function ServiceCard({
-  service,
-  index,
-}: {
-  service: (typeof services)[0];
-  index: number;
-}) {
+function ServiceCard({ service, index }: { service: typeof services[0]; index: number }) {
+  const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLElement>(null);
   const isInView = useInView(cardRef, { once: true, margin: "-50px" });
 
   return (
     <motion.article
       ref={cardRef}
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group relative p-6 sm:p-8 rounded-xl border transition-all duration-300 hover:-translate-y-0.5"
-      style={{
-        backgroundColor: "var(--surface)",
-        borderColor: "var(--border-color)",
-      }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="group relative py-6 sm:py-8 cursor-pointer border-b"
+      style={{ borderColor: "var(--border-color)" }}
     >
-      {/* Hover glow */}
-      <div
-        className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-        style={{
-          border: "1px solid var(--accent-primary)",
-          boxShadow: "0 0 20px var(--accent-dim)",
-        }}
-        aria-hidden="true"
-      />
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-start">
+        {/* Number */}
+        <div className="md:col-span-1">
+          <span className="text-accent font-mono text-sm">{service.num}</span>
+        </div>
 
-      <div className="relative z-10">
-        {/* Number + Title */}
-        <div className="flex items-baseline gap-3 mb-4">
-          <span
-            className="font-mono text-sm font-semibold"
-            style={{ color: "var(--accent-primary)" }}
+        {/* Title */}
+        <div className="md:col-span-3">
+          <motion.h3
+            className="text-xl sm:text-2xl md:text-3xl font-semibold text-theme-primary"
+            animate={{ x: isHovered ? 10 : 0 }}
+            transition={{ duration: 0.3 }}
           >
-            {service.num}
-          </span>
-          <h3 className="text-xl sm:text-2xl font-bold text-theme-primary">
-            {service.title}
-          </h3>
+            <TextScramble text={service.title} duration={0.5} once={false} trigger={isHovered} />
+          </motion.h3>
         </div>
 
         {/* Description */}
-        <p className="text-base text-theme-secondary leading-relaxed mb-6">
-          {service.description}
-        </p>
+        <div className="md:col-span-5">
+          <p className="text-base sm:text-base text-theme-secondary">{service.description}</p>
+        </div>
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-2" role="list" aria-label="Technologies">
+        <div className="md:col-span-3 flex flex-wrap gap-2" role="list" aria-label="Service technologies">
           {service.tags.map((tag, i) => (
-            <span
+            <motion.span
               key={i}
               role="listitem"
-              className="px-3 py-1.5 text-xs font-mono rounded-full"
-              style={{
-                backgroundColor: "var(--tag-bg)",
-                color: "var(--tag-text)",
-              }}
+              initial={{ opacity: 0.5 }}
+              animate={{ opacity: isHovered ? 1 : 0.5 }}
+              className="px-4 py-2.5 text-xs font-mono rounded-full min-h-[44px] flex items-center"
+              style={{ backgroundColor: "var(--tag-bg)", color: "var(--tag-text)" }}
             >
               {tag}
-            </span>
+            </motion.span>
           ))}
         </div>
       </div>
+
+      {/* Hover indicator line */}
+      <motion.div
+        className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent"
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        style={{ transformOrigin: "top" }}
+        aria-hidden="true"
+      />
     </motion.article>
   );
 }
@@ -130,44 +122,31 @@ export default function Services() {
       className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 section-border bg-theme"
     >
       <div className="max-w-7xl mx-auto">
-        {/* 2-column layout: sticky label left, cards right */}
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16">
-          {/* Left: sticky label */}
-          <div className="lg:col-span-4 lg:sticky lg:top-24 lg:self-start">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6 }}
-              className="flex items-center gap-4 mb-6 sm:mb-8"
-            >
-              <span
-                className="font-mono text-sm"
-                style={{ color: "var(--accent-primary)" }}
-              >
-                02
-              </span>
-              <motion.div
-                className="h-px"
-                style={{ backgroundColor: "var(--accent-primary)" }}
-                initial={{ width: 0 }}
-                animate={isInView ? { width: 60 } : {}}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              />
-              <span className="text-theme-muted font-mono text-sm uppercase tracking-wider">
-                Services
-              </span>
-            </motion.div>
+        {/* Section header */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="flex items-center gap-4 mb-6 sm:mb-8"
+        >
+          <span className="text-accent font-mono text-sm">02</span>
+          <motion.div
+            className="h-px bg-accent"
+            initial={{ width: 0 }}
+            animate={isInView ? { width: 60 } : {}}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          />
+          <span className="text-theme-muted font-mono text-sm uppercase tracking-wider">Services</span>
+        </motion.div>
 
-            <header className="overflow-hidden mb-6">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
+          <div>
+            <header className="overflow-hidden">
               <motion.h2
                 className="display-lg"
                 initial={{ y: "100%" }}
                 animate={isInView ? { y: 0 } : {}}
-                transition={{
-                  duration: 0.8,
-                  delay: 0.2,
-                  ease: [0.215, 0.61, 0.355, 1],
-                }}
+                transition={{ duration: 0.8, delay: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
               >
                 What we
               </motion.h2>
@@ -175,42 +154,28 @@ export default function Services() {
                 className="display-lg gradient-text"
                 initial={{ y: "100%" }}
                 animate={isInView ? { y: 0 } : {}}
-                transition={{
-                  duration: 0.8,
-                  delay: 0.3,
-                  ease: [0.215, 0.61, 0.355, 1],
-                }}
+                transition={{ duration: 0.8, delay: 0.3, ease: [0.215, 0.61, 0.355, 1] }}
               >
                 deliver
               </motion.h2>
             </header>
-
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="text-lg text-theme-secondary leading-relaxed"
+              className="text-xl mt-6"
             >
-              <span
-                className="font-semibold"
-                style={{ color: "var(--accent-primary)" }}
-              >
-                Tailored to your product
-              </span>{" "}
-              — not one-size-fits-all packages.
+              <span className="text-accent font-semibold">Tailored to your product</span>
+              <span className="text-theme-secondary"> — not one-size-fits-all packages.</span>
             </motion.p>
           </div>
+        </div>
 
-          {/* Right: scrolling cards */}
-          <div
-            className="lg:col-span-8 space-y-4 sm:space-y-6"
-            role="list"
-            aria-label="Our QA testing services"
-          >
-            {services.map((service, index) => (
-              <ServiceCard key={index} service={service} index={index} />
-            ))}
-          </div>
+        {/* Services list */}
+        <div role="list" aria-label="Our QA testing services">
+          {services.map((service, index) => (
+            <ServiceCard key={index} service={service} index={index} />
+          ))}
         </div>
       </div>
     </section>

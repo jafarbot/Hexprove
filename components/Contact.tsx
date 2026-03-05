@@ -3,7 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { HoverText } from "./animations";
+import { TextScramble, MagneticButton, HoverText, CircuitTrace } from "./animations";
 import { Logo } from "./Logo";
 import { trackFormSubmit, trackOutboundLink } from "@/lib/analytics";
 import { useSectionTracking } from "@/lib/useSectionTracking";
@@ -37,157 +37,146 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
     const errors: { name?: string; email?: string; message?: string } = {};
 
     if (!formData.name.trim()) {
-      errors.name = "Name is required";
+      errors.name = 'Name is required';
     }
 
     if (!formData.email.trim()) {
-      errors.email = "Email is required";
+      errors.email = 'Email is required';
     } else {
+      // More strict email validation
       const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       const email = formData.email.trim().toLowerCase();
-
+      
       if (!emailRegex.test(email)) {
-        errors.email = "Please enter a valid email address";
+        errors.email = 'Please enter a valid email address';
       } else {
-        const domain = email.split("@")[1];
+        // Check for common typos in popular domains
+        const domain = email.split('@')[1];
         const commonDomainTypos: Record<string, string> = {
-          "gmial.com": "gmail.com",
-          "gmai.com": "gmail.com",
-          "gmil.com": "gmail.com",
-          "yahooo.com": "yahoo.com",
-          "yaho.com": "yahoo.com",
-          "hotmial.com": "hotmail.com",
-          "outlok.com": "outlook.com",
+          'gmial.com': 'gmail.com',
+          'gmai.com': 'gmail.com',
+          'gmil.com': 'gmail.com',
+          'yahooo.com': 'yahoo.com',
+          'yaho.com': 'yahoo.com',
+          'hotmial.com': 'hotmail.com',
+          'outlok.com': 'outlook.com',
         };
-
+        
         if (commonDomainTypos[domain]) {
-          errors.email = `Did you mean ${email.split("@")[0]}@${commonDomainTypos[domain]}?`;
+          errors.email = `Did you mean ${email.split('@')[0]}@${commonDomainTypos[domain]}?`;
         }
       }
     }
 
     if (!formData.message.trim()) {
-      errors.message = "Message is required";
+      errors.message = 'Message is required';
     }
 
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   }, [formData]);
 
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
 
-      if (!validateForm()) {
+    // Validate before submitting
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      let data: { error?: string; success?: boolean } = {};
+      try {
+        data = await res.json();
+      } catch {
+        setError(res.status === 500
+          ? 'Server error. Please try again in a moment or email us at team@hexprove.com.'
+          : 'Something went wrong. Please email us at team@hexprove.com.');
         return;
       }
 
-      setIsSubmitting(true);
-      setError(null);
-
-      try {
-        const res = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+      if (res.ok) {
+        setSubmitted(true);
+        trackFormSubmit('contact_form', {
+          source_page: window.location.pathname,
+          has_company: !!formData.company,
         });
+      } else {
+        const errorMessage = data.error || (res.status === 500
+          ? 'Server error. Please try again or email us at team@hexprove.com.'
+          : 'Failed to send. Please email us at team@hexprove.com.');
+        setError(errorMessage);
+      }
+    } catch (err) {
+      setError('Network error. Please check your connection or email us at team@hexprove.com.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [formData, validateForm]);
 
-        let data: { error?: string; success?: boolean } = {};
-        try {
-          data = await res.json();
-        } catch {
-          setError(
-            res.status === 500
-              ? "Server error. Please try again in a moment or email us at team@hexprove.com."
-              : "Something went wrong. Please email us at team@hexprove.com."
-          );
-          return;
-        }
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear field error when user starts typing
+    if (fieldErrors[name as keyof typeof fieldErrors]) {
+      setFieldErrors(prev => ({ ...prev, [name]: undefined }));
+    }
+  }, [fieldErrors]);
 
-        if (res.ok) {
-          setSubmitted(true);
-          trackFormSubmit("contact_form", {
-            source_page: window.location.pathname,
-            has_company: !!formData.company,
-          });
+  const handleBlur = useCallback((fieldName: string) => {
+    // Validate individual field on blur
+    const errors: { name?: string; email?: string; message?: string } = {};
+    
+    if (fieldName === 'name' && !formData.name.trim()) {
+      errors.name = 'Name is required';
+    }
+    
+    if (fieldName === 'email') {
+      if (!formData.email.trim()) {
+        errors.email = 'Email is required';
+      } else {
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const email = formData.email.trim().toLowerCase();
+        
+        if (!emailRegex.test(email)) {
+          errors.email = 'Please enter a valid email address';
         } else {
-          const errorMessage =
-            data.error ||
-            (res.status === 500
-              ? "Server error. Please try again or email us at team@hexprove.com."
-              : "Failed to send. Please email us at team@hexprove.com.");
-          setError(errorMessage);
-        }
-      } catch (err) {
-        setError(
-          "Network error. Please check your connection or email us at team@hexprove.com."
-        );
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [formData, validateForm]
-  );
-
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({ ...prev, [name]: value }));
-      if (fieldErrors[name as keyof typeof fieldErrors]) {
-        setFieldErrors((prev) => ({ ...prev, [name]: undefined }));
-      }
-    },
-    [fieldErrors]
-  );
-
-  const handleBlur = useCallback(
-    (fieldName: string) => {
-      const errors: { name?: string; email?: string; message?: string } = {};
-
-      if (fieldName === "name" && !formData.name.trim()) {
-        errors.name = "Name is required";
-      }
-
-      if (fieldName === "email") {
-        if (!formData.email.trim()) {
-          errors.email = "Email is required";
-        } else {
-          const emailRegex =
-            /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-          const email = formData.email.trim().toLowerCase();
-
-          if (!emailRegex.test(email)) {
-            errors.email = "Please enter a valid email address";
-          } else {
-            const domain = email.split("@")[1];
-            const commonDomainTypos: Record<string, string> = {
-              "gmial.com": "gmail.com",
-              "gmai.com": "gmail.com",
-              "gmil.com": "gmail.com",
-              "yahooo.com": "yahoo.com",
-              "yaho.com": "yahoo.com",
-              "hotmial.com": "hotmail.com",
-              "outlok.com": "outlook.com",
-            };
-
-            if (commonDomainTypos[domain]) {
-              errors.email = `Did you mean ${email.split("@")[0]}@${commonDomainTypos[domain]}?`;
-            }
+          const domain = email.split('@')[1];
+          const commonDomainTypos: Record<string, string> = {
+            'gmial.com': 'gmail.com',
+            'gmai.com': 'gmail.com',
+            'gmil.com': 'gmail.com',
+            'yahooo.com': 'yahoo.com',
+            'yaho.com': 'yahoo.com',
+            'hotmial.com': 'hotmail.com',
+            'outlok.com': 'outlook.com',
+          };
+          
+          if (commonDomainTypos[domain]) {
+            errors.email = `Did you mean ${email.split('@')[0]}@${commonDomainTypos[domain]}?`;
           }
         }
       }
-
-      if (fieldName === "message" && !formData.message.trim()) {
-        errors.message = "Message is required";
-      }
-
-      setFieldErrors((prev) => ({ ...prev, ...errors }));
-    },
-    [formData]
-  );
+    }
+    
+    if (fieldName === 'message' && !formData.message.trim()) {
+      errors.message = 'Message is required';
+    }
+    
+    setFieldErrors(prev => ({ ...prev, ...errors }));
+  }, [formData]);
 
   return (
-    <section
+    <section 
       id="contact"
       ref={(node) => {
         (sectionRef as any).current = node;
@@ -196,181 +185,99 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
       aria-label="Contact Hexprove for QA consulting"
       className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 section-border relative overflow-hidden bg-theme"
     >
+      {/* Subtle static background gradient */}
+      <div
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[400px] sm:w-[800px] h-[400px] sm:h-[800px] rounded-full blur-3xl"
+        style={{ background: "radial-gradient(circle, var(--accent-dim) 0%, transparent 70%)" }}
+        aria-hidden="true"
+      />
+
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={isInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="flex items-center gap-4 mb-6 sm:mb-8"
-        >
-          <span className="text-theme-muted font-mono text-sm">07</span>
-          <motion.div
-            className="h-px bg-theme-secondary"
-            initial={{ width: 0 }}
-            animate={isInView ? { width: 60 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          />
-          <span className="text-theme-muted font-mono text-sm uppercase tracking-wider">
-            Contact
-          </span>
-        </motion.div>
-
-        <header className="overflow-hidden mb-6">
-          <motion.h2
-            className="display-lg"
-            initial={{ y: "100%" }}
-            animate={isInView ? { y: 0 } : {}}
-            transition={{
-              duration: 0.8,
-              delay: 0.2,
-              ease: [0.215, 0.61, 0.355, 1],
-            }}
-          >
-            Let&apos;s
-          </motion.h2>
-          <motion.h2
-            className="display-lg gradient-text"
-            initial={{ y: "100%" }}
-            animate={isInView ? { y: 0 } : {}}
-            transition={{
-              duration: 0.8,
-              delay: 0.3,
-              ease: [0.215, 0.61, 0.355, 1],
-            }}
-          >
-            talk
-          </motion.h2>
-        </header>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-lg sm:text-xl text-theme-secondary mb-12 sm:mb-16 max-w-2xl"
-        >
-          Ready to upgrade your QA? Book a 30-minute intro call or send us a
-          message.
-        </motion.p>
-
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
-          {/* Left: Calendly prominent */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.5 }}
-          >
-            {/* Calendly CTA card */}
-            <div
-              className="p-8 sm:p-10 rounded-2xl mb-8"
-              style={{
-                backgroundColor: "var(--surface)",
-                border: "1px solid var(--border-color)",
-              }}
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-24">
+          {/* Left side */}
+          <div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.6 }}
+              className="flex items-center gap-4 mb-6 sm:mb-8"
             >
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center mb-6"
-                style={{ backgroundColor: "var(--accent-dim)" }}
+              <span className="text-theme-muted font-mono text-sm">07</span>
+              <motion.div
+                className="h-px bg-theme-secondary"
+                initial={{ width: 0 }}
+                animate={isInView ? { width: 60 } : {}}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              />
+              <span className="text-theme-muted font-mono text-sm uppercase tracking-wider">Contact</span>
+            </motion.div>
+
+            <header className="overflow-hidden mb-6 sm:mb-8">
+              <motion.h2
+                className="display-lg"
+                initial={{ y: "100%" }}
+                animate={isInView ? { y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
               >
-                <svg
-                  className="w-6 h-6"
-                  style={{ color: "var(--accent-primary)" }}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-
-              <h3 className="text-2xl font-bold text-theme-primary mb-2">
-                Book a Call
-              </h3>
-              <p className="text-theme-secondary mb-6">
-                30-minute intro call. No sales pitch — just a conversation about
-                your QA needs.
-              </p>
-
-              <a
-                href="https://calendly.com/hexprove/intro"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() =>
-                  trackOutboundLink(
-                    "Schedule on Calendly",
-                    "https://calendly.com/hexprove/intro",
-                    "contact_calendly"
-                  )
-                }
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-base transition-all duration-300"
-                style={{
-                  backgroundColor: "var(--accent-primary)",
-                  color: "#ffffff",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor =
-                    "var(--accent-hover)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundColor =
-                    "var(--accent-primary)")
-                }
+                Let&apos;s
+              </motion.h2>
+              <motion.h2
+                className="display-lg gradient-text"
+                initial={{ y: "100%" }}
+                animate={isInView ? { y: 0 } : {}}
+                transition={{ duration: 0.8, delay: 0.3, ease: [0.215, 0.61, 0.355, 1] }}
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
-                </svg>
-                Schedule on Calendly
-              </a>
-            </div>
+                <TextScramble text="talk" delay={0.5} duration={1} />
+              </motion.h2>
+            </header>
 
-            {/* Contact info */}
-            <address className="space-y-4 not-italic">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-lg sm:text-xl text-theme-secondary mb-8 sm:mb-12"
+            >
+              Ready to upgrade your QA? Tell us about your project.
+            </motion.p>
+
+            <motion.address
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="space-y-6 not-italic"
+            >
               <div>
-                <span className="text-sm text-theme-muted uppercase tracking-wider font-mono">
-                  Email
-                </span>
+                <span className="text-sm text-theme-muted uppercase tracking-wider">Email</span>
                 <a
                   href="mailto:team@hexprove.com"
-                  className="block text-xl sm:text-2xl font-semibold mt-1 text-theme-primary hover:text-theme-secondary transition-colors"
+                  className="block text-xl sm:text-2xl md:text-3xl font-semibold mt-2 text-theme-primary hover:text-theme-secondary transition-colors"
                 >
                   team@hexprove.com
                 </a>
               </div>
 
-              <div className="flex gap-6 pt-4">
-                <HoverText
-                  text="LinkedIn"
-                  href="https://www.linkedin.com/in/sinousmonov/"
+              <motion.div
+                className="flex gap-6 pt-6 sm:pt-8"
+                initial={{ opacity: 0 }}
+                animate={isInView ? { opacity: 1 } : {}}
+                transition={{ duration: 0.8, delay: 0.6 }}
+              >
+                <HoverText 
+                  text="LinkedIn" 
+                  href="https://www.linkedin.com/in/sinousmonov/" 
                   className="text-theme-muted hover:text-theme-primary min-h-[44px] flex items-center"
                   trackLocation="contact_footer"
                   onTrack={trackOutboundLink}
                 />
-              </div>
-            </address>
-          </motion.div>
+              </motion.div>
+            </motion.address>
+          </div>
 
-          {/* Right: Contact form */}
+          {/* Right side - Form */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
           >
             {submitted ? (
               <motion.div
@@ -394,8 +301,7 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                       initial={{ pathLength: 0 }}
                       animate={{ pathLength: 1 }}
                       transition={{ duration: 0.5, delay: 0.5 }}
-                      className="w-8 h-8 sm:w-10 sm:h-10"
-                      style={{ color: "var(--accent-primary)" }}
+                      className="w-8 h-8 sm:w-10 sm:h-10 text-accent"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -408,12 +314,11 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                       />
                     </motion.svg>
                   </motion.div>
-                  <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-theme-primary">
-                    Thank You
+                  <h3 className="text-2xl sm:text-3xl font-bold mb-4">
+                    <span className="text-theme-primary">Thank </span>
+                    <span className="text-accent">You</span>
                   </h3>
-                  <p className="text-theme-secondary mb-6">
-                    We&apos;ll be in touch within 24 hours.
-                  </p>
+                  <p className="text-theme-secondary mb-6">We&apos;ll be in touch within 24 hours.</p>
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -422,8 +327,7 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                     {blogPostCount < 3 ? (
                       <Link
                         href="/blog/truebit-26m-logic-bug"
-                        className="inline-flex items-center gap-2 font-medium"
-                        style={{ color: "var(--accent-primary)" }}
+                        className="inline-flex items-center gap-2 text-accent hover:underline font-medium"
                       >
                         While you wait: See how a $26M bug slipped through
                         <span aria-hidden="true">&rarr;</span>
@@ -431,8 +335,7 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                     ) : (
                       <Link
                         href="/blog"
-                        className="inline-flex items-center gap-2 font-medium"
-                        style={{ color: "var(--accent-primary)" }}
+                        className="inline-flex items-center gap-2 text-accent hover:underline font-medium"
                       >
                         Explore our insights
                         <span aria-hidden="true">&rarr;</span>
@@ -442,61 +345,26 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                 </div>
               </motion.div>
             ) : (
-              <form
-                onSubmit={handleSubmit}
-                className="space-y-5 sm:space-y-6"
-                noValidate
-              >
-                <h3 className="text-xl font-semibold text-theme-primary mb-2">
-                  Or send a message
-                </h3>
-
+              <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6" noValidate>
                 {[
-                  {
-                    name: "name",
-                    label: "Name",
-                    type: "text",
-                    placeholder: "Your name",
-                  },
-                  {
-                    name: "email",
-                    label: "Email",
-                    type: "email",
-                    placeholder: "you@company.com",
-                  },
-                  {
-                    name: "company",
-                    label: "Company",
-                    type: "text",
-                    placeholder: "Your company",
-                  },
+                  { name: "name", label: "Name", type: "text", placeholder: "Your name" },
+                  { name: "email", label: "Email", type: "email", placeholder: "you@company.com" },
+                  { name: "company", label: "Company", type: "text", placeholder: "Your company" },
                 ].map((field, index) => (
                   <motion.div
                     key={field.name}
                     initial={{ opacity: 0, y: 20 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.5, delay: 0.7 + index * 0.1 }}
+                    transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
                     className="relative"
                   >
                     <motion.label
                       htmlFor={field.name}
                       className="block text-sm font-medium mb-2 transition-colors"
-                      animate={{
-                        color:
-                          focusedField === field.name
-                            ? "var(--text-primary)"
-                            : "var(--text-muted)",
-                      }}
+                      animate={{ color: focusedField === field.name ? "var(--text-primary)" : "var(--text-muted)" }}
                     >
                       {field.label}
-                      {field.name !== "company" && (
-                        <span
-                          className="text-theme-secondary ml-1"
-                          aria-label="required"
-                        >
-                          *
-                        </span>
-                      )}
+                      {field.name !== "company" && <span className="text-theme-secondary ml-1" aria-label="required">*</span>}
                     </motion.label>
                     <input
                       type={field.type}
@@ -512,25 +380,19 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                       required={field.name !== "company"}
                       autoComplete={field.name}
                       className={`input-field w-full px-0 py-3 text-base sm:text-lg min-h-[48px] ${
-                        fieldErrors[field.name as keyof typeof fieldErrors]
-                          ? "border-theme-red"
-                          : ""
+                        fieldErrors[field.name as keyof typeof fieldErrors] 
+                          ? 'border-theme-red' 
+                          : ''
                       }`}
                       placeholder={field.placeholder}
                       aria-required={field.name !== "company"}
-                      aria-invalid={
-                        !!fieldErrors[field.name as keyof typeof fieldErrors]
-                      }
-                      aria-describedby={
-                        fieldErrors[field.name as keyof typeof fieldErrors]
-                          ? `${field.name}-error`
-                          : undefined
-                      }
+                      aria-invalid={!!fieldErrors[field.name as keyof typeof fieldErrors]}
+                      aria-describedby={fieldErrors[field.name as keyof typeof fieldErrors] ? `${field.name}-error` : undefined}
                     />
                     {fieldErrors[field.name as keyof typeof fieldErrors] && (
-                      <motion.span
-                        id={`${field.name}-error`}
-                        className="text-theme-red text-sm mt-2 block font-medium"
+                      <motion.span 
+                        id={`${field.name}-error`} 
+                        className="text-theme-red text-sm mt-2 block font-medium" 
                         role="alert"
                         initial={{ opacity: 0, y: -5 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -545,26 +407,16 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 1.0 }}
+                  transition={{ duration: 0.5, delay: 0.8 }}
                   className="relative"
                 >
                   <motion.label
                     htmlFor="message"
                     className="block text-sm font-medium mb-2"
-                    animate={{
-                      color:
-                        focusedField === "message"
-                          ? "var(--text-primary)"
-                          : "var(--text-muted)",
-                    }}
+                    animate={{ color: focusedField === "message" ? "var(--text-primary)" : "var(--text-muted)" }}
                   >
                     Message
-                    <span
-                      className="text-theme-secondary ml-1"
-                      aria-label="required"
-                    >
-                      *
-                    </span>
+                    <span className="text-theme-secondary ml-1" aria-label="required">*</span>
                   </motion.label>
                   <textarea
                     id="message"
@@ -579,19 +431,17 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                     required
                     rows={4}
                     className={`input-field w-full px-0 py-3 resize-none text-base sm:text-lg ${
-                      fieldErrors.message ? "border-theme-red" : ""
+                      fieldErrors.message ? 'border-theme-red' : ''
                     }`}
                     placeholder="Tell us about your project..."
                     aria-required="true"
                     aria-invalid={!!fieldErrors.message}
-                    aria-describedby={
-                      fieldErrors.message ? "message-error" : undefined
-                    }
+                    aria-describedby={fieldErrors.message ? "message-error" : undefined}
                   />
                   {fieldErrors.message && (
-                    <motion.span
-                      id="message-error"
-                      className="text-theme-red text-sm mt-2 block font-medium"
+                    <motion.span 
+                      id="message-error" 
+                      className="text-theme-red text-sm mt-2 block font-medium" 
                       role="alert"
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -610,16 +460,8 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                     role="alert"
                   >
                     <div className="flex items-start gap-2">
-                      <svg
-                        className="w-5 h-5 flex-shrink-0 mt-0.5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                          clipRule="evenodd"
-                        />
+                      <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                       </svg>
                       <span className="font-medium">{error}</span>
                     </div>
@@ -629,44 +471,28 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 1.1 }}
+                  transition={{ duration: 0.5, delay: 0.9 }}
                   className="pt-4"
                 >
-                  <button
+                  <MagneticButton
                     type="submit"
-                    className="w-full py-4 font-semibold rounded-full min-h-[52px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all duration-300"
-                    style={{
-                      backgroundColor: "var(--surface-elevated)",
-                      color: "var(--text-primary)",
-                      border: "1px solid var(--border-color)",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = "var(--accent-primary)";
-                      e.currentTarget.style.backgroundColor = "var(--accent-dim)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = "var(--border-color)";
-                      e.currentTarget.style.backgroundColor = "var(--surface-elevated)";
-                    }}
+                    className="w-full py-4 btn-primary font-semibold rounded-full min-h-[52px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    strength={0.1}
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
                       <>
                         <motion.div
                           animate={{ rotate: 360 }}
-                          transition={{
-                            duration: 1,
-                            repeat: Infinity,
-                            ease: "linear",
-                          }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                           className="w-5 h-5 border-2 border-current border-t-transparent rounded-full"
                         />
                         <span>Sending...</span>
                       </>
                     ) : (
-                      "Send Message"
+                      'Send Message'
                     )}
-                  </button>
+                  </MagneticButton>
                 </motion.div>
               </form>
             )}
@@ -687,39 +513,21 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
             <motion.div
               whileHover={{ scale: 1.1 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              style={{ color: "var(--accent-primary)" }}
+              className="text-accent"
             >
               <Logo size={24} />
             </motion.div>
-            <span className="font-semibold text-theme-primary group-hover:text-theme-secondary transition-colors">
-              Hexprove
-            </span>
+            <span className="font-semibold text-theme-primary group-hover:text-theme-secondary transition-colors">Hexprove</span>
           </Link>
-
-          <nav
-            className="flex gap-6 sm:gap-8 text-sm"
-            aria-label="Footer navigation"
-          >
-            <HoverText
-              text="Privacy"
-              href="/privacy"
-              className="text-theme-muted min-h-[44px] flex items-center"
-            />
-            <HoverText
-              text="Terms"
-              href="/terms"
-              className="text-theme-muted min-h-[44px] flex items-center"
-            />
-            <HoverText
-              text="Cookie Policy"
-              href="/cookie-policy"
-              className="text-theme-muted min-h-[44px] flex items-center"
-            />
+          
+          <nav className="flex gap-6 sm:gap-8 text-sm" aria-label="Footer navigation">
+            <HoverText text="Privacy" href="/privacy" className="text-theme-muted min-h-[44px] flex items-center" />
+            <HoverText text="Terms" href="/terms" className="text-theme-muted min-h-[44px] flex items-center" />
+            <HoverText text="Cookie Policy" href="/cookie-policy" className="text-theme-muted min-h-[44px] flex items-center" />
           </nav>
-
+          
           <div className="text-sm text-theme-muted font-mono">
-            <span aria-label="Copyright">&copy;</span>{" "}
-            {new Date().getFullYear()} Hexprove LLC
+            <span aria-label="Copyright">&copy;</span> {new Date().getFullYear()} Hexprove LLC
           </div>
         </div>
       </motion.footer>
