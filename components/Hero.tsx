@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import { TextScramble, CharReveal } from "./animations";
+
 import { AnimatedCounter } from "./animations";
 import { MagneticButton } from "./animations";
 import { trackCtaClick } from "@/lib/analytics";
@@ -59,41 +59,25 @@ export default function Hero() {
         {/* Main headline */}
         <header className="mb-6 sm:mb-8 overflow-visible">
           <h1 className="display-xl leading-[0.9] overflow-visible">
-            <div className="overflow-visible">
-              <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3, ease: [0.215, 0.61, 0.355, 1] }}
-                className="overflow-visible"
-              >
-                <TextScramble 
-                  text="Crypto-native" 
-                  className="block"
-                  delay={0.5}
-                  duration={1.2}
-                />
-              </motion.div>
-            </div>
-            <div className="overflow-visible">
-              <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.8, delay: 0.5, ease: [0.215, 0.61, 0.355, 1] }}
-                className="overflow-visible"
-              >
-                <span className="gradient-text">
-                  <TextScramble 
-                    text="QA experts" 
-                    delay={0.8}
-                    duration={1.2}
-                  />
-                </span>
-              </motion.div>
-            </div>
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.215, 0.61, 0.355, 1] }}
+              className="block"
+            >
+              We break DeFi protocols
+            </motion.span>
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5, ease: [0.215, 0.61, 0.355, 1] }}
+              className="block gradient-text"
+            >
+              before hackers do.
+            </motion.span>
           </h1>
         </header>
 
-        {/* Subtitle */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -101,18 +85,7 @@ export default function Hero() {
           className="max-w-3xl mb-6 sm:mb-12"
         >
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-theme-secondary leading-relaxed">
-            <CharReveal 
-              text="The only QA team built from inside crypto — not trained on it."
-              delay={1.2}
-              staggerDelay={0.02}
-            />
-          </p>
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-theme-secondary leading-relaxed mt-2">
-            <CharReveal 
-              text="Built QA for products processing billions. Now building yours."
-              delay={1.8}
-              staggerDelay={0.02}
-            />
+            Crypto-native QA from the team that tested billions in on-chain volume.
           </p>
         </motion.div>
 
@@ -141,15 +114,6 @@ export default function Hero() {
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </motion.svg>
-          </MagneticButton>
-
-          <MagneticButton
-            href="/about"
-            className="inline-flex items-center justify-center px-6 sm:px-8 py-4 btn-secondary font-medium rounded-full min-h-[48px]"
-            strength={0.2}
-            onClick={() => trackCtaClick('hero', 'Learn More', '/about')}
-          >
-            Learn More
           </MagneticButton>
         </motion.div>
 

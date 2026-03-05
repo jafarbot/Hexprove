@@ -2,25 +2,27 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { TextScramble, HoverText } from "./animations";
+import { Shield, Target, Sliders } from "lucide-react";
 import { useSectionTracking } from "@/lib/useSectionTracking";
 
-const comparisons = [
+const pillars = [
   {
-    them: "Different tester every week",
-    us: "Same dedicated team, every sprint",
+    icon: Shield,
+    title: "Crypto-Native",
+    description:
+      "We've shipped and tested DeFi protocols, NFT platforms, and trading systems. We don't Google \"what is a blockchain\" — we live it. Wallet flows, gas edge cases, chain-specific quirks — it's muscle memory.",
   },
   {
-    them: "Report gas fees as bugs",
-    us: "Native understanding of wallets & DeFi",
+    icon: Target,
+    title: "Battle-Tested",
+    description:
+      "Experience from teams at Uniswap, OpenSea, Bloomberg, and Tradeweb. We've caught the bugs that cost millions — before they shipped. Our playbooks come from real war stories, not textbooks.",
   },
   {
-    them: "No context continuity",
-    us: "Deep product knowledge that grows",
-  },
-  {
-    them: "Generic testing playbooks",
-    us: "Crypto-specific edge cases from day one",
+    icon: Sliders,
+    title: "Flexible",
+    description:
+      "No long-term contracts required. Need a 2-week sprint before launch? A dedicated team every cycle? An embedded QA lead? We scale to your stage and ship on your timeline.",
   },
 ];
 
@@ -30,8 +32,8 @@ export default function WhyChooseUs() {
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
-    <section 
-      id="about" 
+    <section
+      id="about"
       ref={(node) => {
         (sectionRef as any).current = node;
         (trackingRef as any).current = node;
@@ -39,138 +41,111 @@ export default function WhyChooseUs() {
       aria-label="Why choose Hexprove for crypto QA"
       className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 section-border relative overflow-hidden bg-theme"
     >
-      {/* Background decoration - neutral gray */}
-      <motion.div
-        className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 rounded-full"
-        style={{
-          background: "radial-gradient(circle, var(--accent-dim) 0%, transparent 70%)",
-        }}
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.5, 0.3, 0.5],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        aria-hidden="true"
-      />
-
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section header */}
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-24 mb-12 sm:mb-20">
-          <div>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6 }}
-              className="flex items-center gap-4 mb-6 sm:mb-8"
-            >
-              <span className="text-theme-muted font-mono text-sm">01</span>
-              <motion.div
-                className="h-px bg-theme-secondary"
-                initial={{ width: 0 }}
-                animate={isInView ? { width: 60 } : {}}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              />
-              <span className="text-theme-muted font-mono text-sm uppercase tracking-wider">About</span>
-            </motion.div>
-
-            <header className="overflow-hidden">
-              <motion.h2
-                className="display-lg"
-                initial={{ y: "100%" }}
-                animate={isInView ? { y: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
-              >
-                Why
-              </motion.h2>
-              <motion.h2
-                className="display-lg gradient-text"
-                initial={{ y: "100%" }}
-                animate={isInView ? { y: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.3, ease: [0.215, 0.61, 0.355, 1] }}
-              >
-                <TextScramble text="Hexprove" delay={0.5} duration={1} />
-              </motion.h2>
-            </header>
-          </div>
-          
+        <div className="mb-16 sm:mb-20 max-w-3xl">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="lg:pt-24"
+            initial={{ opacity: 0, x: -20 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="flex items-center gap-4 mb-6 sm:mb-8"
           >
-            <p className="text-lg sm:text-xl text-theme-secondary leading-relaxed mb-4 sm:mb-6">
-              Try hiring a QA vendor for your crypto product. You&apos;ll get testers
-              who&apos;ve never connected a wallet, rotating staff who lose context
-              every week, and bug reports that flag gas fees as defects.
-            </p>
-            <p className="text-lg sm:text-xl text-theme-muted leading-relaxed">
-              There&apos;s no QA shop that actually focuses on crypto. So we built one.
-              Hexprove is staffed by people who&apos;ve shipped and tested DeFi, NFT platforms,
-              and trading systems — not people who Googled &quot;what is a blockchain&quot; last Tuesday.
-            </p>
+            <span className="text-theme-muted font-mono text-sm">01</span>
+            <motion.div
+              className="h-px"
+              style={{ backgroundColor: "var(--text-secondary)" }}
+              initial={{ width: 0 }}
+              animate={isInView ? { width: 60 } : {}}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            />
+            <span className="text-theme-muted font-mono text-sm uppercase tracking-wider">
+              Why Hexprove
+            </span>
           </motion.div>
-        </div>
 
-        {/* Comparison grid */}
-        <div className="grid sm:grid-cols-2 gap-1" role="list" aria-label="Comparison between crowdsourced vendors and Hexprove">
-          {comparisons.map((item, index) => (
-            <motion.article
-              key={index}
-              role="listitem"
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.5 + index * 0.1 }}
-              className="group relative p-6 sm:p-8 hover:bg-theme-surface transition-all duration-500"
-              style={{ backgroundColor: "var(--surface-50)" }}
+          <header className="overflow-hidden">
+            <motion.h2
+              className="display-lg"
+              initial={{ y: "100%" }}
+              animate={isInView ? { y: 0 } : {}}
+              transition={{
+                duration: 0.8,
+                delay: 0.2,
+                ease: [0.215, 0.61, 0.355, 1],
+              }}
             >
-              {/* Hover line */}
-              <motion.div
-                className="absolute left-0 top-0 bottom-0 w-1 bg-accent"
-                initial={{ scaleY: 0 }}
-                whileHover={{ scaleY: 1 }}
-                transition={{ duration: 0.3 }}
-                style={{ transformOrigin: "top" }}
-                aria-hidden="true"
-              />
-
-              <div className="mb-4 sm:mb-6">
-                <span className="inline-block px-4 py-2.5 text-xs font-mono rounded-full uppercase tracking-wider text-theme-red bg-theme-red min-h-[44px]">
-                  Them
-                </span>
-                <p className="text-theme-muted mt-3 line-through text-base sm:text-base" style={{ textDecorationColor: "var(--text-muted)" }}>
-                  {item.them}
-                </p>
-              </div>
-              <div>
-                <span className="inline-block px-4 py-2.5 text-xs font-mono text-theme-primary rounded-full uppercase tracking-wider min-h-[44px]" style={{ backgroundColor: "var(--surface-100)" }}>
-                  Hexprove
-                </span>
-                <p className="text-theme-primary mt-3 font-medium text-base sm:text-lg">
-                  {item.us}
-                </p>
-              </div>
-            </motion.article>
-          ))}
+              Built different
+            </motion.h2>
+            <motion.h2
+              className="display-lg gradient-text"
+              initial={{ y: "100%" }}
+              animate={isInView ? { y: 0 } : {}}
+              transition={{
+                duration: 0.8,
+                delay: 0.3,
+                ease: [0.215, 0.61, 0.355, 1],
+              }}
+            >
+              for crypto
+            </motion.h2>
+          </header>
         </div>
 
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="mt-12 sm:mt-16 text-center"
+        {/* 3-column grid */}
+        <div
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          role="list"
+          aria-label="Why choose Hexprove"
         >
-          <HoverText 
-            text="See what we catch →" 
-            href="/services"
-            className="text-theme-secondary hover:text-theme-primary text-base sm:text-lg min-h-[44px] inline-flex items-center"
-          />
-        </motion.div>
+          {pillars.map((pillar, index) => {
+            const IconComponent = pillar.icon;
+            return (
+              <motion.article
+                key={index}
+                role="listitem"
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.4 + index * 0.15 }}
+                className="group relative p-8 sm:p-10 rounded-2xl border transition-all duration-300 hover:-translate-y-1"
+                style={{
+                  backgroundColor: "var(--surface)",
+                  borderColor: "var(--border-color)",
+                }}
+              >
+                {/* Hover border glow */}
+                <div
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  style={{
+                    border: "1px solid var(--accent-primary)",
+                    boxShadow: "0 0 20px var(--accent-dim)",
+                  }}
+                  aria-hidden="true"
+                />
+
+                {/* Icon */}
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-6"
+                  style={{ backgroundColor: "var(--accent-dim)" }}
+                >
+                  <IconComponent
+                    className="w-6 h-6"
+                    style={{ color: "var(--accent-primary)" }}
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
+                </div>
+
+                {/* Content */}
+                <h3 className="text-xl sm:text-2xl font-bold text-theme-primary mb-3">
+                  {pillar.title}
+                </h3>
+                <p className="text-base text-theme-secondary leading-relaxed">
+                  {pillar.description}
+                </p>
+              </motion.article>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

@@ -2,175 +2,155 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { TextScramble } from "./animations";
-
-const values = [
-  { 
-    title: "Consistent", 
-    subtitle: "Quality",
-    desc: "Same team, same standards, every sprint" 
-  },
-  { 
-    title: "Growing", 
-    subtitle: "Expertise",
-    desc: "We learn your product deeper each cycle" 
-  },
-  { 
-    title: "Direct", 
-    subtitle: "Communication",
-    desc: "No middlemen, no ticket queues" 
-  },
-];
+import { trackOutboundLink } from "@/lib/analytics";
 
 export default function Team() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
-    <section 
+    <section
       id="team"
       ref={sectionRef}
-      aria-label="Our dedicated QA team approach"
+      aria-label="Meet the founder"
       className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 section-border bg-theme"
     >
       <div className="max-w-7xl mx-auto">
-        {/* Section header */}
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 mb-12 sm:mb-20">
-          <div>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6 }}
-              className="flex items-center gap-4 mb-6 sm:mb-8"
+        {/* Section label */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="flex items-center gap-4 mb-6 sm:mb-8"
+        >
+          <span className="text-theme-muted font-mono text-sm">05</span>
+          <motion.div
+            className="h-px bg-theme-secondary"
+            initial={{ width: 0 }}
+            animate={isInView ? { width: 60 } : {}}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          />
+          <span className="text-theme-muted font-mono text-sm uppercase tracking-wider">
+            Founder
+          </span>
+        </motion.div>
+
+        {/* Founder spotlight */}
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          {/* Photo placeholder */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="lg:col-span-4"
+          >
+            <div
+              className="relative w-full aspect-square max-w-sm mx-auto rounded-2xl overflow-hidden"
+              style={{
+                backgroundColor: "var(--surface)",
+                border: "1px solid var(--border-color)",
+              }}
             >
-              <span className="text-theme-muted font-mono text-sm">05</span>
-              <motion.div
-                className="h-px bg-theme-secondary"
-                initial={{ width: 0 }}
-                animate={isInView ? { width: 60 } : {}}
-                transition={{ duration: 0.8, delay: 0.2 }}
+              {/* Gradient overlay */}
+              <div
+                className="absolute inset-0 rounded-2xl"
+                style={{
+                  background:
+                    "linear-gradient(135deg, var(--accent-dim) 0%, transparent 60%)",
+                }}
+                aria-hidden="true"
               />
-              <span className="text-theme-muted font-mono text-sm uppercase tracking-wider">Team</span>
-            </motion.div>
+              {/* Initials fallback */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span
+                  className="text-6xl sm:text-7xl font-bold"
+                  style={{ color: "var(--accent-primary)" }}
+                >
+                  SM
+                </span>
+              </div>
+            </div>
+          </motion.div>
 
-            <header className="overflow-hidden">
-              <motion.h2
-                className="display-lg"
-                initial={{ y: "100%" }}
-                animate={isInView ? { y: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
-              >
-                Your dedicated
-              </motion.h2>
-              <motion.h2
-                className="display-lg gradient-text"
-                initial={{ y: "100%" }}
-                animate={isInView ? { y: 0 } : {}}
-                transition={{ duration: 0.8, delay: 0.3, ease: [0.215, 0.61, 0.355, 1] }}
-              >
-                <TextScramble text="team" delay={0.5} duration={1} />
-              </motion.h2>
-            </header>
-          </div>
-
+          {/* Bio */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="lg:pt-24"
+            className="lg:col-span-8"
           >
-            <p className="text-lg sm:text-xl text-theme-secondary leading-relaxed">
-              Not a rotating cast of crowdsourced testers. The same expert QA team, 
-              sprint after sprint.
+            <h2 className="display-lg mb-2">Sino Monov</h2>
+            <p
+              className="text-lg font-mono mb-6"
+              style={{ color: "var(--accent-primary)" }}
+            >
+              Founder & CEO
             </p>
-          </motion.div>
-        </div>
 
-        {/* Quote block */}
-        <motion.blockquote
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="relative mb-12 sm:mb-20 py-10 sm:py-16 px-6 sm:px-8 lg:px-16 rounded-2xl"
-          style={{ border: "1px solid var(--border-color)" }}
-        >
-          {/* Corner accents */}
-          <div className="absolute top-0 left-4 sm:left-8 w-6 sm:w-8 h-6 sm:h-8 border-t-2 border-l-2 rounded-tl-lg" style={{ borderColor: "var(--border-color)" }} aria-hidden="true" />
-          <div className="absolute bottom-0 right-4 sm:right-8 w-6 sm:w-8 h-6 sm:h-8 border-b-2 border-r-2 rounded-br-lg" style={{ borderColor: "var(--border-color)" }} aria-hidden="true" />
+            <div className="space-y-4 mb-8">
+              <p className="text-lg text-theme-secondary leading-relaxed">
+                Built QA programs at Bloomberg and Tradeweb. Led testing for
+                platforms handling billions in daily volume. Saw firsthand how
+                crypto products were shipping with QA vendors who had never
+                connected a wallet.
+              </p>
+              <p className="text-lg text-theme-secondary leading-relaxed">
+                Built the QA infrastructure at some of crypto's most recognized
+                names — including at Uniswap and OpenSea. Now building yours.
+              </p>
+            </div>
 
-          <div className="text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.7 }}
-            >
-              <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-theme-primary">
-                One team.
-              </span>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.8 }}
-            >
-              <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight gradient-text">
-                Your product.
-              </span>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.9 }}
-            >
-              <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-theme-muted">
-                Every sprint.
-              </span>
-            </motion.div>
-          </div>
-        </motion.blockquote>
+            {/* Credential pills */}
+            <div className="flex flex-wrap gap-3 mb-8">
+              {["Bloomberg", "Tradeweb", "Uniswap", "OpenSea"].map(
+                (company, i) => (
+                  <span
+                    key={i}
+                    className="px-4 py-2 text-sm font-mono rounded-full"
+                    style={{
+                      backgroundColor: "var(--surface-elevated)",
+                      color: "var(--text-secondary)",
+                      border: "1px solid var(--border-color)",
+                    }}
+                  >
+                    {company}
+                  </span>
+                )
+              )}
+            </div>
 
-        {/* Values */}
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-1" role="list" aria-label="Our core values">
-          {values.map((value, index) => (
-            <motion.article
-              key={index}
-              role="listitem"
-              initial={{ opacity: 0, y: 30 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 1 + index * 0.1 }}
-              whileHover={{ backgroundColor: "var(--surface-50)" }}
-              className="group p-6 sm:p-8 transition-all duration-300"
-              style={{ border: "1px solid var(--border-color)" }}
+            {/* LinkedIn link */}
+            <a
+              href="https://www.linkedin.com/in/sinousmonov/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() =>
+                trackOutboundLink(
+                  "Connect on LinkedIn",
+                  "https://www.linkedin.com/in/sinousmonov/",
+                  "founder_linkedin"
+                )
+              }
+              className="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-200"
+              style={{ color: "var(--accent-primary)" }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.color = "var(--accent-secondary)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.color = "var(--accent-primary)")
+              }
             >
-              <div className="mb-4">
-                <motion.h3
-                  className="text-2xl sm:text-3xl font-bold text-theme-primary"
-                  whileHover={{ x: 10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {value.title}
-                </motion.h3>
-                <motion.span
-                  className="text-2xl sm:text-3xl font-bold text-theme-secondary block"
-                  whileHover={{ x: 10 }}
-                  transition={{ duration: 0.2, delay: 0.05 }}
-                >
-                  {value.subtitle}
-                </motion.span>
-              </div>
-              <p className="text-sm sm:text-base text-theme-muted">{value.desc}</p>
-              
-              {/* Animated underline */}
-              <motion.div
-                className="h-px mt-4 sm:mt-6"
-                style={{ backgroundColor: "var(--border-color)" }}
-                initial={{ width: 0 }}
-                whileHover={{ width: "100%" }}
-                transition={{ duration: 0.3 }}
+              <svg
+                className="w-5 h-5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
                 aria-hidden="true"
-              />
-            </motion.article>
-          ))}
+              >
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+              </svg>
+              Connect on LinkedIn →
+            </a>
+          </motion.div>
         </div>
       </div>
     </section>
