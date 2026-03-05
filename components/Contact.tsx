@@ -188,7 +188,7 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
       {/* Subtle static background gradient */}
       <div
         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[400px] sm:w-[800px] h-[400px] sm:h-[800px] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, var(--accent-dim) 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%)" }}
         aria-hidden="true"
       />
 

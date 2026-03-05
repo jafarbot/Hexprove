@@ -47,6 +47,7 @@ export default function PageLoader() {
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-[9998] overflow-hidden"
             style={{
+              background: "radial-gradient(circle at center, rgba(0, 212, 170, 0.05) 0%, rgba(0, 0, 0, 1) 100%)",
               backgroundColor: "var(--background)",
             }}
           >
@@ -60,13 +61,12 @@ export default function PageLoader() {
                   opacity: { duration: 0.6, delay: 0.2 },
                   scale: { duration: 0.8, delay: 0.2, ease: "easeOut" },
                 }}
-                className="font-bold tracking-tighter leading-none text-center select-none"
+                className="text-white font-bold tracking-tighter leading-none text-center select-none"
                 style={{ 
                   fontSize: "clamp(3rem, 12vw, 10rem)",
                   textTransform: "uppercase",
                   fontWeight: 900,
                   letterSpacing: "-0.05em",
-                  color: "var(--text-primary)",
                 }}
               >
                 HEXPROVE
