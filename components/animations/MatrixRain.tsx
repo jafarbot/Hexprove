@@ -40,7 +40,7 @@ export function MatrixRain({ className = "" }: MatrixRainProps) {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Set text style
-      ctx.fillStyle = "#00d4aa"; // Teal color
+      ctx.fillStyle = "#00F5A0"; // Brand green color
       ctx.font = `${fontSize}px monospace`;
 
       // Draw characters
