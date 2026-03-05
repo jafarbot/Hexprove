@@ -87,7 +87,7 @@ export default function Navbar() {
             <motion.div
               whileHover={{ scale: 1.1 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="text-theme-primary"
+              className="text-accent"
             >
               <Logo size={32} />
             </motion.div>
@@ -103,7 +103,7 @@ export default function Navbar() {
                 onClick={(e) => handleNavClick(e, link)}
                 className="group relative text-sm text-theme-secondary hover:text-theme-primary transition-colors"
               >
-                <span className="text-theme-muted text-[10px] font-mono absolute -top-3 left-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-accent text-[10px] font-mono absolute -top-3 left-0 opacity-0 group-hover:opacity-100 transition-opacity">
                   {link.num}
                 </span>
                 <HoverText text={link.name} />
@@ -182,8 +182,8 @@ export default function Navbar() {
                   transition={{ delay: index * 0.1 }}
                   className="group flex items-center gap-4 min-h-[44px] py-2"
                 >
-                  <span className="text-theme-muted font-mono text-sm">{link.num}</span>
-                  <span className="text-2xl sm:text-3xl font-bold text-theme-primary hover:text-theme-secondary transition-colors">
+                  <span className="text-accent font-mono text-sm">{link.num}</span>
+                  <span className="text-2xl sm:text-3xl font-bold text-theme-primary hover:text-accent transition-colors">
                     {link.name}
                   </span>
                 </motion.a>

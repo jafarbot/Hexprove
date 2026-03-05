@@ -39,11 +39,11 @@ export default function WhyChooseUs() {
       aria-label="Why choose Hexprove for crypto QA"
       className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 section-border relative overflow-hidden bg-theme"
     >
-      {/* Background decoration - neutral gray */}
+      {/* Background decoration */}
       <motion.div
         className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 rounded-full"
         style={{
-          background: "radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%)",
+          background: "radial-gradient(circle, var(--accent-dim) 0%, transparent 70%)",
         }}
         animate={{
           scale: [1, 1.2, 1],
@@ -67,9 +67,9 @@ export default function WhyChooseUs() {
               transition={{ duration: 0.6 }}
               className="flex items-center gap-4 mb-6 sm:mb-8"
             >
-              <span className="text-theme-muted font-mono text-sm">01</span>
+              <span className="text-accent font-mono text-sm">01</span>
               <motion.div
-                className="h-px bg-theme-secondary"
+                className="h-px bg-accent"
                 initial={{ width: 0 }}
                 animate={isInView ? { width: 60 } : {}}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -147,7 +147,7 @@ export default function WhyChooseUs() {
                 </p>
               </div>
               <div>
-                <span className="inline-block px-4 py-2.5 text-xs font-mono text-theme-primary rounded-full uppercase tracking-wider min-h-[44px]" style={{ backgroundColor: "var(--surface-100)" }}>
+                <span className="inline-block px-4 py-2.5 text-xs font-mono text-accent rounded-full uppercase tracking-wider min-h-[44px]" style={{ backgroundColor: "var(--accent-dim)" }}>
                   Hexprove
                 </span>
                 <p className="text-theme-primary mt-3 font-medium text-base sm:text-lg">
@@ -168,7 +168,7 @@ export default function WhyChooseUs() {
           <HoverText 
             text="See what we catch →" 
             href="/services"
-            className="text-theme-secondary hover:text-theme-primary text-base sm:text-lg min-h-[44px] inline-flex items-center"
+            className="text-accent text-base sm:text-lg min-h-[44px] inline-flex items-center"
           />
         </motion.div>
       </div>

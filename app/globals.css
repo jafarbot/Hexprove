@@ -124,13 +124,28 @@ body {
    UTILITY CLASSES (theme-aware)
    ============================================ */
 
-/* Gradient text - subtle white to gray, no green */
+/* Gradient text - same for both modes. Solid accent fallback for mobile when gradient doesn't paint (e.g. iOS Safari). */
 .gradient-text {
-  color: var(--text-primary);
-  background: linear-gradient(135deg, #ffffff 0%, #888888 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--accent);
+  -webkit-transform: translateZ(0);
+}
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent) 0%, #00ff88 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+/* Ensure gradient text is always visible on small viewports (real devices where gradient can fail to paint) */
+@media (max-width: 768px) {
+  .gradient-text {
+    color: var(--accent);
+    background: none;
+    -webkit-text-fill-color: var(--accent);
+    background-clip: unset;
+    -webkit-background-clip: unset;
+  }
 }
 
 /* Glass effect */
@@ -205,7 +220,7 @@ body {
 
 .card:hover {
   background-color: var(--card-hover);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--accent);
 }
 
 /* Tag */

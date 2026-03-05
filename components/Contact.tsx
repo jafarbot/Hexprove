@@ -185,10 +185,14 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
       aria-label="Contact Hexprove for QA consulting"
       className="py-20 sm:py-32 px-4 sm:px-6 lg:px-8 section-border relative overflow-hidden bg-theme"
     >
-      {/* Subtle static background gradient */}
-      <div
+      {/* Background gradient */}
+      <motion.div
         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[400px] sm:w-[800px] h-[400px] sm:h-[800px] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, var(--accent-dim) 0%, transparent 70%)" }}
+        animate={{
+          scale: [1, 1.1, 1],
+        }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         aria-hidden="true"
       />
 
@@ -202,9 +206,9 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
               transition={{ duration: 0.6 }}
               className="flex items-center gap-4 mb-6 sm:mb-8"
             >
-              <span className="text-theme-muted font-mono text-sm">07</span>
+              <span className="text-accent font-mono text-sm">07</span>
               <motion.div
-                className="h-px bg-theme-secondary"
+                className="h-px bg-accent"
                 initial={{ width: 0 }}
                 animate={isInView ? { width: 60 } : {}}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -250,9 +254,9 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                 <span className="text-sm text-theme-muted uppercase tracking-wider">Email</span>
                 <a
                   href="mailto:team@hexprove.com"
-                  className="block text-xl sm:text-2xl md:text-3xl font-semibold mt-2 text-theme-primary hover:text-theme-secondary transition-colors"
+                  className="block text-xl sm:text-2xl md:text-3xl font-semibold mt-2 text-theme-primary hover:text-accent transition-colors"
                 >
-                  team@hexprove.com
+                  <HoverText text="team@hexprove.com" />
                 </a>
               </div>
 
@@ -361,10 +365,10 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                     <motion.label
                       htmlFor={field.name}
                       className="block text-sm font-medium mb-2 transition-colors"
-                      animate={{ color: focusedField === field.name ? "var(--text-primary)" : "var(--text-muted)" }}
+                      animate={{ color: focusedField === field.name ? "var(--accent)" : "var(--text-muted)" }}
                     >
                       {field.label}
-                      {field.name !== "company" && <span className="text-theme-secondary ml-1" aria-label="required">*</span>}
+                      {field.name !== "company" && <span className="text-accent ml-1" aria-label="required">*</span>}
                     </motion.label>
                     <input
                       type={field.type}
@@ -413,10 +417,10 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                   <motion.label
                     htmlFor="message"
                     className="block text-sm font-medium mb-2"
-                    animate={{ color: focusedField === "message" ? "var(--text-primary)" : "var(--text-muted)" }}
+                    animate={{ color: focusedField === "message" ? "var(--accent)" : "var(--text-muted)" }}
                   >
                     Message
-                    <span className="text-theme-secondary ml-1" aria-label="required">*</span>
+                    <span className="text-accent ml-1" aria-label="required">*</span>
                   </motion.label>
                   <textarea
                     id="message"
@@ -517,7 +521,7 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
             >
               <Logo size={24} />
             </motion.div>
-            <span className="font-semibold text-theme-primary group-hover:text-theme-secondary transition-colors">Hexprove</span>
+            <span className="font-semibold text-theme-primary group-hover:text-accent transition-colors">Hexprove</span>
           </Link>
           
           <nav className="flex gap-6 sm:gap-8 text-sm" aria-label="Footer navigation">

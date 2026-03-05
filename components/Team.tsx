@@ -43,9 +43,9 @@ export default function Team() {
               transition={{ duration: 0.6 }}
               className="flex items-center gap-4 mb-6 sm:mb-8"
             >
-              <span className="text-theme-muted font-mono text-sm">05</span>
+              <span className="text-accent font-mono text-sm">05</span>
               <motion.div
-                className="h-px bg-theme-secondary"
+                className="h-px bg-accent"
                 initial={{ width: 0 }}
                 animate={isInView ? { width: 60 } : {}}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -95,8 +95,8 @@ export default function Team() {
           style={{ border: "1px solid var(--border-color)" }}
         >
           {/* Corner accents */}
-          <div className="absolute top-0 left-4 sm:left-8 w-6 sm:w-8 h-6 sm:h-8 border-t-2 border-l-2 rounded-tl-lg" style={{ borderColor: "var(--border-color)" }} aria-hidden="true" />
-          <div className="absolute bottom-0 right-4 sm:right-8 w-6 sm:w-8 h-6 sm:h-8 border-b-2 border-r-2 rounded-br-lg" style={{ borderColor: "var(--border-color)" }} aria-hidden="true" />
+          <div className="absolute top-0 left-4 sm:left-8 w-6 sm:w-8 h-6 sm:h-8 border-t-2 border-l-2 border-accent rounded-tl-lg" aria-hidden="true" />
+          <div className="absolute bottom-0 right-4 sm:right-8 w-6 sm:w-8 h-6 sm:h-8 border-b-2 border-r-2 border-accent rounded-br-lg" aria-hidden="true" />
 
           <div className="text-center">
             <motion.div
@@ -151,7 +151,7 @@ export default function Team() {
                   {value.title}
                 </motion.h3>
                 <motion.span
-                  className="text-2xl sm:text-3xl font-bold text-theme-secondary block"
+                  className="text-2xl sm:text-3xl font-bold text-accent block"
                   whileHover={{ x: 10 }}
                   transition={{ duration: 0.2, delay: 0.05 }}
                 >
@@ -162,8 +162,7 @@ export default function Team() {
               
               {/* Animated underline */}
               <motion.div
-                className="h-px mt-4 sm:mt-6"
-                style={{ backgroundColor: "var(--border-color)" }}
+                className="h-px bg-accent mt-4 sm:mt-6"
                 initial={{ width: 0 }}
                 whileHover={{ width: "100%" }}
                 transition={{ duration: 0.3 }}

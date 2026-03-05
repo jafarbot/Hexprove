@@ -46,9 +46,9 @@ export default function Hero() {
           className="flex items-center gap-4 mb-8 sm:mb-12"
           aria-hidden="true"
         >
-          <span className="text-theme-muted font-mono text-sm">00</span>
+          <span className="text-accent font-mono text-sm">00</span>
           <motion.div
-            className="h-px bg-theme-secondary"
+            className="h-px bg-accent"
             initial={{ width: 0 }}
             animate={{ width: 60 }}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -197,12 +197,17 @@ export default function Hero() {
           </span>
           <nav aria-label="Companies we have experience from" className="flex flex-wrap justify-center sm:justify-end items-center gap-4 sm:gap-8 md:gap-12">
             {companies.map((company, i) => (
-              <span 
+              <motion.span 
                 key={i} 
-                className="text-sm sm:text-lg text-theme-secondary font-medium tracking-wide cursor-default"
+                className={`text-sm sm:text-lg text-theme-secondary font-medium tracking-wide transition-colors cursor-default ${
+                  company === "Uniswap" ? "hover:text-[#FF007A]" : "hover:text-theme-primary"
+                }`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 3.4 + i * 0.1 }}
               >
                 {company}
-              </span>
+              </motion.span>
             ))}
           </nav>
         </div>
@@ -222,7 +227,7 @@ export default function Hero() {
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-          className="w-px h-16 bg-gradient-to-b from-white/30 to-transparent"
+          className="w-px h-16 bg-gradient-to-b from-accent to-transparent"
         />
       </motion.div>
     </section>
