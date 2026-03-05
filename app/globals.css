@@ -124,10 +124,10 @@ body {
    UTILITY CLASSES (theme-aware)
    ============================================ */
 
-/* Gradient text - subtle white to gray, no green */
+/* Gradient text - theme-aware, works in both dark and light mode */
 .gradient-text {
   color: var(--text-primary);
-  background: linear-gradient(135deg, #ffffff 0%, #888888 100%);
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -205,7 +205,7 @@ body {
 
 .card:hover {
   background-color: var(--card-hover);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--text-muted);
 }
 
 /* Tag */
@@ -313,15 +313,17 @@ body {
    ============================================ */
 
 .display-xl {
-  font-size: clamp(3rem, 10vw, 8rem);
+  font-size: clamp(2.5rem, 8vw, 8rem);
   line-height: 0.95;
   letter-spacing: -0.03em;
   font-weight: 700;
   color: var(--foreground);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .display-lg {
-  font-size: clamp(2rem, 6vw, 5rem);
+  font-size: clamp(1.75rem, 5vw, 5rem);
   line-height: 1;
   letter-spacing: -0.02em;
   font-weight: 700;
@@ -329,7 +331,7 @@ body {
 }
 
 .display-md {
-  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-size: clamp(1.25rem, 3.5vw, 3rem);
   line-height: 1.1;
   letter-spacing: -0.02em;
   font-weight: 600;
@@ -337,79 +339,17 @@ body {
 }
 
 /* ============================================
-   LEGACY OVERRIDES (for Tailwind classes)
+   THEME-AWARE OVERRIDES
+   Components already use CSS variables directly via 
+   theme utility classes (text-theme-primary, bg-theme, etc.)
+   and inline style={{}} attributes. These overrides only
+   exist for the few remaining Tailwind hardcoded classes.
    ============================================ */
 
-/* Background colors */
-.dark .bg-black, .light .bg-black {
-  background-color: var(--background) !important;
-}
-
-.dark .bg-surface, .light .bg-surface {
-  background-color: var(--surface) !important;
-}
-
-.dark .bg-surface-50, .light .bg-surface-50 {
-  background-color: var(--surface-50) !important;
-}
-
-.dark .bg-surface-100, .light .bg-surface-100 {
-  background-color: var(--surface-100) !important;
-}
-
-/* Text colors */
-.dark .text-white, .light .text-white {
-  color: var(--text-primary) !important;
-}
-
-.dark .text-gray-400, .light .text-gray-400 {
-  color: var(--text-secondary) !important;
-}
-
-.dark .text-gray-500, .light .text-gray-500 {
-  color: var(--text-muted) !important;
-}
-
-.dark .text-gray-600, .light .text-gray-600 {
-  color: var(--text-muted) !important;
-}
-
-/* Border colors */
-.dark .border-white\/10, .light .border-white\/10 {
-  border-color: var(--border-color) !important;
-}
-
-.dark .border-white\/5, .light .border-white\/5 {
-  border-color: var(--border-color) !important;
-}
-
-/* Red text */
-.dark .text-red-400, .light .text-red-400 {
-  color: var(--red-text) !important;
-}
-
-/* Accent backgrounds */
-.dark .bg-accent\/10, .light .bg-accent\/10 {
-  background-color: var(--accent-dim) !important;
-}
-
-.dark .bg-red-500\/10, .light .bg-red-500\/10 {
-  background-color: var(--red-bg) !important;
-}
-
-/* Button overrides */
-.dark .bg-white, .light .bg-white {
-  background-color: var(--button-bg) !important;
-}
-
-.dark .text-black, .light .text-black {
-  color: var(--button-text) !important;
-}
-
-/* Navbar blur */
-.dark .bg-black\/80, .light .bg-black\/80 {
-  background-color: var(--glass-bg) !important;
-}
+/* Map Tailwind bg-surface classes to CSS variables */
+.bg-surface { background-color: var(--surface); }
+.bg-surface-50 { background-color: var(--surface-50); }
+.bg-surface-100 { background-color: var(--surface-100); }
 
 /* Mobile */
 @media (max-width: 768px) {

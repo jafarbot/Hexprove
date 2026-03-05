@@ -43,7 +43,7 @@ export default function WhatWeCatch() {
       />
       <div
         className="absolute bottom-1/4 -right-32 w-64 h-64 rounded-full blur-3xl"
-        style={{ background: "rgba(255,255,255,0.03)" }}
+        style={{ background: "var(--accent-dim)" }}
       />
 
       <div className="max-w-7xl mx-auto relative z-10">

@@ -211,13 +211,11 @@ export default function RootLayout({
           </>
         )}
         {/* Umami Analytics */}
-        {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
-          <Script
-            defer
-            src={process.env.NEXT_PUBLIC_UMAMI_URL || "https://cloud.umami.is/script.js"}
-            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-          />
-        )}
+        <Script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="34efe3ec-5975-4b4e-af78-7c06deced10e"
+        />
       </head>
       <body className="bg-background text-foreground antialiased">
         <PageLoader />

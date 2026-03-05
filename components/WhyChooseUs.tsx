@@ -43,7 +43,7 @@ export default function WhyChooseUs() {
       <motion.div
         className="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 rounded-full"
         style={{
-          background: "radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%)",
+          background: "radial-gradient(circle, var(--accent-dim) 0%, transparent 70%)",
         }}
         animate={{
           scale: [1, 1.2, 1],

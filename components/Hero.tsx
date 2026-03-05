@@ -158,7 +158,7 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 2.5 }}
-          className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8 pt-4 sm:pt-8 border-t border-theme"
+          className="grid grid-cols-3 gap-3 sm:gap-8 pt-4 sm:pt-8 border-t border-theme"
           role="list"
           aria-label="Key statistics"
         >
@@ -170,7 +170,7 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 2.7 + index * 0.1 }}
               role="listitem"
             >
-              <div className="font-mono text-2xl sm:text-4xl md:text-5xl font-bold mb-1 sm:mb-2 text-theme-primary">
+              <div className="font-mono text-xl sm:text-4xl md:text-5xl font-bold mb-1 sm:mb-2 text-theme-primary">
                 <AnimatedCounter 
                   value={stat.value} 
                   suffix={stat.suffix}
@@ -189,7 +189,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 3.2 }}
-        className="absolute bottom-0 left-0 right-0 py-4 sm:py-6 border-t border-theme"
+        className="mt-auto pt-6 sm:pt-8 py-4 sm:py-6 border-t border-theme w-full"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <span className="text-xs sm:text-sm text-theme-muted font-mono uppercase tracking-wider">
@@ -213,7 +213,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 3.5, duration: 0.8 }}
-        className="absolute bottom-24 right-8 hidden lg:flex flex-col items-center gap-4"
+        className="absolute bottom-8 right-8 hidden lg:flex flex-col items-center gap-4"
         aria-hidden="true"
       >
         <span className="text-xs text-theme-muted uppercase tracking-widest rotate-90 origin-center mb-8">
@@ -222,7 +222,8 @@ export default function Hero() {
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-          className="w-px h-16 bg-gradient-to-b from-white/30 to-transparent"
+          className="w-px h-16"
+          style={{ background: "linear-gradient(to bottom, var(--text-muted), transparent)" }}
         />
       </motion.div>
     </section>
