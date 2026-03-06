@@ -179,6 +179,14 @@ If ANY of #2-5 are yes, rephrase to be generic/industry-wide.
 </button>
 ```
 
+## AI Authorship Policy
+
+Blog posts written by AI agents must be attributed as AI-written:
+- **Author field:** Use `author: "Hexprove Agent"` in frontmatter
+- **Disclosure:** Add a brief note at the bottom of each AI-written post: *"This post was written by the Hexprove Agent and reviewed by the Hexprove team."*
+- **Existing posts by Sino:** Keep `author: "Sino Usmonov"` — those are human-written
+- **Never mention:** The specific AI model, framework, or tool used — only refer to it as "Hexprove Agent"
+
 ## Content Strategy Guidelines
 
 ### Hero Section Stats
