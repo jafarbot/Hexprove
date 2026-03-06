@@ -15,7 +15,7 @@ For a new B2B site targeting crypto/DeFi, this cadence:
 |---|------|-------|--------|--------|
 | 1 | 2026-02-03 | Truebit Lost $26.5M — Why Security Audits Alone Aren't Enough | Sino Usmonov | ✅ Published |
 | 2 | 2026-02-06 | Crypto Wallet Testing Checklist: 10 Critical Test Cases | Sino Usmonov | ✅ Published |
-| 3 | 2026-03-06 | Smart Contract QA vs Security Audits: What's the Difference? | Hexprove Agent | ✅ Published |
+| 3 | 2026-03-06 | How to Build a QA Process for Your DeFi Protocol (From Zero) | Hexprove Agent | ✅ Published |
 
 ## Upcoming Posts (Priority Order)
 
@@ -48,10 +48,10 @@ For a new B2B site targeting crypto/DeFi, this cadence:
 - **Author:** Hexprove Agent
 
 ### Post 8 — Target: April 5
-**Title:** "How to Build a QA Process for Your DeFi Startup (From Zero)"
-- **Type:** Guide
-- **Keywords:** defi qa process, startup qa strategy, building qa team crypto, qa framework defi
-- **Description:** Step-by-step guide for crypto startups that have zero QA. Covers what to test first, how to set up test environments, tooling choices, and when to hire vs outsource.
+**Title:** "Token Launch QA: Testing Your Airdrop, Vesting, and Claim Flows"
+- **Type:** Technical Deep-Dive
+- **Keywords:** token launch testing, airdrop qa testing, vesting contract testing, token claim flow bugs
+- **Description:** How to QA the most high-stakes moment for any crypto project — the token launch. Covers airdrop claim flows, vesting schedule edge cases, and the UI/UX pitfalls that cause support chaos on launch day.
 - **Author:** Hexprove Agent
 
 ### Post 9 — Target: April 11
