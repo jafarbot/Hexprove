@@ -1,0 +1,196 @@
+---
+title: "How to Build a QA Process for Your DeFi Protocol (From Zero)"
+description: "A practical guide for crypto startups that need QA but don't know where to start. Learn what to test first, how to set up test environments, and when to hire vs outsource your QA team."
+date: "2026-03-06"
+author: "Hexprove Agent"
+tags: ["QA Process", "DeFi Startups", "Testing Strategy", "Web3 QA", "Crypto Testing"]
+keywords: ["defi qa process", "crypto startup testing", "how to test defi app", "web3 qa strategy", "defi test environment setup", "qa team crypto startup"]
+---
+
+You've built your DeFi protocol, smart contracts are deployed on testnet, and your frontend is coming together. But nobody on your team has set up a real QA process before — and you know you can't just ship and hope for the best when real money is on the line.
+
+This guide walks you through building a QA process from scratch, specifically for crypto products. No generic advice about "writing test cases." Just the practical steps that matter when your users are connecting wallets and signing transactions.
+
+## Step 1: Define What "Working" Means for Your Protocol
+
+Before you test anything, get crystal clear on your **critical user paths**. For most DeFi protocols, these fall into a few categories:
+
+### Money In
+- Connect wallet → approve token → deposit/swap/stake
+- This flow must work perfectly across every wallet you support
+- If users can't get money in, nothing else matters
+
+### Money Out
+- Withdraw → claim rewards → bridge out
+- Users get anxious when money is leaving. Any UI lag, unclear status, or failed transaction here destroys trust instantly
+
+### Core Protocol Actions
+- Whatever your protocol actually does — swaps, lending, staking, governance voting
+- Map out every variant: different token pairs, different pool sizes, edge case amounts (max, min, dust)
+
+### Error Recovery
+- What happens when a transaction fails? When gas spikes? When the RPC goes down?
+- Users need to understand what happened and what to do next
+
+**Write these down.** A simple spreadsheet with columns for: flow name, steps, expected result, wallets to test, chains to test. This is your test plan — it doesn't need to be fancy.
+
+## Step 2: Set Up Your Test Environment
+
+This is where most teams either overcomplicate things or skip it entirely. Here's the practical setup:
+
+### Testnet Deployment
+- Deploy contracts on the relevant testnet (Sepolia for Ethereum, Arbitrum Sepolia for L2)
+- Keep your testnet deployment in sync with your development branch
+- **Tip:** Set up a CI pipeline that auto-deploys to testnet on every PR merge. Testing against stale contracts wastes everyone's time
+
+### Test Wallets
+- Create dedicated test wallets with testnet tokens pre-loaded
+- Label them: `test-wallet-metamask`, `test-wallet-coinbase`, `test-wallet-mobile`
+- Fund them with enough testnet ETH and test tokens for a full day of testing
+- **Never use personal wallets for QA.** State gets messy, and you'll accidentally test with cached approvals
+
+### Frontend Staging
+- Point a staging URL at your testnet contracts
+- This should be accessible only to your team (password protect or IP restrict)
+- Make sure it mirrors production exactly — same RPC endpoints pattern, same wallet connection flow
+
+### Test Data
+- Pre-create any pools, vaults, or positions needed for testing
+- If your protocol needs liquidity to test, seed it via scripts — don't do it manually every time
+- Document the test data state so QA knows what exists
+
+## Step 3: Choose What to Test First
+
+You can't test everything immediately. Prioritize by **risk × frequency**:
+
+### Priority 1 — Test Every Release
+- **Wallet connection** across your supported wallets (MetaMask, WalletConnect, Coinbase Wallet at minimum)
+- **Core transaction flow** — can users complete the main action?
+- **Balance display accuracy** — do balances match on-chain state?
+- **Transaction status** — does the UI correctly show pending, confirmed, and failed states?
+
+### Priority 2 — Test Weekly
+- **Cross-browser** — Chrome, Firefox, Safari, Brave (yes, Brave matters in crypto)
+- **Mobile wallets** — in-app browsers and WalletConnect mobile flow
+- **Error handling** — reject transaction in wallet, insufficient gas, slippage exceeded
+- **Network switching** — what if the user is on the wrong chain?
+
+### Priority 3 — Test Before Major Releases
+- **Edge case amounts** — 0 input, max uint, dust amounts, very large positions
+- **Multi-step flows** — approve + swap, stake + vote, deposit + borrow
+- **Governance** (if applicable) — full proposal lifecycle
+- **Cross-chain functionality** — bridge interactions, L2 quirks
+
+## Step 4: Write Test Cases That Actually Help
+
+Bad test case: "Test the swap feature."
+Good test case:
+
+> **TC-SWAP-001: Basic token swap on Ethereum**
+> 1. Connect MetaMask wallet with ≥100 USDC on Ethereum mainnet
+> 2. Navigate to swap page
+> 3. Select USDC → ETH
+> 4. Enter 50 USDC as input amount
+> 5. Verify output estimate shows reasonable ETH amount (check against current price ±2%)
+> 6. Verify slippage tolerance is displayed (default 0.5%)
+> 7. Click "Swap" → confirm in MetaMask
+> 8. Verify pending transaction toast appears with tx hash
+> 9. Wait for confirmation → verify success message
+> 10. Verify updated balances: USDC decreased by 50, ETH increased by expected amount
+>
+> **Expected:** Transaction succeeds, balances update within 30 seconds of confirmation
+> **Wallets:** MetaMask, Coinbase Wallet, WalletConnect (repeat for each)
+> **Chains:** Ethereum, Arbitrum, Base (repeat for each)
+
+The key is **specific, reproducible steps with clear expected results.** Anyone on your team should be able to follow this and know if the test passed or failed.
+
+## Step 5: Decide Who Does the Testing
+
+You have three options, each with trade-offs:
+
+### Option A: Developers Test Their Own Code
+- **Pro:** Fast, cheap, already happening informally
+- **Con:** Developers test the happy path. They built it, they know how it works, and they unconsciously avoid the paths that break. Also, their time is expensive — every hour testing is an hour not building
+- **Best for:** Unit tests and basic sanity checks during development
+
+### Option B: Hire an In-House QA Engineer
+- **Pro:** Deep product knowledge, always available, part of the team
+- **Con:** Expensive ($80-150K+ salary), hard to find crypto-native QA talent, single point of failure if they leave
+- **Best for:** Post-product-market-fit with a stable release cadence and budget
+
+### Option C: Outsource to a Crypto-Native QA Partner
+- **Pro:** Immediate expertise, flexible cost, no hiring overhead, team already knows crypto quirks (wallet edge cases, gas behavior, chain-specific issues)
+- **Con:** Needs onboarding to your specific protocol, communication overhead
+- **Best for:** Pre-PMF startups, teams without QA experience, teams that need coverage now
+
+Most early-stage DeFi teams start with **A (developers) + C (outsourced partner)**, then add B (in-house) once they have consistent revenue and a stable release cadence.
+
+## Step 6: Integrate QA Into Your Dev Cycle
+
+QA isn't a phase at the end. It's woven into your sprint:
+
+### During Development
+- Developers write unit tests for contract logic
+- Basic frontend smoke tests (can it render, can you connect a wallet)
+
+### PR/Feature Review
+- QA reviews the feature on staging
+- Tests the specific test cases for that feature
+- Checks for regressions in related flows
+
+### Pre-Release
+- Full regression run of Priority 1 test cases
+- Spot-check Priority 2 items
+- Any new features get dedicated exploratory testing
+
+### Post-Deploy
+- Smoke test on production immediately after deploy
+- Verify critical paths work with real mainnet transactions (use small amounts)
+- Monitor error tracking (Sentry) and on-chain events for the first hour
+
+### Bug Workflow
+- Bug found → file with steps to reproduce, browser/wallet info, screenshots/video
+- Severity levels: Critical (funds at risk), High (feature broken), Medium (UX issue), Low (cosmetic)
+- Critical bugs block the release. Everything else gets prioritized in the next sprint
+
+## Step 7: Tools That Actually Matter
+
+Skip the enterprise QA tools. For a DeFi startup, you need:
+
+- **Bug tracking:** GitHub Issues or Linear. Keep it where your developers already work
+- **Test case management:** A shared spreadsheet or Notion database. Don't overthink this
+- **Screen recording:** Loom for bug reports. A 30-second video is worth 1,000 words of reproduction steps
+- **Browser testing:** BrowserStack for cross-browser. Worth the cost when you need to test Safari + Brave + mobile
+- **Transaction monitoring:** Tenderly or custom Etherscan/block explorer alerts
+- **Error tracking:** Sentry — catch frontend errors before users report them
+
+## Common Mistakes to Avoid
+
+**1. Only testing on Chrome + MetaMask.** Your users are on Brave with Rabby, on mobile with Trust Wallet, on Safari with WalletConnect. Test where your users actually are.
+
+**2. Testing with cached approvals.** Always test the full flow including first-time approval. Token approvals are where half the UX bugs live.
+
+**3. Ignoring testnet/mainnet differences.** Gas behavior, block times, RPC reliability — they're all different on mainnet. Don't assume testnet results translate perfectly.
+
+**4. No regression testing.** You fixed the swap bug, great. But did the fix break withdrawals? Without regression tests on critical paths, every fix is a gamble.
+
+**5. Treating QA as a gate, not a partner.** QA should be involved from feature design, not just handed a finished feature to "check." Early QA input catches design-level issues that are 10x cheaper to fix before code is written.
+
+## Start Today, Improve Tomorrow
+
+You don't need a perfect QA process on day one. You need:
+
+1. ✅ A list of your critical user flows
+2. ✅ A staging environment that works
+3. ✅ Someone testing those flows before each release
+4. ✅ A way to file and track bugs
+
+Everything else — automation, cross-chain matrix testing, performance testing — can come later. The biggest risk isn't an imperfect QA process. It's shipping without any QA at all.
+
+---
+
+**Need help building QA into your DeFi development cycle?** At Hexprove, we help crypto teams go from zero QA to comprehensive coverage — without the overhead of building an in-house team from scratch. [Book a call to discuss your needs](https://hexprove.com/#contact).
+
+---
+
+*This post was written by the Hexprove Agent and reviewed by the Hexprove team.*
