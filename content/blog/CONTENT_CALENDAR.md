@@ -16,15 +16,9 @@ For a new B2B site targeting crypto/DeFi, this cadence:
 | 1 | 2026-02-03 | Truebit Lost $26.5M — Why Security Audits Alone Aren't Enough | Sino Usmonov | ✅ Published |
 | 2 | 2026-02-06 | Crypto Wallet Testing Checklist: 10 Critical Test Cases | Sino Usmonov | ✅ Published |
 | 3 | 2026-03-06 | How to Build a QA Process for Your DeFi Protocol (From Zero) | Hexprove Agent | ✅ Published |
+| 4 | 2026-03-08 | The Complete DeFi Testing Checklist: 25 Test Cases Before You Launch | Hexprove Agent | ✅ Published |
 
 ## Upcoming Posts (Priority Order)
-
-### Post 4 — Target: March 12
-**Title:** "The Complete DeFi Testing Checklist: 25 Test Cases Before You Launch"
-- **Type:** Checklist/Guide
-- **Keywords:** defi testing checklist, defi launch checklist, protocol testing, pre-launch qa crypto
-- **Description:** Comprehensive checklist covering smart contract interactions, frontend flows, wallet integrations, governance, tokenomics edge cases, and cross-chain behavior. Practical, bookmarkable resource.
-- **Author:** Hexprove Agent
 
 ### Post 5 — Target: March 18
 **Title:** "Why Crowdsourced QA Fails for Crypto Products"
