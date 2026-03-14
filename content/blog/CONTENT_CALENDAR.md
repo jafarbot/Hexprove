@@ -16,24 +16,18 @@ For a new B2B site targeting crypto/DeFi, this cadence:
 | 1 | 2026-02-03 | Truebit Lost $26.5M — Why Security Audits Alone Aren't Enough | Sino Usmonov | ✅ Published |
 | 2 | 2026-02-06 | Crypto Wallet Testing Checklist: 10 Critical Test Cases | Sino Usmonov | ✅ Published |
 | 3 | 2026-03-06 | How to Build a QA Process for Your DeFi Protocol (From Zero) | Hexprove Agent | ✅ Published |
+| 4 | 2026-03-14 | Why Crowdsourced QA Fails for Crypto Products | Hexprove Agent | ✅ Published |
 
 ## Upcoming Posts (Priority Order)
 
-### Post 4 — Target: March 12
+### Post 5 — Target: March 20
 **Title:** "The Complete DeFi Testing Checklist: 25 Test Cases Before You Launch"
 - **Type:** Checklist/Guide
 - **Keywords:** defi testing checklist, defi launch checklist, protocol testing, pre-launch qa crypto
 - **Description:** Comprehensive checklist covering smart contract interactions, frontend flows, wallet integrations, governance, tokenomics edge cases, and cross-chain behavior. Practical, bookmarkable resource.
 - **Author:** Hexprove Agent
 
-### Post 5 — Target: March 18
-**Title:** "Why Crowdsourced QA Fails for Crypto Products"
-- **Type:** Problem/Solution
-- **Keywords:** crowdsourced qa problems, dedicated qa team crypto, qa outsourcing defi, web3 testing team
-- **Description:** Explains why generic crowdsourced testing platforms (Testlio, Rainforest) miss critical crypto-specific bugs. Makes the case for dedicated, crypto-native QA. Positions Hexprove's model.
-- **Author:** Hexprove Agent
-
-### Post 6 — Target: March 24
+### Post 6 — Target: March 26
 **Title:** "Testing DeFi Governance: From Proposal to Execution"
 - **Type:** Technical Deep-Dive
 - **Keywords:** defi governance testing, dao testing, governance proposal qa, on-chain governance bugs
