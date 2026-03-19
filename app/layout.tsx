@@ -91,7 +91,7 @@ export const metadata: Metadata = {
 };
 
 // JSON-LD Structured Data for SEO
-const jsonLd = {
+const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Hexprove",
@@ -104,7 +104,7 @@ const jsonLd = {
     "hex proof",
     "hexproof",
   ],
-  description: "Crypto-native QA consultancy providing dedicated testing services for Web3, DeFi, and NFT companies.",
+  description: "Crypto-native QA consultancy specializing in DeFi protocol testing",
   url: "https://hexprove.com",
   logo: "https://hexprove.com/logo.svg",
   contactPoint: {
@@ -112,10 +112,7 @@ const jsonLd = {
     email: "team@hexprove.com",
     contactType: "sales",
   },
-  sameAs: [
-    "https://twitter.com/hexprove",
-    "https://linkedin.com/company/hexprove",
-  ],
+  sameAs: [],
   knowsAbout: [
     "Quality Assurance",
     "Software Testing",
@@ -177,6 +174,34 @@ const jsonLd = {
   },
 };
 
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  serviceType: "Quality Assurance Testing",
+  provider: {
+    "@type": "Organization",
+    name: "Hexprove",
+    url: "https://hexprove.com",
+  },
+  areaServed: "Worldwide",
+  description: "Comprehensive QA testing services for DeFi protocols, smart contracts, and Web3 applications. We provide manual testing, E2E automation, API testing, wallet testing, and transaction flow verification for blockchain-based applications.",
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Hexprove",
+  url: "https://hexprove.com",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: "https://hexprove.com/search?q={search_term_string}",
+    },
+    "query-input": "required name=search_term_string",
+  },
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -187,7 +212,15 @@ export default function RootLayout({
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         {/* Google Analytics 4 — NEXT_PUBLIC_* is inlined at build time; redeploy after setting env var */}
         {process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID && (
