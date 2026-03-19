@@ -12,11 +12,11 @@ const faqs = [
   },
   {
     question: "What's the difference between a security audit and QA testing?",
-    answer: "Security audits examine smart contract code for vulnerabilities like reentrancy or access control flaws. QA testing validates your entire user experience — wallet flows, frontend logic, API reliability, and edge cases. Both are essential: audits secure your contracts, QA ensures your product actually works for users.",
+    answer: "Security audits focus on smart contract code — looking for vulnerabilities in Solidity. We don't do that. QA testing validates your entire user experience — wallet flows, frontend logic, API reliability, transaction handling, and edge cases that break real user journeys. You need both, but they're completely different disciplines.",
   },
   {
     question: "How much does DeFi QA testing cost?",
-    answer: "It depends on scope, frequency, and complexity. A one-time pre-launch audit starts around $5-10K. Ongoing embedded QA (like a dedicated tester on your sprints) runs $8-15K/month. We tailor engagements to your needs — whether that's a launch sprint, continuous testing, or automation buildout.",
+    answer: "Every engagement is different — it depends on your product's complexity, the scope of testing, and whether you need a one-time sprint or ongoing coverage. We'll scope it together on a discovery call and give you a clear proposal with no surprises.",
   },
   {
     question: "Can't we just use crowdsourced testing for our crypto product?",
@@ -28,10 +28,10 @@ const faqs = [
   },
   {
     question: "Do you test smart contracts or just the frontend?",
-    answer: "We focus on the user-facing product — frontend flows, wallet integrations, APIs, and transaction handling. We don't audit Solidity code (that's what security auditors do), but we do test how your dApp interacts with contracts: signing, reverts, gas estimation, and state changes.",
+    answer: "We test the full user-facing product — frontend flows, wallet integrations, APIs, and how your dApp interacts with contracts (signing, reverts, gas estimation, state changes). We don't audit Solidity code — that's a separate discipline. We make sure your product works for real users.",
   },
   {
-    question: "How long does a QA audit take?",
+    question: "How long does a typical QA engagement take?",
     answer: "A pre-launch QA sprint typically takes 2-4 weeks depending on scope. Ongoing engagements run continuously, synced to your sprints. E2E automation buildout can take 4-6 weeks for initial coverage, then we maintain and expand it as your product evolves.",
   },
   {
