@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     "quality assurance crypto",
     "software testing Web3",
     "dApp testing",
-    "smart contract QA",
+    "DeFi product QA",
     "wallet testing",
     "crypto bug testing",
     "dedicated QA team",
@@ -184,7 +184,7 @@ const serviceSchema = {
     url: "https://hexprove.com",
   },
   areaServed: "Worldwide",
-  description: "Comprehensive QA testing services for DeFi protocols, smart contracts, and Web3 applications. We provide manual testing, E2E automation, API testing, wallet testing, and transaction flow verification for blockchain-based applications.",
+  description: "Comprehensive QA testing services for DeFi protocols and Web3 applications. We provide manual testing, E2E automation, API testing, wallet flow verification, and cross-chain testing for blockchain-based products.",
 };
 
 const websiteSchema = {
