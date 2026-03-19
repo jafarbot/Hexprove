@@ -54,8 +54,33 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound();
   }
 
+  const blogPostingSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description,
+    author: {
+      "@type": "Person",
+      name: post.author,
+    },
+    datePublished: post.date,
+    publisher: {
+      "@type": "Organization",
+      name: "Hexprove",
+      url: "https://hexprove.com",
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://hexprove.com/blog/${slug}`,
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
+      />
       <Navbar />
       <BlogPost post={post}>
         <MDXRemote
