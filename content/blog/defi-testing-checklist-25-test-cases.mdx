@@ -1,0 +1,362 @@
+---
+title: "The Complete DeFi Testing Checklist: 25 Test Cases Before You Launch"
+description: "A comprehensive, bookmarkable checklist of 25 critical test cases every DeFi protocol should run before going live. Covers smart contract interactions, frontend flows, wallet integrations, governance, tokenomics edge cases, and cross-chain behavior."
+date: "2026-03-08"
+author: "Hexprove Agent"
+tags: ["DeFi Testing", "QA Checklist", "Protocol Launch", "Web3 QA", "Smart Contract Testing"]
+keywords: ["defi testing checklist", "defi launch checklist", "protocol testing", "pre-launch qa crypto", "defi test cases", "web3 launch checklist"]
+---
+
+Launching a DeFi protocol without a testing checklist is like deploying a smart contract without an audit — technically possible, catastrophically risky. The difference is that audits cover your contract logic, while QA covers everything your users actually touch: the frontend, the wallet flows, the edge cases that only surface when real people interact with real money.
+
+This checklist covers 25 test cases organized by category. Each one represents a real class of bugs that has cost protocols users, TVL, or reputation. Bookmark this, adapt it to your protocol, and run through it before every major release.
+
+## Wallet Connection & Authentication (Test Cases 1–5)
+
+Wallet connection is the front door of your protocol. If it's broken, nothing else matters.
+
+### 1. First-Time Wallet Connection
+
+**Test:** A user with no prior interaction connects their wallet for the first time.
+
+- Open the app in a fresh browser profile (no cached state)
+- Click "Connect Wallet"
+- Select MetaMask → approve connection in MetaMask popup
+- Verify: wallet address displays correctly, truncated format matches full address
+- Verify: correct network name and chain ID shown
+- Verify: no console errors, no stuck loading states
+
+**Repeat for:** Coinbase Wallet, WalletConnect, Rabby, Trust Wallet (mobile)
+
+**Why this matters:** Many protocols only test reconnection. First-time connection is a different code path — it triggers permission prompts, initial state hydration, and sometimes token approval checks that reconnection skips.
+
+### 2. Network Switching
+
+**Test:** User is connected on Ethereum, switches to Arbitrum (or whichever chains you support).
+
+- Connect wallet on Chain A
+- Switch network in wallet → verify the app detects the change
+- Verify: displayed chain name updates, balances reload for new chain, pool/vault data refreshes
+- Switch to an unsupported chain → verify the app shows a clear "switch network" prompt
+- Use the app's built-in chain switcher (if you have one) → verify wallet receives the switch request
+
+**Why this matters:** Network switching bugs are among the most reported issues in DeFi. Users see stale balances from the wrong chain, try to transact, and get confusing errors.
+
+### 3. Wallet Disconnection & Reconnection
+
+**Test:** User disconnects and reconnects their wallet.
+
+- Click "Disconnect" in your app's UI
+- Verify: all user-specific data clears (balances, positions, transaction history)
+- Verify: the app returns to the generic "Connect Wallet" state
+- Reconnect the same wallet → verify state restores correctly
+- Disconnect in the wallet itself (e.g., revoke permissions in MetaMask settings) → verify the app handles this gracefully
+
+**Why this matters:** Disconnection often leaves ghost state. Users see partial data, stale approvals, or get errors because the app thinks a wallet is still connected when it isn't.
+
+### 4. Multiple Wallets Installed
+
+**Test:** User has MetaMask, Coinbase Wallet, and Rabby all installed simultaneously.
+
+- Click "Connect Wallet" → verify all installed wallets appear as options
+- Select one specific wallet → verify the correct wallet opens (not a different one)
+- Connect with Wallet A, then try connecting with Wallet B → verify clean handoff or clear messaging
+
+**Why this matters:** Browser extension wallets compete for the `window.ethereum` provider. Without proper detection (EIP-6963), clicking "MetaMask" might open Rabby, or the wallet selection modal might only show one option.
+
+### 5. Mobile Wallet / In-App Browser
+
+**Test:** User opens your protocol inside a mobile wallet's built-in browser.
+
+- Open your URL inside MetaMask Mobile's browser
+- Verify: wallet connection happens automatically or with one tap (no QR code step)
+- Complete a full transaction flow → verify the signing prompt appears natively
+- Test WalletConnect from a desktop browser → scan QR with mobile wallet → verify connection persists through the full flow
+
+**Why this matters:** Mobile in-app browsers have different JavaScript environments, viewport behavior, and connection mechanisms. Flows that work perfectly on desktop Chrome break silently in mobile wallet browsers.
+
+## Core Transaction Flows (Test Cases 6–10)
+
+These are the actions your users came to perform. Every one must work reliably.
+
+### 6. Basic Transaction — Happy Path
+
+**Test:** The core action of your protocol with typical inputs.
+
+- Connect wallet with sufficient token balance
+- Enter a reasonable amount (not min, not max — a normal amount)
+- If approval is needed: approve → wait for confirmation → proceed
+- Execute the transaction → confirm in wallet
+- Verify: pending state shown with transaction hash
+- Verify: success state shown after confirmation
+- Verify: balances update to reflect the transaction
+- Verify: transaction appears in any history/activity view
+
+**Why this matters:** This is your baseline. If this flow has any friction, hesitation, or confusion, you'll lose users on the first interaction.
+
+### 7. Token Approval Flow
+
+**Test:** First-time interaction with a token that requires ERC-20 approval.
+
+- Use a token the wallet has never approved for your protocol
+- Initiate a transaction → verify the approval step appears first
+- Check the approval amount shown: is it "exact amount" or "unlimited"? Does the UI explain the choice?
+- Approve → wait for confirmation → verify the transaction step becomes available
+- Complete the transaction → verify it succeeds with the approved amount
+- Attempt a second transaction with the same token → verify no approval step needed (if unlimited was chosen)
+
+**Why this matters:** Approval UX is where trust is won or lost. Users who don't understand what they're approving will abandon the flow. Users who approved "unlimited" and later see a different amount will panic.
+
+### 8. Transaction Failure Handling
+
+**Test:** Deliberately trigger transaction failures and verify recovery.
+
+- **User rejection:** Click "Reject" in the wallet signing popup → verify the app returns to the pre-transaction state cleanly, no stuck loading spinners
+- **Insufficient gas:** Attempt a transaction with almost zero ETH for gas → verify a clear error message (not a generic "transaction failed")
+- **Slippage exceeded:** On a DEX, set very tight slippage and trade a low-liquidity pair → verify the slippage error is explained and the user can adjust
+- **Contract revert:** If possible, trigger a revert condition → verify the error message helps the user understand what went wrong
+
+**Why this matters:** Users will encounter failures. The difference between a good protocol and a bad one is what happens next. Clear error messages and clean state recovery prevent support tickets and rage-quits.
+
+### 9. Transaction With Extreme Amounts
+
+**Test:** Push the boundaries of your input validation.
+
+- **Zero amount:** Enter 0 → verify the submit button is disabled or a validation message appears
+- **Dust amount:** Enter the smallest possible amount (e.g., 0.000001) → verify it either executes correctly or tells the user it's below the minimum
+- **Maximum balance:** Click "Max" → verify it accounts for gas costs (don't let users max out their ETH and have nothing left for gas)
+- **Beyond balance:** Manually type an amount larger than the wallet balance → verify clear "insufficient balance" messaging
+- **Very large numbers:** If your protocol handles large positions, test with amounts in the millions → verify no overflow issues in the UI display
+
+**Why this matters:** Users do weird things with amounts. The "Max" button alone has a history of causing bugs — from not reserving gas to rounding errors that leave 0.0000001 tokens stranded.
+
+### 10. Concurrent & Rapid Transactions
+
+**Test:** User submits multiple transactions in quick succession.
+
+- Start a transaction, then immediately start another before the first confirms
+- Verify: the app handles the nonce correctly (transactions don't conflict)
+- Verify: both transactions are tracked in the UI (pending states for each)
+- Click the submit button rapidly → verify no duplicate transactions are created
+- In a multi-step flow (approve + swap), close the browser after approval but before the swap → reopen and verify the app recognizes the approval already happened
+
+**Why this matters:** Impatient users double-click. Power users batch transactions. Your frontend needs to handle both without creating duplicate or conflicting transactions.
+
+## Balance & Data Display (Test Cases 11–14)
+
+Users make financial decisions based on what your UI shows them. Accuracy is non-negotiable.
+
+### 11. Balance Accuracy
+
+**Test:** Verify displayed balances match actual on-chain state.
+
+- Connect wallet → note displayed token balances
+- Cross-reference with a block explorer (Etherscan, Arbiscan) for the same block
+- After a transaction: verify balances update within a reasonable timeframe (< 30 seconds after confirmation)
+- Check that balances display with appropriate decimal precision (don't show 18 decimal places for ETH)
+- Verify: portfolio value calculation uses current market prices, not stale data
+
+**Why this matters:** Balance discrepancies — even temporary ones — erode trust. A user who sees $10,000 in their account but only $9,800 on Etherscan will assume your protocol stole from them before they consider "maybe the RPC is slow."
+
+### 12. Price & Rate Display
+
+**Test:** Verify that exchange rates, APYs, and price estimates are accurate and current.
+
+- Compare displayed swap rate against a reference (CoinGecko, another DEX)
+- Verify the rate updates when input amounts change
+- Verify "price impact" displays correctly for large trades
+- Check APY/APR calculations against the actual contract reward rate
+- Change market conditions (if on testnet, manipulate pool ratios) → verify UI reflects changes within a reasonable interval
+
+**Why this matters:** Misleading rates — even unintentionally — create regulatory and trust risk. If your UI shows 200% APY but the actual rate is 20%, you have a problem that goes beyond QA.
+
+### 13. Empty & Zero States
+
+**Test:** How does the app look when there's nothing to show?
+
+- Connect a wallet with zero balance in relevant tokens → verify the UI handles this gracefully (not broken layout, not confusing messaging)
+- View a pool or vault with no positions → verify clear "no positions" or "get started" state
+- Access a page with no transaction history → verify clean empty state
+- Search/filter with no results → verify appropriate messaging
+
+**Why this matters:** Empty states are the first thing new users see. A broken or confusing empty state is an immediate bounce.
+
+### 14. Data Loading & Stale Data
+
+**Test:** How does the app handle slow or interrupted data loading?
+
+- Throttle your connection (Chrome DevTools → Network → Slow 3G) → verify loading states appear (not blank screens)
+- Disconnect internet mid-use → verify an error state or offline message appears
+- Reconnect → verify data refreshes without requiring a page reload
+- Leave the app open for 30+ minutes → verify displayed data isn't dangerously stale (especially prices and balances)
+- Verify that stale data is visually indicated or auto-refreshes
+
+**Why this matters:** RPC endpoints go down. Connections drop. Users leave tabs open for hours. If your app shows a swap rate from 30 minutes ago without any indication, a user could execute a trade at a wildly different price than expected.
+
+## Cross-Browser & Cross-Device (Test Cases 15–17)
+
+Your users aren't all on Chrome. Test where they actually are.
+
+### 15. Browser Compatibility
+
+**Test:** Full critical path on each supported browser.
+
+- **Chrome:** Baseline — most tested, but don't assume it's bug-free
+- **Firefox:** Different JavaScript engine, different wallet extension behavior
+- **Safari:** Notoriously different CSS rendering, WebSocket handling, and localStorage behavior
+- **Brave:** Ships with a built-in wallet that can conflict with MetaMask. Many crypto users use Brave specifically
+
+For each browser: connect wallet → complete one full transaction → verify balances → disconnect.
+
+**Why this matters:** Brave alone accounts for a disproportionate share of DeFi users. Safari handles `BigInt`, `localStorage`, and `window.ethereum` differently than Chrome. Firefox processes some async wallet calls with different timing.
+
+### 16. Mobile Responsiveness
+
+**Test:** Complete the full flow on actual mobile devices (not just browser resize).
+
+- Load the app on an iPhone and an Android device
+- Verify: all buttons are tappable (minimum 44×44px touch targets)
+- Verify: no horizontal scrolling on any page
+- Verify: modals and popups are usable (not cut off, dismissible)
+- Verify: number inputs work correctly with mobile keyboards
+- Complete a full transaction flow using WalletConnect mobile → verify the app-to-wallet-to-app round trip works smoothly
+
+**Why this matters:** Browser resize simulation doesn't catch mobile-specific issues: touch target sizes, virtual keyboard overlap, wallet app-switching behavior, and viewport quirks.
+
+### 17. Viewport & Layout Edge Cases
+
+**Test:** Non-standard screen sizes and orientations.
+
+- Test on a tablet in both portrait and landscape orientation
+- Resize the desktop browser to very narrow (< 375px) and very wide (> 2560px)
+- Verify: no content overflow, no hidden buttons, no overlapping text
+- Verify: data tables or complex layouts have horizontal scroll or responsive alternatives
+- Test with browser zoom at 150% and 200% → verify layout doesn't break
+
+**Why this matters:** Not everyone has a 1920×1080 screen. Large monitor users, tablet users, and accessibility zoom users all need usable layouts.
+
+## Smart Contract Interactions (Test Cases 18–20)
+
+Where your frontend meets the chain.
+
+### 18. Gas Estimation & Fee Display
+
+**Test:** Verify gas estimates are accurate and clearly communicated.
+
+- Before confirming a transaction, note the estimated gas fee in your UI
+- Compare against the gas estimate shown in the wallet popup — they should be in the same ballpark
+- Execute during high-gas and low-gas periods (if on mainnet) → verify estimates adjust
+- On L2s: verify the L1 data fee is included in the total estimate
+- Verify: gas fee is displayed in both native token (ETH) and USD equivalent
+
+**Why this matters:** Incorrect gas estimates cause transaction failures (too low) or erode user trust (wildly inflated). On L2s, forgetting the L1 data fee component makes your estimates look suspiciously low.
+
+### 19. Contract State Synchronization
+
+**Test:** Verify the UI stays in sync with on-chain state after external changes.
+
+- Make a transaction directly through a block explorer (bypassing your UI) → return to your app → verify it reflects the new state
+- Have another wallet interact with the same pool/vault → verify your UI updates (pool TVL, exchange rate, available liquidity)
+- If your protocol has time-based state changes (e.g., epoch transitions, reward distributions), verify the UI reflects them when they occur
+
+**Why this matters:** Users don't only interact through your frontend. They use Etherscan, aggregators, and other interfaces. Your UI needs to reflect the true on-chain state, not a cached version of what it last knew.
+
+### 20. Approval & Permission Management
+
+**Test:** Verify users can manage their token approvals.
+
+- After granting approval, verify the app correctly detects existing approvals (no redundant approval requests)
+- If you provide a "revoke approval" feature → test that it works and the app correctly detects the revoked state
+- Test with "exact amount" approval → use more than the approved amount → verify the app requests a new approval
+- Test approval for a token you've never interacted with on this chain → verify no stale approval data appears
+
+**Why this matters:** Approval management is a security feature. Users who read about approval exploits want to verify and control what they've approved. Bugs here create real security anxiety.
+
+## Governance & Protocol-Specific (Test Cases 21–23)
+
+If your protocol has governance, voting, or complex multi-step workflows, these need dedicated testing.
+
+### 21. Governance Proposal Lifecycle
+
+**Test:** Walk through the full governance cycle if your protocol has on-chain voting.
+
+- Create a proposal (if permissionless) → verify it appears in the proposal list with correct status
+- Vote on an active proposal → verify vote is recorded and displayed
+- Verify vote weight matches the user's token holdings/delegation
+- Wait for the voting period to end → verify status transitions (active → succeeded/defeated)
+- If there's a timelock: verify the execution step works after the delay period
+
+**Why this matters:** Governance bugs have real consequences — invalid proposals passing, vote counts being wrong, or successful proposals that can't execute. These undermine the entire trust model of decentralized governance.
+
+### 22. Staking & Reward Flows
+
+**Test:** The full lifecycle of staking and claiming rewards.
+
+- Stake tokens → verify staking position appears with correct amount
+- Wait for at least one reward interval → verify accrued rewards display and update
+- Claim rewards → verify reward amount transfers correctly and staked position remains unchanged
+- Unstake (partial) → verify correct amount returns and remaining stake is accurate
+- Unstake (full) → verify zero balance state and no phantom rewards continue accruing
+- If there's a cooldown period: verify the UI enforces it and shows the remaining time
+
+**Why this matters:** Staking reward display bugs are the number one source of "your protocol stole my rewards" complaints. Rounding errors, display lag, and incorrect accrual calculations create support nightmares.
+
+### 23. Multi-Step & Complex Transactions
+
+**Test:** Any flow that requires more than one transaction in sequence.
+
+- Identify all multi-step flows (e.g., approve → deposit → stake, or create position → add liquidity → set range)
+- Complete the full sequence without interruption → verify final state is correct
+- Interrupt at each step (close browser, switch apps, lose connection) → return and verify the app recognizes the completed steps and resumes from the right point
+- Verify: clear progress indicators show which step the user is on and what's next
+
+**Why this matters:** Multi-step flows are fragile. If a user completes step 2 of 3 and their browser crashes, they need to resume from step 3, not start over. Losing track of state in multi-step flows leads to stuck funds and confused users.
+
+## Security & Edge Cases (Test Cases 24–25)
+
+The test cases that protect your users from the unexpected.
+
+### 24. Input Sanitization & Validation
+
+**Test:** Throw unexpected input at every field in your UI.
+
+- Paste a very long string into amount inputs → verify no overflow or crash
+- Enter negative numbers → verify they're rejected
+- Paste a transaction hash or wallet address into an amount field → verify NaN handling
+- If you have search fields: test with special characters, HTML tags, and very long queries
+- Verify: no user input is rendered as HTML (XSS prevention)
+- Test with different locale decimal separators (comma vs. period) → verify correct parsing
+
+**Why this matters:** Input validation bugs range from cosmetic (weird display) to critical (XSS vulnerabilities that could steal wallet signatures). In DeFi, where users regularly paste long hex strings, robust input handling is essential.
+
+### 25. Session Persistence & Recovery
+
+**Test:** The app's ability to maintain and recover user context.
+
+- Connect wallet → close the tab → reopen → verify wallet auto-reconnects (or prompts reconnect without losing context)
+- Mid-transaction, refresh the page → verify no duplicate transactions are submitted
+- Open the app in two tabs → perform actions in one → verify the other tab updates or at least doesn't show conflicting state
+- Clear browser cache/cookies → reopen → verify clean state (no broken references to old sessions)
+- Test with privacy/incognito mode → verify full functionality (some localStorage-dependent features fail)
+
+**Why this matters:** Users refresh pages. They open multiple tabs. They clear cookies. They use private browsing. Every one of these scenarios should result in a safe, predictable state — never a duplicate transaction or stuck UI.
+
+## How to Use This Checklist
+
+**Before every release:** Run test cases 1, 6, 7, 8, 11, and 14. These are your non-negotiable smoke tests.
+
+**Before a major launch or mainnet deploy:** Run all 25. Assign them across team members if needed, but ensure full coverage.
+
+**Ongoing:** Keep a running log of which test cases pass and fail. Track bug patterns — if test case 8 (transaction failure handling) keeps failing, that's a signal to invest in better error handling architecture, not just fix individual bugs.
+
+**Adapt and extend:** This checklist is a starting point. Add protocol-specific test cases for your unique features. The best checklists evolve with your product.
+
+A DeFi protocol that can pass all 25 of these test cases consistently isn't just "tested." It's the kind of protocol users trust with their money, recommend to others, and return to. And in a market where trust is the scarcest resource, that's the strongest competitive advantage you can build.
+
+---
+
+**Want help running this checklist against your protocol?** Hexprove specializes in comprehensive QA for DeFi protocols — from pre-launch checklists to ongoing regression testing. [Let's talk about your testing needs](https://hexprove.com/#contact).
+
+---
+
+*This post was written by the Hexprove Agent and reviewed by the Hexprove team.*
