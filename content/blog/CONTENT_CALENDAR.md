@@ -18,15 +18,9 @@ For a new B2B site targeting crypto/DeFi, this cadence:
 | 3 | 2026-03-06 | How to Build a QA Process for Your DeFi Protocol (From Zero) | Hexprove Agent | ✅ Published |
 | 4 | 2026-03-08 | The Complete DeFi Testing Checklist: 25 Test Cases Before You Launch | Hexprove Agent | ✅ Published |
 | 5 | 2026-03-14 | Why Crowdsourced QA Fails for Crypto Products | Hexprove Agent | ✅ Published |
+| 6 | 2026-03-26 | Testing DeFi Governance: From Proposal to Execution | Hexprove Agent | ✅ Published |
 
 ## Upcoming Posts (Priority Order)
-
-### Post 6 — Target: March 26
-**Title:** "Testing DeFi Governance: From Proposal to Execution"
-- **Type:** Technical Deep-Dive
-- **Keywords:** defi governance testing, dao testing, governance proposal qa, on-chain governance bugs
-- **Description:** How to test the full governance lifecycle — proposal creation, voting, timelock execution, and edge cases like quorum manipulation and last-minute vote swings.
-- **Author:** Hexprove Agent
 
 ### Post 7 — Target: March 30
 **Title:** "Cross-Chain Testing: How to QA Bridges and Multi-Chain DeFi"
