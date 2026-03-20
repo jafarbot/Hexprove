@@ -1,0 +1,259 @@
+---
+title: "Testing DeFi Governance: From Proposal to Execution"
+description: "How to test the full DeFi governance lifecycle — proposal creation, voting, timelock execution, and edge cases like quorum manipulation and last-minute vote swings. A practical QA guide for DAO builders."
+date: "2026-03-26"
+author: "Hexprove Agent"
+tags: ["DeFi Governance", "DAO Testing", "Governance QA", "On-Chain Governance", "Web3 QA"]
+keywords: ["defi governance testing", "dao testing", "governance proposal qa", "on-chain governance bugs", "dao voting testing", "timelock testing defi"]
+---
+
+Governance is where code meets politics. A DeFi protocol's governance system lets token holders propose changes, vote on them, and execute the results on-chain. When it works, it's decentralized decision-making at its best. When it breaks, the consequences range from embarrassing (a proposal that can't execute) to catastrophic (unauthorized parameter changes draining a treasury).
+
+Most teams treat governance as a "set it and forget it" feature. Deploy a Governor contract, wire up a frontend, ship it. Testing gets limited to "can I create a proposal and vote yes?" — the happy path and nothing else.
+
+But governance systems have one of the most complex state machines in all of DeFi. A proposal moves through multiple phases, each with time-dependent transitions, quorum requirements, and execution logic that interacts with the rest of your protocol. The edge cases here are where the real bugs live.
+
+This guide walks through how to QA the full governance lifecycle, from proposal creation to on-chain execution, with a focus on the failure modes that actually hit production. If you're starting from scratch, you might want to read [How to Build a QA Process for Your DeFi Protocol](/blog/how-to-build-qa-process-defi) first for foundational context.
+
+## Why Governance Testing Gets Neglected
+
+There's a pattern across DeFi teams: governance is the last feature built and the least tested. A few reasons:
+
+- **It's rarely the core product.** If you're a lending protocol, your testing energy goes into borrow/repay flows. Governance feels secondary.
+- **The feedback loop is slow.** Governance proposals take days to complete a full cycle — voting periods, timelocks, execution delays. That makes manual testing painful and iteration slow.
+- **Low usage frequency.** A protocol might process thousands of swaps per day but only a handful of governance proposals per month. Low frequency makes it easy to rationalize light testing.
+- **It "works on testnet."** Teams test the happy path on a testnet fork, see a proposal go through, and move on. But testnet testing with one voter and no time pressure doesn't expose the real bugs.
+
+The problem is that governance failures are disproportionately damaging. A swap bug might affect one user. A governance bug can affect every user — changing protocol parameters, moving treasury funds, or upgrading contract logic in ways nobody intended.
+
+## The Governance State Machine
+
+Before diving into test cases, understand the lifecycle your testing needs to cover. Most governance implementations (OpenZeppelin Governor, Compound Governor Bravo, or custom forks) follow a similar pattern:
+
+1. **Proposal Created** — A user with enough voting power submits a proposal with target addresses, calldata, and a description.
+2. **Voting Delay** — A waiting period before voting begins, giving token holders time to review.
+3. **Active Voting** — Token holders cast votes (For, Against, Abstain) during a fixed window.
+4. **Succeeded / Defeated** — Voting period ends. Proposal passes if it meets quorum and has more For than Against votes.
+5. **Queued** — Successful proposals enter a timelock queue with an execution delay.
+6. **Executed** — After the timelock delay, anyone can trigger execution.
+7. **Expired** — If not executed within the grace period after the timelock, the proposal expires.
+8. **Canceled** — Proposals can be canceled under certain conditions (by the proposer, or by anyone if the proposer's voting power drops below threshold).
+
+Each state transition is a potential failure point. Your testing needs to verify that proposals move through states correctly, that invalid transitions are blocked, and that the UI reflects the current state accurately.
+
+## Phase 1: Proposal Creation Testing
+
+### Proposer Threshold Enforcement
+
+Most governance systems require a minimum amount of voting power to create a proposal. This prevents spam proposals and ensures only stakeholders with skin in the game can initiate changes.
+
+**Test cases:**
+
+- **Below threshold rejection.** Attempt to create a proposal with an account that holds fewer tokens than the proposal threshold. The contract should revert, and the UI should display a clear message explaining the minimum requirement — not a generic "transaction failed" error.
+- **Exact threshold boundary.** Test with an account holding exactly the minimum required tokens. This boundary condition is where off-by-one errors hide. Does the contract use `>=` or `>` for the comparison?
+- **Delegated voting power.** Token holders can delegate their voting power to another address. Verify that delegated power counts toward the proposal threshold. Test the case where a user has enough power through delegation but not through direct holdings.
+- **Threshold changes mid-proposal.** If the proposer's voting power drops below the threshold after proposal creation (they sell tokens or a delegator switches), can the proposal be canceled? Different implementations handle this differently — test your specific behavior.
+
+### Proposal Content Validation
+
+A governance proposal isn't just a vote — it contains executable calldata that will run on-chain. This is where testing gets critical.
+
+- **Valid calldata encoding.** Create proposals with different action types: token transfers, parameter updates, contract upgrades. Verify the calldata is encoded correctly and matches what the UI displays to voters.
+- **Multiple actions per proposal.** Many governance systems support batched actions — a single proposal that executes several transactions. Test proposals with 1, 5, and the maximum allowed number of actions. Check that all actions display correctly in the UI.
+- **Description rendering.** Proposals include markdown descriptions. Test with long descriptions, special characters, embedded links, and code blocks. Verify the frontend renders them correctly without XSS vulnerabilities or broken formatting.
+- **Duplicate proposal prevention.** Most implementations use a hash of the proposal parameters as an ID. Attempting to create an identical proposal should fail. But what about proposals with the same actions but slightly different descriptions?
+
+## Phase 2: Voting Period Testing
+
+The voting period is where most governance UX bugs surface. Users are interacting with a time-sensitive feature that involves token-weighted decisions — every piece of displayed information needs to be accurate.
+
+### Vote Casting
+
+- **Basic vote flow.** Cast a For, Against, and Abstain vote from different accounts. Verify each vote type is recorded correctly and the UI updates vote counts in real time (or with an appropriate polling interval).
+- **Vote weight accuracy.** Voting power is typically based on a snapshot taken at the proposal's creation block, not the current balance. This is critical — verify that a user who acquires tokens after the proposal was created cannot vote with those new tokens. Conversely, a user who held tokens at snapshot time but has since sold them should still be able to vote with their snapshot balance.
+- **Double voting prevention.** Attempt to vote twice from the same account. The contract should revert on the second attempt. But check the UI too — does it show the vote button for an account that has already voted? It shouldn't, or at minimum it should clearly indicate the existing vote.
+- **Vote with reason.** Many governance systems support attaching a reason string to a vote. Test with empty reasons, long reasons, and special characters. Check that reasons display correctly in the proposal detail view.
+
+### Timing Edge Cases
+
+Governance timing is the source of some of the most subtle bugs in DeFi. Every transition happens at a specific block number or timestamp, and the UI needs to reflect these boundaries precisely.
+
+- **Voting before the voting delay ends.** After a proposal is created, there's typically a delay before voting begins. Attempting to vote during this period should fail. Test that the UI shows a countdown or status message rather than a vote button.
+- **Voting after the voting period ends.** Votes submitted after the deadline should be rejected on-chain. But test the race condition: what happens if a user opens the voting UI before the deadline, takes a few minutes to review, and submits their transaction after the period has closed? The UI should warn them or prevent submission.
+- **Last-block voting.** Submit a vote in the last block of the voting period. Verify it's counted. This is particularly relevant because mempool delays can mean a transaction submitted "in time" actually lands in the next block — after voting closes.
+- **Block time variability.** If your governance uses block numbers for timing (common on Ethereum L1), remember that block times aren't perfectly consistent. A voting period of 50,400 blocks is approximately one week, but could be off by hours. Test that the UI shows accurate time estimates and handles the approximation gracefully.
+
+### Quorum Mechanics
+
+Quorum is the minimum total voting power that must participate for a vote to be valid. It prevents a small minority from pushing through proposals while most token holders aren't paying attention.
+
+- **Quorum not reached.** Create a proposal, cast votes totaling less than the quorum threshold. When the voting period ends, the proposal should be marked as Defeated regardless of the For/Against ratio.
+- **Quorum reached exactly.** Vote with exactly the quorum amount. Verify the proposal succeeds (assuming more For than Against). Test this boundary carefully — is quorum checked with `>=` or `>`?
+- **Abstain votes and quorum.** In most implementations (including OpenZeppelin Governor), Abstain votes count toward quorum but don't count as For or Against. This creates an interesting dynamic: a user can help reach quorum without supporting or opposing the proposal. Verify this behavior matches your implementation, and that the UI clearly explains how Abstain votes work.
+- **Quorum manipulation scenario.** Consider this: a large token holder sees a controversial proposal about to fail quorum. They vote Abstain with a massive stake, pushing the proposal over the quorum threshold. Now the proposal passes with a slim For majority that otherwise wouldn't have mattered. Test that your quorum calculation handles this correctly — it's by design in most implementations, but the UI should make the dynamics transparent.
+
+## Phase 3: Post-Voting and Timelock Testing
+
+Once voting ends, successful proposals enter the timelock — a mandatory waiting period before execution. This is a security mechanism that gives the community time to react to proposals (and potentially exit the protocol) before changes take effect.
+
+### Timelock Queue
+
+- **Queue the proposal.** After a proposal succeeds, trigger the queue action. Verify it enters the timelock with the correct execution window (earliest execution time = current time + timelock delay).
+- **Queue a defeated proposal.** Attempt to queue a proposal that failed to reach quorum or was voted down. This should revert.
+- **Queue timing.** The queue action should only be available after the voting period ends and the proposal has succeeded. Test that the UI shows the "Queue" button at the right time and disables it otherwise.
+- **Timelock collision.** If two proposals queue the same action (same target, same calldata) at the same time, some timelock implementations will reject the second one. Test this scenario if your protocol could have overlapping proposals.
+
+### Execution
+
+- **Execute after timelock.** Wait for the timelock delay to pass, then execute the proposal. Verify the on-chain effects: parameters changed, funds transferred, contracts upgraded — whatever the proposal specified.
+- **Execute before timelock expires.** Attempt to execute a proposal before the timelock delay has passed. This should revert with a clear error.
+- **Execute after grace period.** Timelocks typically have a grace period after which the proposal expires if not executed. Test that execution reverts after this window closes, and that the UI clearly shows the expiration.
+- **Execution with insufficient gas.** Complex proposals (multiple actions, contract upgrades) can require significant gas. Test with gas limits that are too low and verify the transaction reverts cleanly rather than partially executing.
+- **Partial execution failure.** If a proposal has multiple actions and one of them fails (e.g., insufficient treasury balance for a transfer), what happens? In most implementations, the entire execution reverts. Verify this behavior — partial execution is a dangerous state.
+
+### Cancellation
+
+- **Proposer cancels.** The original proposer should be able to cancel a proposal that hasn't been executed yet. Test cancellation at each stage: during voting delay, during active voting, after voting succeeds, and while queued in the timelock.
+- **Guardian/admin cancel.** Some governance systems have a guardian or admin role that can cancel proposals. Test that this works, and test that unauthorized addresses cannot cancel.
+- **Cancel after proposer loses voting power.** In Compound-style governance, anyone can cancel a proposal if the proposer's voting power drops below the proposal threshold. This is a safety mechanism — test that it works, and test that the UI surfaces this possibility to proposers (e.g., "Warning: if your voting power drops below X, this proposal can be canceled by anyone").
+
+## Phase 4: Frontend-Specific Testing
+
+On-chain governance logic might work perfectly, but if the frontend misrepresents the state, users will make wrong decisions.
+
+### State Display Accuracy
+
+- **Real-time state updates.** As a proposal transitions from Pending → Active → Succeeded → Queued → Executed, the UI should reflect each change. Test that polling or WebSocket updates keep the displayed state current. Pay special attention to the transition from Active to Succeeded/Defeated — this is the moment users are most actively watching.
+- **Vote count display.** Verify that For, Against, and Abstain counts match on-chain data. Test with very large token balances (18 decimals can make display formatting tricky) and very small ones. Rounding errors in vote display can undermine trust.
+- **Time remaining accuracy.** Countdown timers for voting periods and timelock delays should be accurate. Test what happens when the displayed countdown reaches zero — does the UI correctly transition to the next state, or does it show "0 seconds remaining" indefinitely until the page refreshes?
+- **Proposal history.** Executed and expired proposals should be viewable in a history view. Verify that the execution results (success/failure, on-chain effects) are displayed accurately.
+
+### Wallet Integration for Governance
+
+Governance introduces wallet interactions that differ from typical DeFi flows.
+
+- **Delegation flow.** Before voting, users often need to delegate their voting power (even to themselves). Test the delegation transaction flow end-to-end. Is this requirement clearly communicated to users who haven't delegated? A common UX failure: a user tries to vote, gets a confusing error, and doesn't realize they need to delegate first.
+- **Voting power display.** Show the user's current voting power on the proposal detail page. This should reflect delegations received from other addresses, not just the user's direct token balance.
+- **Multi-sig governance participation.** If institutional or multi-sig holders participate in governance, test the flow: proposal review → vote signing → multi-sig execution. This involves multiple wallet interactions and intermediate "pending" states that your UI needs to handle.
+- **Vote transaction details.** When the wallet popup appears for a vote transaction, the displayed data should make sense. Users should see clearly that they're voting For/Against/Abstain on a specific proposal — not a raw hex calldata blob that requires trust to approve.
+
+## Phase 5: Edge Cases and Attack Vectors
+
+Governance systems are high-value targets. Testing should include adversarial scenarios.
+
+### Flash Loan Governance Attacks
+
+This is one of the most discussed governance attack vectors: an attacker borrows a large amount of governance tokens via a flash loan, uses them to push through a malicious proposal, and returns the tokens in the same block.
+
+**Testing this depends on your implementation:**
+
+- If voting power is based on a snapshot at proposal creation block, flash loan attacks on voting are mitigated — the attacker would need to hold tokens at the snapshot block, which a flash loan can't achieve.
+- But can flash-loaned tokens be used to meet the proposal creation threshold? If so, an attacker could create malicious proposals even if they can't vote them through. Test this.
+- Verify your snapshot mechanism works correctly. Create a proposal, then transfer tokens to a new address. The new address should NOT have voting power for that proposal.
+
+### Governance Griefing
+
+- **Proposal spam.** If the proposal threshold is low, test what happens when dozens of proposals are created simultaneously. Does the UI handle pagination? Does the contract emit events that your indexer can process at volume?
+- **Proposal with malicious description.** Submit a proposal with HTML/JavaScript in the description. Verify the frontend sanitizes this content and prevents XSS attacks. Test with markdown injection as well.
+- **Voter fatigue simulation.** Create multiple proposals with similar descriptions. Can voters easily distinguish between them? Is there a risk of voting on the wrong proposal because the UI doesn't differentiate them clearly?
+
+### Upgrade Governance Scenarios
+
+If your governance system controls contract upgrades (common with proxy patterns), the stakes are even higher.
+
+- **Upgrade proposal execution.** Create a proposal that upgrades a core protocol contract. After execution, verify the upgrade was applied correctly and that existing state (balances, positions) is preserved.
+- **Malicious upgrade detection.** Test whether your community tools (UI, monitoring, alerts) would surface a proposal that upgrades a contract to a malicious implementation. This is more of a process test than a code test, but it's critical.
+- **Upgrade revert scenario.** If an upgrade goes wrong, does your governance system support emergency proposals with shortened timeframes? Test this flow if it's part of your design.
+
+## Building Your Governance Test Environment
+
+Testing governance is slow by nature — voting periods and timelocks create multi-day cycles. Here's how to make it practical.
+
+### Fork Testing with Time Manipulation
+
+Use a local Ethereum fork (Hardhat or Anvil) with time manipulation to compress governance timelines:
+
+```
+# Advance time by 3 days (voting period)
+cast rpc evm_increaseTime 259200
+cast rpc evm_mine
+
+# Advance time by 2 days (timelock delay)
+cast rpc evm_increaseTime 172800
+cast rpc evm_mine
+```
+
+This lets you test a full governance cycle in minutes instead of days. But always validate on a live testnet with real timing before shipping — time manipulation can mask timing-related bugs.
+
+### Multi-Account Testing
+
+Governance testing requires multiple accounts with different voting weights. Set up a test harness with:
+
+- **Large holder** — Above proposal threshold, significant voting power
+- **Medium holders (3-5)** — Enough collectively to reach quorum
+- **Small holder** — Below proposal threshold, minimal voting power
+- **Zero-balance account** — No tokens, no delegations
+- **Delegated account** — Holds tokens but has delegated to another address
+
+Pre-fund and pre-delegate these accounts as part of your test setup. Manual wallet switching mid-test is error-prone and time-consuming.
+
+### Event Monitoring
+
+Governance contracts emit events at every state transition. Set up monitoring that:
+
+- Logs every `ProposalCreated`, `VoteCast`, `ProposalQueued`, `ProposalExecuted`, and `ProposalCanceled` event
+- Compares event data against UI displayed data
+- Alerts on unexpected state transitions (e.g., a proposal moving from Active to Executed without going through Queued)
+
+This gives you a secondary verification layer independent of your frontend.
+
+## Common Governance Bugs in Production
+
+Based on patterns seen across deployed governance systems, here are bugs that have caused real issues:
+
+1. **Voting power calculated at wrong block.** Using current balance instead of snapshot balance. This is the single most critical governance bug — it enables vote buying and flash loan attacks.
+
+2. **Timelock delay set to zero in production.** Testnet configuration accidentally deployed to mainnet, eliminating the safety buffer between vote and execution.
+
+3. **Quorum denominator not updating.** Quorum is often calculated as a percentage of total supply. If your token is inflationary or deflationary, the quorum threshold should adjust. Bugs where quorum is fixed at deployment make proposals progressively easier or harder to pass.
+
+4. **Frontend showing wrong proposal state.** The subgraph or indexer falls behind, showing a proposal as "Active" when voting has actually ended. Users try to vote and waste gas on reverted transactions.
+
+5. **Execution by wrong caller.** Some implementations restrict who can call `execute()`. If this is set incorrectly (e.g., only admin instead of anyone), proposals can get stuck in the Queued state with nobody able to trigger them.
+
+6. **Description hash mismatch.** OpenZeppelin Governor uses the hash of the proposal description as part of the proposal ID. If the frontend hashes the description differently than the contract (whitespace differences, encoding issues), the execution transaction will fail.
+
+## Your Governance Testing Checklist
+
+| Phase | Test | Priority |
+|-------|------|----------|
+| Creation | Proposer threshold enforcement (below, at, above) | High |
+| Creation | Delegated voting power counted for threshold | High |
+| Creation | Multi-action proposals display correctly | Medium |
+| Voting | Vote weight matches snapshot balance | Critical |
+| Voting | Double voting prevented (contract + UI) | High |
+| Voting | Voting outside valid period rejected | High |
+| Voting | Quorum calculation (met, not met, exact boundary) | High |
+| Voting | Abstain votes count toward quorum | Medium |
+| Timelock | Queue only succeeds for passed proposals | High |
+| Timelock | Execution only after delay passes | Critical |
+| Timelock | Expired proposal cannot execute | High |
+| Timelock | Multi-action execution atomicity | High |
+| Frontend | State transitions display in real time | High |
+| Frontend | Delegation flow clearly communicated | Medium |
+| Frontend | Vote counts formatted correctly at scale | Medium |
+| Security | Flash loan attack on snapshot mechanism | Critical |
+| Security | Proposal description XSS prevention | High |
+| Security | Cancel behavior when proposer loses power | Medium |
+
+## Governance Testing Is Protocol Testing
+
+If your protocol has on-chain governance, then governance testing isn't a separate workstream — it's core protocol testing. A governance bug doesn't just break a feature; it can change every parameter your protocol runs on. Interest rates, collateral ratios, fee structures, treasury allocations, contract upgrades — all of these are governance-controlled in many DeFi protocols.
+
+The test cases in this guide should be adapted to your specific implementation (our [DeFi testing checklist](/blog/defi-testing-checklist-25-test-cases) covers the broader set of test cases across all protocol areas), but the categories apply broadly. Start with the critical items (snapshot correctness, timelock enforcement, execution atomicity), then work outward to the edge cases and attack vectors.
+
+If you're building governance into your protocol and want help setting up a comprehensive QA process, [reach out to the Hexprove team](/#contact). Testing governance right means testing it before your token holders discover the bugs for you.
+
+---
+
+*This post was written by the Hexprove Agent and reviewed by the Hexprove team.*
