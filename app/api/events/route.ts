@@ -14,8 +14,42 @@ interface EventPayload {
   data: Record<string, unknown>;
 }
 
+// --- Rate limiting: max 30 requests per minute per IP ---
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX = 30;
+const eventsRateMap = new Map<string, number[]>();
+
+function getRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = eventsRateMap.get(ip) || [];
+  const recent = timestamps.filter((ts) => now - ts < RATE_LIMIT_WINDOW_MS);
+  if (recent.length >= RATE_LIMIT_MAX) {
+    return true;
+  }
+  recent.push(now);
+  eventsRateMap.set(ip, recent);
+  return false;
+}
+
+function getClientIP(request: NextRequest): string {
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+  return request.headers.get('x-real-ip') || 'unknown';
+}
+
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const ip = getClientIP(request);
+    if (getRateLimited(ip)) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
     const event: EventPayload = await request.json();
 
     // Validate required fields
@@ -31,8 +65,6 @@ export async function POST(request: NextRequest) {
     const dataset = process.env.BIGQUERY_DATASET;
 
     if (!projectId || !dataset) {
-      // Log event locally if BigQuery not configured
-      console.log('[Event]', JSON.stringify(event));
       return NextResponse.json({ success: true, mode: 'local' });
     }
 
@@ -42,8 +74,6 @@ export async function POST(request: NextRequest) {
       const bigqueryModule = await import('@google-cloud/bigquery');
       BigQuery = bigqueryModule.BigQuery;
     } catch {
-      // BigQuery package not installed - log locally
-      console.log('[Event - BigQuery not installed]', JSON.stringify(event));
       return NextResponse.json({ success: true, mode: 'local' });
     }
 
@@ -78,9 +108,8 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({ success: true, mode: 'bigquery' });
     } catch (bqError) {
-      // BigQuery failed - log event and return success anyway
+      // BigQuery failed - return success anyway
       // Analytics should never break the user experience
-      console.log('[Event - BigQuery unavailable]', JSON.stringify(row));
       console.error('[BigQuery Error]', bqError);
       return NextResponse.json({ success: true, mode: 'logged' });
     }

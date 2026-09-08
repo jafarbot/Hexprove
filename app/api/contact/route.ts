@@ -1,8 +1,55 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
-export async function POST(request: Request) {
+// --- Rate limiting: max 3 requests per 10 minutes per IP ---
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+const RATE_LIMIT_MAX = 3;
+const contactRateMap = new Map<string, number[]>();
+
+function getRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = contactRateMap.get(ip) || [];
+  // Filter to only timestamps within the window
+  const recent = timestamps.filter((ts) => now - ts < RATE_LIMIT_WINDOW_MS);
+  if (recent.length >= RATE_LIMIT_MAX) {
+    return true; // rate limited
+  }
+  recent.push(now);
+  contactRateMap.set(ip, recent);
+  return false;
+}
+
+// --- HTML escaping for email templates ---
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function getClientIP(request: Request): string {
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+  return request.headers.get('x-real-ip') || 'unknown';
+}
+
+const MAX_MESSAGE_LENGTH = 5000;
+
+export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const ip = getClientIP(request);
+    if (getRateLimited(ip)) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
     const smtpUser = process.env.PROTON_SMTP_USER;
     const smtpPass = process.env.PROTON_SMTP_PASS;
 
@@ -35,6 +82,14 @@ export async function POST(request: Request) {
     if (!trimmedName || !trimmedEmail || !trimmedMessage) {
       return NextResponse.json(
         { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    // Validate message length
+    if (trimmedMessage.length > MAX_MESSAGE_LENGTH) {
+      return NextResponse.json(
+        { error: 'Message is too long. Please limit to 5000 characters.' },
         { status: 400 }
       );
     }
@@ -78,6 +133,12 @@ export async function POST(request: Request) {
       },
     });
 
+    // Escape user input for HTML email templates (text versions are safe)
+    const safeName = escapeHtml(trimmedName);
+    const safeEmail = escapeHtml(trimmedEmail);
+    const safeCompany = escapeHtml(String(company ?? '').trim());
+    const safeMessage = escapeHtml(trimmedMessage);
+
     // Send both emails in parallel for faster response
     await Promise.all([
       // Notification email to team
@@ -90,13 +151,13 @@ export async function POST(request: Request) {
         html: `
           <div style="font-family: -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #0A0A0A; color: #fff;">
             <h2 style="color: #00F5A0; margin-bottom: 24px;">New Contact Form Submission</h2>
-            <p><strong style="color: #9CA3AF;">Name:</strong> ${trimmedName}</p>
-            <p><strong style="color: #9CA3AF;">Email:</strong> <a href="mailto:${trimmedEmail}" style="color: #00F5A0;">${trimmedEmail}</a></p>
-            ${company != null && String(company).trim() ? `<p><strong style="color: #9CA3AF;">Company:</strong> ${String(company).trim()}</p>` : ''}
+            <p><strong style="color: #9CA3AF;">Name:</strong> ${safeName}</p>
+            <p><strong style="color: #9CA3AF;">Email:</strong> <a href="mailto:${safeEmail}" style="color: #00F5A0;">${safeEmail}</a></p>
+            ${company != null && String(company).trim() ? `<p><strong style="color: #9CA3AF;">Company:</strong> ${safeCompany}</p>` : ''}
             <hr style="border-color: #2A2A2A; margin: 24px 0;" />
             <p style="color: #9CA3AF;"><strong>Message:</strong></p>
             <div style="background-color: #1A1A1A; padding: 16px 20px; border-radius: 8px; border: 1px solid #2A2A2A;">
-              <p style="color: #D1D5DB; margin: 0; white-space: pre-wrap;">${trimmedMessage}</p>
+              <p style="color: #D1D5DB; margin: 0; white-space: pre-wrap;">${safeMessage}</p>
             </div>
           </div>
         `,
@@ -108,7 +169,7 @@ export async function POST(request: Request) {
         subject: `We got your message, ${trimmedName} ✓`,
         html: `
           <div style="font-family: -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #0A0A0A; color: #fff;">
-            <h2 style="color: #fff; margin-bottom: 24px;">Hi ${trimmedName},</h2>
+            <h2 style="color: #fff; margin-bottom: 24px;">Hi ${safeName},</h2>
             <p style="color: #9CA3AF; line-height: 1.6;">
               Thanks for reaching out. We've received your message and will get back to you within 24 hours.
             </p>
@@ -117,7 +178,7 @@ export async function POST(request: Request) {
               Here's what you sent us:
             </p>
             <div style="background-color: #1A1A1A; padding: 16px 20px; border-radius: 8px; border: 1px solid #2A2A2A; margin-bottom: 24px;">
-              <p style="color: #D1D5DB; margin: 0; font-style: italic;">${trimmedMessage}</p>
+              <p style="color: #D1D5DB; margin: 0; font-style: italic;">${safeMessage}</p>
             </div>
             <hr style="border-color: #2A2A2A; margin: 24px 0;" />
             <p style="color: #9CA3AF; line-height: 1.6;">While you wait, you might find this helpful:</p>

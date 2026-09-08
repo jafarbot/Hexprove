@@ -434,6 +434,7 @@ export default function Contact({ blogPostCount = 0 }: ContactProps) {
                     }}
                     required
                     rows={4}
+                    maxLength={5000}
                     className={`input-field w-full px-0 py-3 resize-none text-base sm:text-lg ${
                       fieldErrors.message ? 'border-theme-red' : ''
                     }`}
