@@ -189,7 +189,7 @@ export default function FAQ() {
               Still have questions?
             </p>
             <a
-              href="#contact"
+              href="/#contact"
               className="inline-flex items-center gap-2 text-accent text-lg font-medium hover:gap-3 transition-all duration-300 min-h-[44px]"
             >
               Get in touch →

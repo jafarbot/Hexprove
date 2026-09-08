@@ -73,7 +73,6 @@ export async function trackEvent(eventName: string, data: EventData = {}): Promi
 
   // Don't track in development unless explicitly enabled
   if (process.env.NODE_ENV === 'development' && !process.env.NEXT_PUBLIC_ENABLE_ANALYTICS) {
-    console.log('[Analytics]', eventName, data);
     return;
   }
 

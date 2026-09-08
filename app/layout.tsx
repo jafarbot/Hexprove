@@ -192,14 +192,6 @@ const websiteSchema = {
   "@type": "WebSite",
   name: "Hexprove",
   url: "https://hexprove.com",
-  potentialAction: {
-    "@type": "SearchAction",
-    target: {
-      "@type": "EntryPoint",
-      urlTemplate: "https://hexprove.com/search?q={search_term_string}",
-    },
-    "query-input": "required name=search_term_string",
-  },
 };
 
 export default function RootLayout({
